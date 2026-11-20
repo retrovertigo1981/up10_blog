@@ -8,6 +8,7 @@ Punto de entrada a la documentación del proyecto.
 | `plan-desarrollo-up10.md` | Arquitectura, stack, specs funcionales y plan de sprints. |
 | `plan-infraestructura-hostinger.md` | Hosting, despliegue, respaldos y hardening. |
 | `../adr/0001-cms-wordpress-headless.md` | Por qué WordPress headless y no Strapi ni Laravel. |
+| `../adr/0002-tipografias.md` | Sistema tipográfico: Integral CF, Anton y Gelasio. |
 | `../specs/00-indice.md` | Índice de especificaciones. |
 | `../specs/01-modelo-de-contenido.md` | Tipos de contenido, campos, taxonomías y reglas editoriales. |
 | `../specs/02-contrato-api.md` | Endpoints, respuestas, caché, CORS y errores. |

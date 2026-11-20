@@ -13,12 +13,12 @@
   /* Tipografías */
   --font-display: "Integral CF", "Archivo Black", ui-sans-serif, system-ui, sans-serif;
   --font-heading: "Anton", "Arial Narrow", ui-sans-serif, sans-serif;
-  --font-sans: "Carrois Gothic", ui-sans-serif, system-ui, sans-serif;
-  --font-reading: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-sans: "Gelasio", Georgia, "Times New Roman", serif;
+  --font-reading: "Gelasio", Georgia, "Times New Roman", serif;
 
-  /* Radios */
-  --radius-button: 6px;
-  --radius-card: 16px;
+  /* Radios (brief: 10 px de referencia) */
+  --radius-button: 10px;
+  --radius-card: 10px;
 
   /* Contenedor */
   --spacing-gutter: clamp(20px, 3.5vw, 56px);
@@ -31,7 +31,7 @@
   }
 
   body {
-    @apply bg-cream text-ink font-sans antialiased;
+    @apply bg-cream text-ink font-reading antialiased;
     min-height: 100dvh;
   }
 

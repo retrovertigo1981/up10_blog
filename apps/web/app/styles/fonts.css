@@ -1,5 +1,19 @@
-/* Fuentes autohospedadas. Integral CF se carga desde /public/fonts cuando el
-   cliente entregue los archivos licenciados (ver public/fonts/README.md). */
+/* Fuentes autohospedadas.
+   Integral CF se carga desde /public/fonts cuando el cliente entregue los archivos
+   licenciados (ver public/fonts/README.md). Hasta entonces se usa Archivo Black. */
 @import "@fontsource/anton/400.css";
-@import "@fontsource/carrois-gothic/400.css";
+@import "@fontsource-variable/gelasio/wght.css";
+@import "@fontsource-variable/gelasio/wght-italic.css";
 @import "@fontsource/archivo-black/400.css";
+
+/*
+@font-face {
+  font-family: "Integral CF";
+  src:
+    url("/fonts/integral-cf/IntegralCF-DemiBold.woff2") format("woff2"),
+    url("/fonts/integral-cf/IntegralCF-DemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+*/

@@ -26,8 +26,8 @@ PHP se ejecuta por petición bajo LiteSpeed: no hay proceso persistente, no hay 
 
 | # | Principio | Implicancia |
 |---|---|---|
-| 1 | **El brief es la fuente de verdad** | Toda funcionalidad se deriva del brief y se traduce a specs verificables (§4). |
-| 2 | **La demo es solo referencia visual** | Se toman paleta, tipografías y ritmo; no su estructura de código. |
+| 1 | **El brief y sus documentos derivados son la fuente de verdad** | Alcance, contenido, marca y tipografías se definen desde el brief y las specs (§4). |
+| 2 | **La demo de Figma es solo referencia de maquetado** | Se toma composición, proporción y ritmo visual. No define contenido, funcionalidades ni roles tipográficos. |
 | 3 | **Desarrollo greenfield** | Componentes tipados y accesibles; sin deuda del export. |
 | 4 | **WordPress es solo el backend** | Sin temas, sin page builders, sin plantillas. El diseño es 100 % React. |
 | 5 | **El cliente no depende de los desarrolladores** | Panel editorial nativo con roles, programación y revisiones. |
@@ -39,12 +39,26 @@ PHP se ejecuta por petición bajo LiteSpeed: no hay proceso persistente, no hay 
 | Se toma | Se descarta |
 |---|---|
 | Paleta y proporción 60/25/15 | Posicionamiento absoluto en px |
-| Escala y jerarquía tipográfica | Lienzo fijo de 1728 px y anchos desbordados |
-| Radios, bordes y degradados | Tarjetas sin título, categoría ni metadatos |
-| Orden editorial de los bloques | Textos de muestra y datos hardcodeados |
-| Tono visual (foto grande, titular fuerte) | Componentes sin estados ni reutilización |
+| Composición y escala tipográfica, aplicada a las fuentes del brief | Lienzo fijo de 1728 px y anchos desbordados |
+| Bordes y degradados | Radios de 15/5 px: el brief fija 10 px |
+| Orden editorial de los bloques | Tarjetas sin título, categoría ni metadatos |
+| Tono visual (foto grande, titular fuerte) | Textos de muestra y datos hardcodeados |
 
 La demo no incluye móvil: ese diseño se produce en el Sprint 2 y se aprueba con el cliente (**Hito A**).
+
+### 2.2 Regla de precedencia y contradicciones resueltas
+
+Cuando el brief y la demo de Figma difieren, **manda el brief y la documentación que se deriva de él**. La demo solo aporta criterio de maquetado. Diferencias detectadas y su resolución:
+
+| Tema | Brief | Demo | Resolución |
+|---|---|---|---|
+| Fuente de lectura | A propuesta del diseñador | Carrois Gothic | **Gelasio** (§7.3) |
+| Nombre del proyecto de sesiones | UP10 Unplugged | UP10 Sessions | **UP10 Unplugged** |
+| Categorías del menú | 8 categorías musicales | Incluye "Estilo" | **Sin "Estilo"**; menú derivado del brief |
+| Radio de esquinas | 10 px | 15 px tarjetas / 5 px botones | **10 px** |
+| Uso de Anton | Subtítulos, categorías, destacados | Aperturas de sección a 80 px | **Válido**: una apertura es un destacado |
+
+Cualquier diferencia nueva se agrega a esta tabla antes de implementarse.
 
 ---
 
@@ -55,7 +69,7 @@ El brief define identidad, concepto, paleta, orden de portada y requisitos técn
 | Punto abierto | Cómo se resuelve |
 |---|---|
 | Tecnologías a cargo de los desarrolladores | Stack en §6, decisión de CMS en el ADR 0001 |
-| Tipografía de lectura a propuesta del diseñador | §7.3 |
+| Tipografía de lectura a propuesta del diseñador | Resuelta: Gelasio (§7.3) |
 | Factibilidad de Instagram y Spotify | §12, con estrategia por fases |
 
 **Requisitos duros:** panel editorial autónomo, publicaciones programadas, 10 últimas noticias, 10 posts de Instagram, TOP 10 sincronizado con Spotify, buscador, SEO, respaldos, SSL y móvil prioritario.
@@ -231,28 +245,44 @@ Contraste AA obligatorio en todos los pares.
 | Título de tarjeta | Integral CF Demi Bold | 24 px / 1.15 | 20 px / 1.2 |
 | Etiqueta de categoría | Anton | 25 px, tracking .05em | 18 px |
 | Navegación | Integral CF Demi Bold | 18 px, tracking .1em | 16 px |
-| Cuerpo | Lectura (§7.3) | 20 px / 1.55 | 17 px / 1.6 |
-| Metadatos | Carrois Gothic | 16 px | 14 px |
+| Cuerpo | Gelasio | 20 px / 1.55 | 17 px / 1.6 |
+| Metadatos | Gelasio | 15 px | 14 px |
 
 Se implementa con `clamp()` y una escala de 5 pasos.
 
 ### 7.3 Tipografías: estado
 
-**Integral CF — resuelto.** El cliente ya cuenta con la licencia web operativa. Se autohospeda en WOFF2 con `font-display: swap`.
+**Integral CF — resuelto.** El cliente cuenta con la licencia web. Se carga manualmente en WOFF2 desde `/public/fonts/integral-cf/` (ver `apps/web/public/fonts/README.md`). Mientras falten los archivos, el fallback es Archivo Black.
 
-**Anton** — Google Fonts, gratuita. Se usa para aperturas de sección y etiquetas.
+**Anton — confirmada por el brief.** Google Fonts, gratuita. Se usa en subtítulos, categorías, destacados y aperturas de sección, tal como indica el brief.
 
-**Carrois Gothic** — gratuita. Solo etiquetas y metadatos; no es adecuada para párrafos largos.
+**Gelasio — texto de lectura (decidido).** Google Fonts, variable 400–700 + itálicas, licencia OFL.
 
-**Tipografía de lectura — pendiente de decisión.** El brief no la define. Se presentan tres alternativas al cliente en el Hito 0:
+Es la alternativa libre más cercana a **Georgia**, la fuente que Billboard usa en el cuerpo de sus notas. Google la describe como métricamente compatible con Georgia: mismos anchos por carácter y sin reflow al cambiar de una a otra.
 
-| Opción | Perfil |
-|---|---|
-| **Newsreader** (recomendada) | Serif editorial, variable, muy legible en móvil |
-| Source Serif 4 | Serif neutra, tono periodístico |
-| Inter | Sans neutra, máxima legibilidad, menos "revista" |
+| Criterio | Georgia (Billboard) | Gelasio |
+|---|---|---|
+| Licencia | Propietaria, no autohospedable | OFL 1.1 |
+| Métricas | — | Idénticas en Regular/Bold/Itálica/Bold Itálica |
+| Pesos | Varios | Variable 400–700 + itálicas |
+| Cifras | Old-style | Old-style y lining, proporcionales y tabulares |
+| Cobertura | Latin, cirílico, griego | Latin, latin-ext, vietnamita |
 
-Si no hay respuesta antes del Sprint 1, se aplica Newsreader por defecto y se registra en `adr/0002-tipografia-lectura.md`.
+Stack: `"Gelasio", Georgia, "Times New Roman", serif`. El fallback no produce reflow gracias a la compatibilidad de métricas.
+
+**Nota:** Gelasio no incluye kerning, decisión del autor para mantener la compatibilidad métrica. No afecta al cuerpo de texto; los titulares usan Integral CF.
+
+**Carrois Gothic — descartada.** Venía del export de Figma y no está en el brief. No se usa para lectura por su baja legibilidad en párrafos largos.
+
+La decisión completa, con alternativas y criterios, está en `adr/0002-tipografias.md`.
+
+### 7.4 Espaciado, radios y movimiento
+
+- Contenedor: `max-width: 1600px`, padding lateral `clamp(20px, 3.5vw, 56px)`.
+- Escala de espacio: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
+- Radios: `10px` para botones, tarjetas, fotos y videos, según el brief. Formas circulares solo en avatares e indicadores.
+- Movimiento: 150–250 ms, `ease-out`; contadores y marquesina se desactivan con `prefers-reduced-motion`.
+- Sin sombras pronunciadas: separar por borde y color.
 
 ---
 
@@ -505,14 +535,14 @@ Código tipado y revisado · responsive verificado · estados de carga/error/vac
 
 | # | Elemento | Para cuándo |
 |---|---|---|
-| 1 | Decisión de tipografía de lectura | Hito 0 |
-| 2 | Licencia web de Integral CF (ya operativa) | — |
+| 1 | Archivos WOFF2 de Integral CF (pesos licenciados) | Sprint 0 |
+| 2 | Tipografía de lectura: aprobada (Gelasio) | — |
 | 3 | Licencia ACF Pro (USD 49/año) | Sprint 0 |
 | 4 | Logotipo horizontal en SVG + versiones de color | Sprint 0 |
 | 5 | 10 logotipos de marcas en SVG/PNG transparente | Sprint 2 |
 | 6 | 15–20 fotografías de alta resolución con derechos | Sprint 1 |
 | 7 | 10 notas, 10 eventos y 10 marcas reales | Sprint 4 |
-| 8 | Confirmación del menú y del nombre "Unplugged/Sessions" | Sprint 1 |
+| 8 | Confirmación del menú definitivo (derivado del brief) | Sprint 1 |
 | 9 | Credenciales de la app de Spotify | Sprint 4 |
 | 10 | Textos legales (Ley 21.719) | Sprint 5 |
 | 11 | Accesos de Hostinger y respaldo previo | Sprint 5 |
@@ -525,9 +555,9 @@ En el repo existe `public/logo_v1.svg` (isotipo vino) y un PNG horizontal de 294
 
 | # | Decisión | Recomendación |
 |---|---|---|
-| 1 | Tipografía de lectura | Newsreader |
+| 1 | Tipografía de lectura | Resuelta: Gelasio |
 | 2 | Menú definitivo | Derivado de las 8 categorías del brief, con "Más" |
-| 3 | Nombre del proyecto de sesiones | UP10 Unplugged |
+| 3 | Nombre del proyecto de sesiones | UP10 Unplugged (brief) |
 | 4 | Ruta de artículo | `/noticias/:slug` |
 | 5 | Instagram | Curado en v1, API en fase 2 |
 | 6 | Newsletter | WordPress + export; ESP al superar 100 suscriptores |
@@ -541,6 +571,6 @@ En el repo existe `public/logo_v1.svg` (isotipo vino) y un PNG horizontal de 294
 ## 19. Próximo paso
 
 1. Revisar y firmar el Hito 0 (§4, spec 01 y spec 02).
-2. Cerrar la tipografía de lectura y el menú definitivo.
+2. Cerrar el menú definitivo; la tipografía de lectura ya está resuelta (Gelasio).
 3. Arrancar el Sprint 0 con WordPress local, sin esperar Hostinger.
 4. Ejecutar la Fase 0 de `docs/plan-infraestructura-hostinger.md` al recuperar el acceso.
