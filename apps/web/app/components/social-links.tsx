@@ -1,9 +1,4 @@
-import {
-  SiFacebook,
-  SiInstagram,
-  SiTiktok,
-  SiYoutube,
-} from "@icons-pack/react-simple-icons";
+import { SiFacebook, SiInstagram, SiTiktok, SiYoutube } from "@icons-pack/react-simple-icons";
 
 import { cn } from "~/lib/cn";
 
@@ -18,10 +13,12 @@ export function SocialLinks({
   className,
   label = "Redes sociales",
   iconSize = 18,
+  buttonClassName,
 }: {
   className?: string;
   label?: string;
   iconSize?: number;
+  buttonClassName?: string;
 }) {
   return (
     <ul aria-label={label} className={cn("flex flex-wrap items-center gap-1", className)}>
@@ -32,7 +29,10 @@ export function SocialLinks({
             target="_blank"
             rel="noreferrer noopener"
             aria-label={name}
-            className="text-wine/70 hover:text-wine hover:bg-wine/10 rounded-button flex size-10 items-center justify-center transition-colors"
+            className={cn(
+              "text-wine/70 hover:text-wine hover:bg-wine/10 rounded-button flex size-10 items-center justify-center transition-colors",
+              buttonClassName,
+            )}
           >
             <Icon size={iconSize} aria-hidden="true" />
           </a>

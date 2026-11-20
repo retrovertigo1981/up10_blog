@@ -3,44 +3,53 @@ import type { Stat } from "@up10/api-client";
 import { cn } from "~/lib/cn";
 
 import { SocialLinks } from "./social-links";
-
-const formatter = new Intl.NumberFormat("es-CL");
-
-function formatStat(stat: Stat) {
-  const value = stat.format === "plain" ? String(stat.value) : formatter.format(stat.value);
-  return `${stat.prefix ?? ""}${value}${stat.suffix ?? ""}`;
-}
+import { AnimatedCounter } from "./ui/animated-counter";
 
 export function StatsBar({ stats }: { stats: Stat[] }) {
   if (stats.length === 0) return null;
 
   return (
     <section aria-labelledby="stats-title" className="border-wine/15 bg-paper border-b">
-      <div className="container-up10 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2">
+      <div className="container-up10 flex flex-col gap-2 py-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-3.5">
         <h2 id="stats-title" className="sr-only">
           UP10 en números
         </h2>
 
-        <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 sm:gap-x-5">
+        <dl className="grid grid-cols-3 items-stretch lg:flex lg:flex-1 lg:items-center lg:justify-evenly">
           {stats.map((stat, index) => (
             <div
               key={stat.id}
               className={cn(
-                "flex items-baseline gap-1.5",
-                index > 0 && "sm:border-wine/15 sm:border-l sm:pl-5",
+                "flex flex-col-reverse items-center justify-center gap-1 px-2 text-center sm:px-4 lg:px-6",
+                index > 0 && "border-wine/15 border-l",
               )}
             >
-              <dd className="font-heading text-wine text-[clamp(1rem,1.8vw,1.35rem)] leading-none">
-                {formatStat(stat)}
-              </dd>
-              <dt className="text-ink/60 text-[10px] tracking-[0.08em] uppercase sm:text-[11px]">
+              <dt className="text-ink/60 text-[9.5px] uppercase leading-none tracking-[0.1em] sm:text-[10.5px] lg:text-[11px]">
                 {stat.shortLabel ?? stat.label}
               </dt>
+              <dd className="font-heading text-wine text-[clamp(1.35rem,4.8vw,1.5rem)] leading-none lg:text-[clamp(1.5rem,2vw,1.75rem)]">
+                <AnimatedCounter
+                  value={stat.value}
+                  prefix={stat.prefix}
+                  suffix={stat.suffix}
+                  format={stat.format === "plain" ? "plain" : "number"}
+                />
+              </dd>
             </div>
           ))}
         </dl>
 
-        <SocialLinks className="ms-auto -mr-2" iconSize={17} />
+        <div className="flex items-center justify-center gap-1.5 lg:justify-end lg:gap-3.5">
+          <p className="text-ink/60 font-heading text-[9.5px] uppercase leading-tight tracking-[0.12em] sm:text-[10.5px] lg:whitespace-nowrap lg:text-[11px]">
+            Síguenos y no te pierdas nada
+          </p>
+          <SocialLinks
+            className="shrink-0 gap-0 lg:gap-1"
+            label="Síguenos y no te pierdas nada: redes sociales de UP10"
+            iconSize={16}
+            buttonClassName="size-8 lg:size-10"
+          />
+        </div>
       </div>
     </section>
   );
