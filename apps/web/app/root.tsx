@@ -16,6 +16,13 @@ import "./app.css";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", href: "/favicon.ico", sizes: "any" },
+  {
+    rel: "preload",
+    href: "/fonts/integral-cf/IntegralCF-DemiBold.woff2",
+    as: "font",
+    type: "font/woff2",
+    crossOrigin: "anonymous",
+  },
 ];
 
 export const meta: Route.MetaFunction = () => [

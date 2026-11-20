@@ -1,19 +1,106 @@
-/* Fuentes autohospedadas.
-   Integral CF se carga desde /public/fonts cuando el cliente entregue los archivos
-   licenciados (ver public/fonts/README.md). Hasta entonces se usa Archivo Black. */
+/* Fuentes del proyecto, autohospedadas.
+
+   Integral CF: licencia del cliente. Los OTF originales viven en
+   apps/web/font-sources/integral-cf/ y se convierten a WOFF2 para el build.
+   Anton y Gelasio se instalan con Fontsource y Vite les aplica hash. */
 @import "@fontsource/anton/400.css";
 @import "@fontsource-variable/gelasio/wght.css";
 @import "@fontsource-variable/gelasio/wght-italic.css";
 @import "@fontsource/archivo-black/400.css";
 
-/*
+/* Integral CF — pesos licenciados */
 @font-face {
   font-family: "Integral CF";
-  src:
-    url("/fonts/integral-cf/IntegralCF-DemiBold.woff2") format("woff2"),
-    url("/fonts/integral-cf/IntegralCF-DemiBold.woff") format("woff");
+  src: url("/fonts/integral-cf/IntegralCF-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-RegularOblique.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-MediumOblique.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-DemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
-*/
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-DemiBoldOblique.woff2") format("woff2");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-BoldOblique.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-ExtraBoldOblique.woff2") format("woff2");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-Heavy.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Integral CF";
+  src: url("/fonts/integral-cf/IntegralCF-HeavyOblique.woff2") format("woff2");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}

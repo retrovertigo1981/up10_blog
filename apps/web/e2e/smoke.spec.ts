@@ -14,3 +14,23 @@ test("el enlace de salto apunta al contenido", async ({ page }) => {
   const skipLink = page.getByRole("link", { name: "Saltar al contenido" });
   await expect(skipLink).toHaveAttribute("href", "#contenido");
 });
+
+test("las tipografías locales cargan", async ({ page }) => {
+  await page.goto("/");
+
+  const loaded = await page.evaluate(async () => {
+    await Promise.all([
+      document.fonts.load('600 42px "Integral CF"'),
+      document.fonts.load('400 80px "Anton"'),
+      document.fonts.load('400 18px "Gelasio"'),
+    ]);
+
+    return {
+      integral: document.fonts.check('600 42px "Integral CF"'),
+      anton: document.fonts.check('400 80px "Anton"'),
+      gelasio: document.fonts.check('400 18px "Gelasio"'),
+    };
+  });
+
+  expect(loaded).toEqual({ integral: true, anton: true, gelasio: true });
+});

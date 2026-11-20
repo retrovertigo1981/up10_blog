@@ -252,7 +252,7 @@ Se implementa con `clamp()` y una escala de 5 pasos.
 
 ### 7.3 Tipografías: estado
 
-**Integral CF — resuelto.** El cliente cuenta con la licencia web. Se carga manualmente en WOFF2 desde `/public/fonts/integral-cf/` (ver `apps/web/public/fonts/README.md`). Mientras falten los archivos, el fallback es Archivo Black.
+**Integral CF — resuelto.** El cliente cuenta con la licencia web. Se carga manualmente en WOFF2 desde `/public/fonts/integral-cf/` (ver `apps/web/font-sources/README.md`). Mientras falten los archivos, el fallback es Archivo Black.
 
 **Anton — confirmada por el brief.** Google Fonts, gratuita. Se usa en subtítulos, categorías, destacados y aperturas de sección, tal como indica el brief.
 
