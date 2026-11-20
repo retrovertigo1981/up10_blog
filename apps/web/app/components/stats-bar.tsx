@@ -40,7 +40,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
         </dl>
 
         <div className="flex items-center justify-center gap-1.5 lg:justify-end lg:gap-3.5">
-          <p className="text-ink/60 font-heading text-[9.5px] uppercase leading-tight tracking-[0.12em] sm:text-[10.5px] lg:whitespace-nowrap lg:text-[11px]">
+          <p className="text-wine font-display text-[9.5px] font-bold uppercase leading-tight tracking-[0.12em] sm:text-[10.5px] lg:whitespace-nowrap lg:text-[11px]">
             Síguenos y no te pierdas nada
           </p>
           <SocialLinks
