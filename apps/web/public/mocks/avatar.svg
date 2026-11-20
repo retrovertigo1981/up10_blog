@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#FFF8E8"/>
+  <rect x="20" y="36" width="110" height="110" fill="#57000B" opacity="0.90"/>
+  <text x="12" y="184" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="2" fill="#FAE3B9">UP</text>
+  <text x="12" y="28" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="4" fill="#57000B">UP10 · MOCK</text>
+</svg>

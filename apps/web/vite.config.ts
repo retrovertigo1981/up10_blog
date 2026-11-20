@@ -7,4 +7,7 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  optimizeDeps: {
+    include: ["lucide-react", "@icons-pack/react-simple-icons"],
+  },
 });

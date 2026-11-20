@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -14,6 +14,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       }),
   );
+
+  useEffect(() => {
+    document.documentElement.dataset.hydrated = "true";
+  }, []);
 
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }

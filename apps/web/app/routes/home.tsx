@@ -1,96 +1,128 @@
-import { Link } from "react-router";
 import type { Route } from "./+types/home";
 
-export const meta: Route.MetaFunction = () => [
-  { title: "UP10 — Revista musical" },
-  {
-    name: "description",
-    content: "Noticias, entrevistas, rankings y eventos de la música chilena y latinoamericana.",
-  },
-];
+import { BentoGrid } from "~/components/bento-grid";
+import { FeatureRow } from "~/components/feature-row";
+import { HeroCarousel } from "~/components/hero-carousel";
+import { InstagramGrid } from "~/components/instagram-grid";
+import { NewsletterSection } from "~/components/newsletter-section";
+import { PartnerMarquee } from "~/components/partner-marquee";
+import { ProjectBand } from "~/components/project-band";
+import { ProjectCards } from "~/components/project-cards";
+import { StatsBar } from "~/components/stats-bar";
+import { PlaylistSection } from "~/components/playlist-section";
+import { ComingSoon } from "~/components/ui/coming-soon";
+import { SectionHeading } from "~/components/ui/section-heading";
+import { api, siteUrl } from "~/lib/api";
 
-const placeholderPosts = [
-  { category: "Música chilena", title: "Los sonidos que están marcando la escena local" },
-  { category: "Entrevistas", title: "Conversamos con una de las voces del momento" },
-  { category: "Lanzamientos", title: "Lo nuevo de la semana, en diez escuchas" },
-] as const;
+const PLAYLIST_ID = "3Iq8oHfADX6oHPi8jYs4vH";
+const PLAYLIST_URL = `https://open.spotify.com/playlist/${PLAYLIST_ID}`;
+const PLAYLIST_EMBED = `https://open.spotify.com/embed/playlist/${PLAYLIST_ID}?utm_source=generator&theme=0`;
 
-export default function Home() {
+export async function loader() {
+  const { data } = await api.home();
+  return { home: data };
+}
+
+export const meta: Route.MetaFunction = () => {
+  const title = "UP10 — Revista musical chilena";
+  const description =
+    "Noticias, entrevistas, rankings y eventos de la música chilena y latinoamericana. Más música, menos problemas.";
+
+  return [
+    { title },
+    { name: "description", content: description },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: siteUrl },
+    { property: "og:locale", content: "es_CL" },
+    { tagName: "link", rel: "canonical", href: siteUrl },
+  ];
+};
+
+export default function Home({ loaderData }: Route.ComponentProps) {
+  const { home } = loaderData;
+  const bentoPosts = home.latest.slice(3);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        name: "UP10",
+        url: siteUrl,
+        sameAs: [
+          "https://www.instagram.com/up10.cl/",
+          "https://www.tiktok.com/@up10.cl",
+          "https://www.facebook.com/up10.cl",
+          "https://www.youtube.com/@up10",
+        ],
+      },
+      {
+        "@type": "WebSite",
+        name: "UP10",
+        url: siteUrl,
+        inLanguage: "es-CL",
+      },
+    ],
+  };
+
   return (
     <>
-      <section className="container-up10 pb-16 pt-10 lg:pt-16">
-        <p className="font-heading text-wine text-base tracking-[0.05em]">/ NOTICIAS</p>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-        <div className="mt-6 grid items-end gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-          <div>
-            <h1 className="text-[clamp(2rem,4vw,2.625rem)] leading-[1.05]">
-              Music Awards Santander 2026: dónde ver EN VIVO la premiación desde Chile
-            </h1>
-            <p className="text-ink/75 mt-5 max-w-[26rem] text-[17px] leading-relaxed lg:text-xl">
-              Este viernes 20 de noviembre se celebra una nueva edición de los premios, con
-              destacados artistas internacionales.
-            </p>
-            <a
-              href="#ultimo"
-              className="text-wine mt-6 inline-block text-[17px] underline decoration-2 underline-offset-[6px]"
-            >
-              Leer reportaje →
-            </a>
-          </div>
+      {home.stats.length > 0 ? <StatsBar stats={home.stats} /> : null}
 
-          <div
-            className="bg-wine rounded-card min-h-[320px] w-full lg:min-h-[440px]"
-            role="img"
-            aria-label="Espacio reservado para la fotografía principal"
-          >
-            <div className="flex h-full min-h-[320px] items-end p-6 lg:min-h-[440px]">
-              <span className="text-cream/70 font-heading text-sm tracking-[0.15em]">
-                FOTOGRAFÍA PRINCIPAL
-              </span>
-            </div>
-          </div>
-        </div>
+      {home.hero.length > 0 ? (
+        <HeroCarousel posts={home.hero} />
+      ) : (
+        <ComingSoon
+          variant="band"
+          title="La música vuelve pronto"
+          description="Estamos preparando la nueva portada de UP10. Mientras tanto, síguenos en Instagram."
+          cta={{ label: "Ver Instagram", href: "https://www.instagram.com/up10.cl/" }}
+        />
+      )}
+
+      <section aria-labelledby="ultimo-title" className="container-up10 py-16 lg:py-24">
+        <SectionHeading id="ultimo-title" action={{ label: "Ver archivo", href: "/noticias" }}>
+          LO ÚLTIMO
+        </SectionHeading>
+
+        <BentoGrid posts={bentoPosts} className="mt-10" />
       </section>
 
-      <div className="border-wine bg-paper overflow-hidden border-y py-3">
-        <div className="container-up10 font-heading flex flex-wrap items-center gap-x-8 gap-y-2 text-sm tracking-wide">
-          <span aria-hidden="true">●</span>
-          <span>Kidd Keo suelta Back to the Bone</span>
-          <span aria-hidden="true">●</span>
-          <span>Movida Urbana: guía del fin de semana</span>
-          <span aria-hidden="true">●</span>
-          <span>Bad Bunny anuncia tour sudamericano</span>
+      <PlaylistSection playlistUrl={PLAYLIST_URL} embedUrl={PLAYLIST_EMBED} />
+
+      <FeatureRow posts={home.interviews} />
+
+      <div className="flex flex-col">
+        <div className="order-2 lg:order-1">
+          <InstagramGrid posts={home.instagram} />
+        </div>
+
+        <div className="order-1 lg:order-2">
+          {home.unplugged ? (
+            <ProjectBand page={home.unplugged} />
+          ) : (
+            <ComingSoon
+              variant="band"
+              title="Unplugged vuelve pronto"
+              description="Más de 50 sesiones íntimas. Estamos preparando una nueva etapa con grabaciones propias."
+              cta={{ label: "Ver Instagram", href: "https://www.instagram.com/up10.cl/" }}
+            />
+          )}
         </div>
       </div>
 
-      <section id="ultimo" className="container-up10 py-16 lg:py-24">
-        <div className="flex items-end justify-between gap-6">
-          <h2 className="font-heading text-[clamp(2.5rem,6vw,5rem)] leading-none">LO ÚLTIMO</h2>
-          <Link to="/noticias" className="text-ink/70 hover:text-wine hidden text-sm sm:block">
-            Ver archivo →
-          </Link>
-        </div>
+      <ProjectCards projects={home.projects} />
 
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {placeholderPosts.map((post) => (
-            <article key={post.title} className="group">
-              <div className="bg-wine/10 rounded-card aspect-[4/3] w-full" aria-hidden="true" />
-              <p className="font-heading text-wine mt-4 text-sm uppercase tracking-[0.05em]">
-                {post.category}
-              </p>
-              <h3 className="mt-2 text-xl leading-tight group-hover:underline group-hover:underline-offset-4">
-                {post.title}
-              </h3>
-            </article>
-          ))}
-        </div>
+      <PartnerMarquee partners={home.partners} />
 
-        <p className="text-ink/50 mt-12 max-w-2xl text-sm">
-          Sprint 0: estructura base del frontend. Las secciones completas, los datos reales y el
-          resto de las rutas se implementan en los sprints 1 a 3 según{" "}
-          <code className="bg-paper rounded px-1.5 py-0.5">docs/plan-desarrollo-up10.md</code>.
-        </p>
-      </section>
+      <NewsletterSection />
     </>
   );
 }

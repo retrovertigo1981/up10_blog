@@ -3,6 +3,8 @@
  * Fuente de verdad: docs/specs/02-contrato-api.md
  */
 
+export type ImageFocalPoint = "center" | "top" | "bottom" | "left" | "right";
+
 export type Image = {
   src: string;
   width: number;
@@ -10,6 +12,8 @@ export type Image = {
   alt: string;
   srcset: string;
   credit?: string;
+  /** Punto de recorte para que la misma foto funcione en hero y bento. */
+  focalPoint?: ImageFocalPoint;
 };
 
 export type Author = {
@@ -87,8 +91,14 @@ export type Event = EventSummary & {
   seo: Seo;
 };
 
+export type TrackMovement = "up" | "down" | "same" | "new";
+
 export type Track = {
   position: number;
+  /** Posición en el snapshot anterior; null si es nueva. */
+  previousPosition?: number | null;
+  movement: TrackMovement;
+  isNew: boolean;
   title: string;
   artist: string;
   cover: Image;
@@ -99,16 +109,20 @@ export type Track = {
 export type Partner = {
   id: number;
   name: string;
-  logo: Image;
+  logo?: Image;
   url?: string;
 };
 
 export type Stat = {
   id: number;
   label: string;
+  /** Versión corta para la barra compacta. */
+  shortLabel?: string;
   value: number;
   prefix?: string;
   suffix?: string;
+  /** "plain" evita el separador de miles, por ejemplo para un año. */
+  format?: "number" | "plain";
 };
 
 export type InstagramPost = {
@@ -129,7 +143,9 @@ export type Page = {
 };
 
 export type HomePayload = {
-  hero: PostSummary | null;
+  /** Las 3 noticias más recientes, en orden. */
+  hero: PostSummary[];
+  /** Las 10 más recientes; las 3 primeras son el hero. */
   latest: PostSummary[];
   interviews: PostSummary[];
   events: EventSummary[];

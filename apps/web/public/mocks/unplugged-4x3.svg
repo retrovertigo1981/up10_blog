@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#FFF8E8"/>
+  <path d="M0 675 L540 135 L1200 558 L1200 900 L0 900 Z" fill="#57000B" opacity="0.90"/>
+  <text x="72" y="828" font-family="Helvetica, Arial, sans-serif" font-size="37" font-weight="700" letter-spacing="2" fill="#FAE3B9">UNPLUGGED 4:3</text>
+  <text x="72" y="126" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" letter-spacing="4" fill="#57000B">UP10 · MOCK</text>
+</svg>

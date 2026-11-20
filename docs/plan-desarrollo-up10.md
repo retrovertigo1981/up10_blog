@@ -93,8 +93,8 @@ Cada requisito se traduce a una spec verificable. Prioridad: **M** = debe estar 
 | F-01 | Publicar, editar y programar noticias | `post` nativo + programador de WordPress + cron real | Un editor publica y programa sin intervención técnica | M | 0 |
 | F-02 | Gestionar fotos, videos, categorías y entrevistas | Medios nativos + `category` + `tipo_contenido` + ACF | Subir imagen y asignarla a una nota en < 1 min | M | 0 |
 | F-03 | Administración sencilla | Roles nativos + campos obligatorios + vista previa | Un editor nuevo publica su primera nota tras 20 min de capacitación | M | 0 |
-| F-04 | Noticia principal destacada | `is_featured` + `featured_rank` (máx. 6) | La portada muestra una sola nota principal | M | 1 |
-| F-05 | Últimas 10 noticias | Consulta ordenada por fecha, límite 10 | La portada nunca muestra más de 10 | M | 1 |
+| F-04 | Carrusel de 3 noticias destacadas | Las 3 últimas publicadas, sin curaduría | Navegable con barras, autoplay de 6 s y pausa | M | 1 |
+| F-05 | Últimas 10 noticias | 3 en el carrusel + 7 en el bento | La portada muestra 10 en total | M | 1 |
 | F-06 | Noticias relacionadas | ACF relationship + sugerencia por categoría | Cada nota muestra 3 relacionadas | S | 3 |
 | F-07 | Galerías fotográficas | ACF gallery + componente con lightbox | 3+ imágenes accesibles por teclado | S | 3 |
 | F-08 | Cifras editables | Options Page con repeater `stat` | Cambiar +136.000 no requiere deploy | M | 1 |
@@ -108,7 +108,7 @@ Cada requisito se traduce a una spec verificable. Prioridad: **M** = debe estar 
 |---|---|---|---|---|---|
 | H-01 | Cabecera con logo, menú y redes | `SiteHeader` sticky, datos desde Options Page | Navegable por teclado; menú móvil en drawer | M | 1 |
 | H-02 | UP10 en números tras la cabecera | `StatsBand` con 3 cifras y contador animado | Visible sin scroll en desktop; respeta `reduced-motion` | M | 2 |
-| H-03 | Noticias destacadas + últimas 10 | `HeroArticle` + `BentoGrid` | 1 principal + 9 secundarias | M | 1 |
+| H-03 | Carrusel + bento | `HeroCarousel` + `BentoGrid` | 3 en el carrusel + 7 en el bento | M | 1 |
 | H-04 | UP10 TOP 10 | `Top10Section` con 10 posiciones | Número, título, artista, portada y enlace | M | 1 |
 | H-05 | Entrevistas destacadas | `FeatureRow` filtrado por `tipo_contenido` | 3 entrevistas con video opcional | M | 2 |
 | H-06 | Últimas 10 de Instagram | `InstagramGrid` curada desde WordPress | 10 piezas + botón "Ver más" | M | 2 |
@@ -240,11 +240,11 @@ Contraste AA obligatorio en todos los pares.
 
 | Rol | Fuente | Desktop | Móvil |
 |---|---|---|---|
-| Titular hero | Integral CF Demi Bold | 42 px / 1.05 | 30 px / 1.1 |
+| Titular hero | Integral CF Bold | 42 px / 1.05 | 30 px / 1.1 |
 | Apertura de sección | Anton | 80 px / 0.95 | 42 px / 1.0 |
-| Título de tarjeta | Integral CF Demi Bold | 24 px / 1.15 | 20 px / 1.2 |
+| Título de tarjeta | Integral CF Bold | 24 px / 1.15 | 20 px / 1.2 |
 | Etiqueta de categoría | Anton | 25 px, tracking .05em | 18 px |
-| Navegación | Integral CF Demi Bold | 18 px, tracking .1em | 16 px |
+| Navegación | Integral CF Regular | 13 px, tracking .1em | 12 px |
 | Cuerpo | Gelasio | 20 px / 1.55 | 17 px / 1.6 |
 | Metadatos | Gelasio | 15 px | 14 px |
 
@@ -337,18 +337,19 @@ El detalle completo está en `specs/01-modelo-de-contenido.md`. Resumen:
 | # | Bloque | Componente | Datos | Notas |
 |---|---|---|---|---|
 | 1 | Cabecera | `SiteHeader` | Options Page | Sticky; menú móvil; buscador en overlay |
-| 2 | UP10 en números | `StatsBand` | `stat` | 3 cifras, contador animado |
-| 3 | Hero | `HeroArticle` | `hero` | Imagen a sangre, texto sobre crema |
-| 4 | Ticker | `NewsTicker` | últimos 6 títulos | Pausa en hover, accesible |
-| 5 | Lo último | `BentoGrid` + `ArticleCard` | 10 últimos | Grilla asimétrica; columna única en móvil |
-| 6 | TOP 10 | `Top10Section` + `TrackRow` | `track` | Bloque oscuro, embed de Spotify |
-| 7 | Entrevistas | `FeatureRow` | `tipo=entrevista` | 3 destacadas |
-| 8 | Instagram | `InstagramGrid` | Options Page | 10 piezas + botón |
-| 9 | Unplugged | `ProjectBand` | `page` + `sesion` | Presentación y galería |
-| 10 | Podcast y Awards | `ProjectCards` | `page` | Estado "próximamente" |
-| 11 | Marcas | `PartnerMarquee` | `marca` | 10 logos |
-| 12 | Newsletter | `NewsletterForm` | — | Validación y consentimiento |
-| 13 | Pie | `SiteFooter` | Options Page | Contacto, prensa, legales |
+| 2 | UP10 en números | `StatsBar` | `stat` | Barra compacta con cifras e iconos sociales |
+| 3 | Hero | `HeroCarousel` | `hero` (3 últimas) | Carrusel automático con barras; imagen 3:2 |
+| 4 | Lo último | `BentoGrid` + `ArticleCard` | 7 siguientes | Mosaico de 2 columnas + fila de 3 |
+| 5 | TOP 10 | `PlaylistSection` | playlist | Playlist de Spotify; el ranking vive en `/top10` |
+| 6 | Entrevistas | `FeatureRow` | `tipo=entrevista` | 3 destacadas |
+| 7 | Instagram | `InstagramGrid` | Options Page | 10 piezas + botón |
+| 8 | Unplugged | `ProjectBand` | `page` + `sesion` | Presentación y galería |
+| 9 | Podcast y Awards | `ProjectCards` | `page` | Estado "próximamente" |
+| 10 | Marcas | `PartnerMarquee` | `marca` | Marquesina con 10 marcas |
+| 11 | Newsletter | `NewsletterForm` | — | Validación y consentimiento |
+| 12 | Pie | `SiteFooter` | Options Page | Contacto, prensa, legales |
+
+La portada muestra **10 noticias**: las 3 más recientes en el carrusel y las 7 siguientes en el bento. Al publicar una nueva, la más antigua del carrusel pasa al bento. El carrusel no se cura a mano.
 
 **Anatomía de tarjeta:** imagen 4:3, etiqueta de categoría en Anton, título en Integral CF, extracto opcional, meta (autor · fecha · tiempo de lectura). Hover: escala 1.03 y subrayado. Foco visible con anillo vino.
 
@@ -356,7 +357,7 @@ El detalle completo está en `specs/01-modelo-de-contenido.md`. Resumen:
 
 ## 11. Inventario de componentes
 
-`SiteHeader`, `MobileMenu`, `SearchOverlay`, `SiteFooter`, `ArticleCard` (3 variantes), `BentoGrid`, `HeroArticle`, `NewsTicker`, `SectionHeading`, `StatsBand`, `AnimatedCounter`, `Top10Section`, `TrackRow`, `SpotifyEmbed`, `InstagramGrid`, `InstagramTile`, `FeatureRow`, `ProjectBand`, `ProjectCards`, `PartnerMarquee`, `EventRow`, `EventCard`, `NewsletterForm`, `ShareButtons`, `Breadcrumbs`, `RelatedArticles`, `ArticleBody`, `Gallery`, `YouTubeLite`, `Seo`, `EmptyState`, `Pagination`, `SkipLink`.
+`SiteHeader`, `MobileMenu`, `SearchOverlay`, `HeroCarousel`, `SiteFooter`, `ArticleCard` (4 variantes), `BentoGrid`, `SectionHeading`, `StatsBar`, `PlaylistSection`, `TrackRow`, `InstagramGrid`, `InstagramTile`, `FeatureRow`, `ProjectBand`, `ProjectCards`, `PartnerMarquee`, `SocialLinks`, `EventRow`, `EventCard`, `NewsletterForm`, `ShareButtons`, `Breadcrumbs`, `RelatedArticles`, `ArticleBody`, `Gallery`, `YouTubeLite`, `Seo`, `EmptyState`, `Pagination`, `SkipLink`.
 
 Cada uno documentado en `/styleguide` (no indexada) con estados: normal, hover, focus, carga, vacío, error.
 

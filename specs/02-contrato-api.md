@@ -28,6 +28,7 @@ type Image = {
   alt: string;
   srcset: string; // "url 400w, url 800w, ..."
   credit?: string;
+  focalPoint?: "center" | "top" | "bottom" | "left" | "right";
 };
 
 type Author = {
@@ -71,7 +72,7 @@ Devuelve todo lo necesario para la portada en **una sola petición**. Existe par
 ```json
 {
   "data": {
-    "hero": { "post": {} },
+    "hero": [],
     "latest": [],
     "interviews": [],
     "events": [],
@@ -87,8 +88,8 @@ Devuelve todo lo necesario para la portada en **una sola petición**. Existe par
 
 | Clave        | Contenido                                 | Límite               |
 | ------------ | ----------------------------------------- | -------------------- |
-| `hero`       | Artículo destacado con `featuredRank = 1` | 1                    |
-| `latest`     | Artículos publicados, más recientes       | 10 (incluye el hero) |
+| `hero`       | Las 3 noticias más recientes, en orden     | 3                    |
+| `latest`     | Artículos publicados, más recientes        | 10 (3 primeras = hero) |
 | `interviews` | `tipo_contenido = entrevista`             | 3                    |
 | `events`     | Próximos eventos                          | 3                    |
 | `top10`      | Ranking ordenado por posición             | 10                   |
@@ -98,7 +99,7 @@ Devuelve todo lo necesario para la portada en **una sola petición**. Existe par
 | `unplugged`  | Página + última sesión                    | 1                    |
 | `projects`   | Podcast y Awards                          | 2                    |
 
-Regla: si no hay destacado, `hero` toma el artículo más reciente.
+Regla: `hero` y `latest` salen de la misma consulta ordenada por fecha. El hero no se cura a mano; si hay menos de 3 artículos, devuelve los disponibles.
 
 ### 2.2 `GET /posts`
 
@@ -200,6 +201,9 @@ type EventSummary = {
   "data": [
     {
       "position": 1,
+      "previousPosition": 3,
+      "movement": "up",
+      "isNew": false,
       "title": "Nombre de la canción",
       "artist": "Artista",
       "cover": { "src": "...", "alt": "..." },
@@ -208,11 +212,17 @@ type EventSummary = {
     }
   ],
   "meta": {
-    "playlistUrl": "https://open.spotify.com/playlist/...",
+    "playlistUrl": "https://open.spotify.com/playlist/3Iq8oHfADX6oHPi8jYs4vH",
+    "embedUrl": "https://open.spotify.com/embed/playlist/3Iq8oHfADX6oHPi8jYs4vH?utm_source=generator&theme=0",
     "syncedAt": "2026-11-20T12:00:00Z"
   }
 }
 ```
+
+- `movement`: `up`, `down`, `same` o `new`.
+- `previousPosition` es `null` cuando la canción entra por primera vez.
+- `embedUrl` se usa en un iframe; la lista se maqueta aparte.
+- El ID correcto es `3Iq8oHfADX6oHPi8jYs4vH`. El del brief devuelve 404.
 
 ### 2.8 `GET /partners`
 

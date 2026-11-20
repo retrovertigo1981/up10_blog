@@ -75,6 +75,7 @@ Etiquetas libres: artistas, géneros, ciudades, festivales. Alimentan el buscado
 | Orden de destacado | `featured_rank` | number | 1–6, único entre destacados |
 | Crédito de foto | `photo_credit` | text | Obligatorio si la imagen no es propia |
 | Galería | `gallery` | gallery | 3–12 imágenes; activa el bloque de galería |
+| Punto focal | `focal_point` | select | `center`/`top`/`bottom`/`left`/`right`; se aplica como `object-position` |
 | Video YouTube | `video_url` | url | Solo YouTube; se extrae el ID |
 | Tiempo de lectura | `reading_time` | number | Si está vacío, se calcula a 200 palabras/min |
 | Relacionados | `related` | relationship → post | Máx. 3; si está vacío, se sugiere por categoría |
@@ -111,6 +112,7 @@ Regla: los eventos pasados se conservan, pero no aparecen en la portada.
 | Campo | Nombre | Tipo | Regla |
 |---|---|---|---|
 | Etiqueta | `label` | text | Ej. "Seguidores en Instagram" |
+| Etiqueta corta | `short_label` | text | Para la barra compacta: "Seguidores", "Vistas", "Desde" |
 | Valor | `value` | number | Ej. 136000 |
 | Prefijo | `prefix` | text | Ej. "+" |
 | Sufijo | `suffix` | text | Ej. "M" |
@@ -129,8 +131,12 @@ El frontend formatea el número según configuración regional chilena.
 | URL Spotify | `spotify_url` | url | Obligatorio |
 | Origen | `source` | select | `spotify` / `manual` |
 | Spotify ID | `spotify_id` | text | Solo lectura; lo escribe el sync |
+| Posición anterior | `previous_position` | number | Null si es nueva |
+| Movimiento | `movement` | select | `up` / `down` / `same` / `new` |
+| Nueva entrada | `is_new` | true/false | Calculado por el sync |
+| Último sync | `last_synced_at` | datetime | Solo lectura |
 
-Regla: el sync de Spotify solo sobrescribe filas con `source = spotify`. Las filas manuales nunca se tocan.
+Regla: el sync de Spotify solo sobrescribe filas con `source = spotify`. Las filas manuales nunca se tocan. El historial de posiciones vive en la tabla `up10_top10_snapshots` (spec 06).
 
 ### 3.6 `sesion` — UP10 Unplugged
 
@@ -207,6 +213,8 @@ Un artículo no puede pasar a `publish` si falta:
 
 Se implementa con validación en `save_post` + aviso en el editor. El incumplimiento no bloquea el guardado del borrador, solo la publicación.
 
+**Carrusel de portada:** las 3 noticias más recientes se muestran en el hero. No se curan a mano; al publicar una nueva, la más antigua pasa al bento. El total de la portada es 10: 3 en el hero y 7 en el bento.
+
 **Programación:** se usa el programador nativo de WordPress. El cron real de hPanel ejecuta `wp-cron.php` cada 5 minutos; sin él, un post programado no se publica a tiempo.
 
 **Revisión:** se activan las revisiones nativas (sin límite configurable) para poder revertir cambios editoriales.
@@ -215,6 +223,8 @@ Se implementa con validación en `save_post` + aviso en el editor. El incumplimi
 
 ## 7. Medios
 
+- **Portada de artículo:** 3:2, mínimo 2000 × 1333 px. Es la misma imagen que se usa en el hero y en el bento, así que el sujeto debe quedar dentro del 60 % central.
+- **Punto focal:** el editor elige `center`, `top`, `bottom`, `left` o `right`; el frontend lo aplica como `object-position` para que el recorte funcione en ambas piezas.
 - Formatos aceptados: JPG, PNG, WebP, SVG (solo administradores).
 - Tamaño máximo de subida: 10 MB (verificar `upload_max_filesize` en Fase 0).
 - WordPress genera `thumbnail`, `medium`, `medium_large`, `large` y `1536x1536`.

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#FFF8E8"/>
+  <path d="M0 540 L576 108 L1280 446 L1280 720 L0 720 Z" fill="#57000B" opacity="0.90"/>
+  <text x="77" y="662" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="2" fill="#FAE3B9">CARD 16:9 · F</text>
+  <text x="77" y="101" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="4" fill="#57000B">UP10 · MOCK</text>
+</svg>

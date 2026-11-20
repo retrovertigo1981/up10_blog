@@ -86,3 +86,4 @@ Ventajas adicionales:
 - `@fontsource/anton` para secciones y etiquetas.
 - Integral CF en `/public/fonts/integral-cf/` con `@font-face` manual.
 - Tokens: `--font-display`, `--font-heading`, `--font-reading`.
+- Titulares en Integral CF **Bold (700)**; botones en 600; Anton en 400.

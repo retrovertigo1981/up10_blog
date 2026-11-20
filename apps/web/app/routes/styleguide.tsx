@@ -54,8 +54,8 @@ export default function Styleguide() {
           <p className="font-display text-2xl">Título de tarjeta</p>
           <p className="font-heading text-xl uppercase tracking-[0.05em]">Etiqueta de categoría</p>
           <p className="max-w-2xl text-xl leading-relaxed">
-            Cuerpo de lectura. Carrois Gothic se usa por ahora; la tipografía definitiva se decide
-            con el cliente.
+            Cuerpo de lectura en Gelasio, la alternativa libre más cercana a Georgia. Titulares en
+            Integral CF y secciones en Anton.
           </p>
           <p className="text-ink/60 text-sm">Metadatos · Autor · Fecha · 5 min de lectura</p>
         </div>

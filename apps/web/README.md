@@ -38,10 +38,11 @@ app/
 
 Copiar `.env.example` a `.env` y ajustar:
 
-| Variable        | Uso                                              |
-| --------------- | ------------------------------------------------ |
-| `VITE_API_URL`  | Base de la API de WordPress (`/wp-json/up10/v1`) |
-| `VITE_SITE_URL` | URL pública para canonical, OG y sitemap         |
+| Variable         | Uso                                              |
+| ---------------- | ------------------------------------------------ |
+| `VITE_API_URL`   | Base de la API de WordPress (`/wp-json/up10/v1`) |
+| `VITE_SITE_URL`  | URL pública para canonical, OG y sitemap         |
+| `VITE_USE_MOCKS` | `true` usa fixtures locales; `false` usa la API  |
 
 ## Despliegue
 
