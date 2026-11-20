@@ -1,0 +1,101 @@
+// MacBook Pro 16" as React + Tailwind CSS v4. Theme: variable.export {format: "tailwind"}.
+export function MacBookPro16() {
+  return (
+    <div className="relative w-[1728px] h-[4374px] bg-[#FFF8E8]">
+      <div className="absolute left-[49.95px] top-[2924px] w-full max-w-[1606px] h-[190px] bg-[linear-gradient(130.59deg,_#000000_0%,_#57000B_100%)]"></div>
+      <div className="absolute left-[49.95px] top-[3136px] w-full max-w-[1606px] h-[190px] bg-[linear-gradient(130.59deg,_#000000_0%,_#57000B_100%)]"></div>
+      <div className="absolute left-[49.95px] top-[3348px] w-full max-w-[1606px] h-[190px] bg-[linear-gradient(130.59deg,_#000000_0%,_#57000B_100%)]"></div>
+      <div className="absolute left-0 top-[1968px] w-full max-w-[1726px] h-[742px] bg-[linear-gradient(149.01deg,_#000000_0%,_#57000B_100%)]"></div>
+      <div className="absolute left-0 top-0 w-full h-[111px]">
+        <div className="absolute left-0 top-0 w-full h-[111px] bg-[#FFF8E8]"></div>
+        <p className="absolute left-[1405px] top-[37px] w-full max-w-[99px] h-[37px] text-[#57000B] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">BUSCAR</p>
+        <p className="absolute left-[582px] top-[44.5px] w-full max-w-[116px] text-[#57000B] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">MUSICA</p>
+        <p className="absolute left-[698px] top-[44.5px] w-full max-w-[104px] text-[#57000B] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">ESTILO</p>
+        <p className="absolute left-[817px] top-[46.25px] w-full max-w-[117px] h-[18.5px] text-[#57000B] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">EVENTOS</p>
+        <p className="absolute left-[934px] top-[46.25px] w-full max-w-[99px] h-[18.5px] text-[#57000B] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">TOP 10</p>
+        <p className="absolute left-[1047px] top-[44.5px] w-full max-w-[114px] text-[#57000B] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">PLAYLIST</p>
+      </div>
+      <div className="absolute left-[1529px] top-[19px] w-[174px] h-[73px]">
+        <div className="absolute left-[-3px] top-[14.93px] w-43 h-[45.15px] rounded-[5px] bg-[#000000]"></div>
+        <p className="absolute left-[-37px] top-1 w-full max-w-[240px] h-[65px] text-[#FAE3B9] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">subscribe</p>
+      </div>
+      <div className="absolute left-[25px] top-[20.5px] w-[70px] h-[70px]">
+        <div className="absolute left-0 top-0 w-[70px] h-[70px]">
+          <div className="absolute left-0 top-[0.01px] w-[32.59px] h-[30.61px] bg-[#57000B]"></div>
+          <div className="absolute left-[1.3px] top-0 w-[68.7px] h-[70px] bg-[#57000B]"></div>
+        </div>
+      </div>
+      <div className="absolute left-0 top-[111px] w-full h-[700px] bg-[#FAE3B9]"></div>
+      <div className="absolute left-[522px] top-[111px] w-full max-w-[1641.18px] h-[700px] [background:url(image.png)_center_/_cover]"></div>
+      <p className="absolute left-[22px] top-[211px] w-full max-w-[423px] h-[245px] text-[#000000] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[42px] font-normal">Music Awards Santander 2026: dónde ver EN VIVO la premiación desde Chile</p>
+      <p className="absolute left-[25px] top-[942px] w-full max-w-[211.5px] text-[#000000] font-['Anton'] text-[42px] font-normal">LO ÚLTIMO</p>
+      <p className="absolute left-[201px] top-[2156px] w-full max-w-[345px] text-[#FAE3B9] font-['Anton'] text-[80px] font-normal">UP10<br />SESSIONS</p>
+      <p className="absolute left-[49.95px] top-[2766px] w-full max-w-[591.05px] text-[#57000B] font-['Anton'] text-[80px] font-normal">PRÓXIMOS EVENTOS</p>
+      <p className="absolute left-[535.98px] top-[3628px] w-full max-w-[657.52px] text-[#57000B] font-['Anton'] text-[80px] font-normal">SUSCRIBETE AL PULSO</p>
+      <p className="absolute left-[30px] top-[525.75px] w-full max-w-[423px] h-[79.5px] text-[#000000] font-['Carrois_Gothic'] text-[20px] font-normal">Este viernes 20 de noviembre se celebrará una nueva edición de los premios, que reunirá a destacados artistas internacionales.</p>
+      <p className="absolute left-[206px] top-[2418px] w-full max-w-[423px] h-[79.5px] text-[#FFF8E8] font-['Carrois_Gothic'] text-[20px] font-normal">Nuestra selección curada semanalmente. Los sonidos que están sonando en los estudios, en los autos y en las calles. Actualizada cada viernes.</p>
+      <p className="absolute left-[560.35px] top-[3748px] w-full max-w-[586.25px] text-[#000000] font-['Carrois_Gothic'] text-[20px] font-normal text-center">Recibe los estrenos, reportajes y eventos de la escena urbana directamente en tu correo cada semana. Sin spam, solo cultura.</p>
+      <p className="absolute left-[272.5px] top-[3027px] w-full max-w-[596.5px] text-[#FFF8E8] font-['Carrois_Gothic'] text-[20px] font-normal">Polimá Westcoast, Young Cister y más · Movistar Arena, Santiago</p>
+      <p className="absolute left-[272.5px] top-[3239px] w-full max-w-[596.5px] text-[#FFF8E8] font-['Carrois_Gothic'] text-[20px] font-normal">Paloma Mami + Invitados especiales · Teatro Caupolicán, Santiago</p>
+      <p className="absolute left-[272.5px] top-[3451px] w-full max-w-[596.5px] text-[#FFF8E8] font-['Carrois_Gothic'] text-[20px] font-normal">Movimiento Original, Ceaese y más · Club Chocolate, Santiago</p>
+      <p className="absolute left-[106px] top-[3046px] w-full max-w-[84px] h-[27px] text-[#FAE3B9] font-['Carrois_Gothic'] text-[20px] font-normal text-center">19:00</p>
+      <p className="absolute left-[106px] top-[3258px] w-full max-w-[84px] h-[27px] text-[#FAE3B9] font-['Carrois_Gothic'] text-[20px] font-normal text-center">19:00</p>
+      <p className="absolute left-[106px] top-[3470px] w-full max-w-[84px] h-[27px] text-[#FAE3B9] font-['Carrois_Gothic'] text-[20px] font-normal text-center">19:00</p>
+      <p className="absolute left-[30px] top-[646.5px] w-full max-w-[184px] h-9 text-[#000000] font-['Carrois_Gothic'] text-[20px] font-normal underline [text-decoration-thickness:2px] [text-underline-offset:5px] [text-decoration-skip-ink:none]">LEER REPORTAJE →</p>
+      <p className="absolute left-[1529px] top-[969px] w-full max-w-[140px] h-9 text-[#000000] font-['Carrois_Gothic'] text-[20px] font-normal">VER ARCHIVO →</p>
+      <p className="absolute left-[206px] top-[2563px] w-full max-w-[184px] h-9 text-[#000000] font-['Carrois_Gothic'] text-[20px] font-normal underline [text-decoration-thickness:2px] [text-underline-offset:5px] [text-decoration-skip-ink:none]">ABRIR EN SPOTIFY→</p>
+      <p className="absolute left-[22px] top-[143px] w-full max-w-[146px] h-9 text-[#57000B] font-['Anton'] text-[25px] font-normal tracking-[0.05em]">/ NOTICIAS</p>
+      <p className="absolute left-[206px] top-[2079px] w-full max-w-[206.5px] h-[27px] text-[#FAE3B9] font-['Anton'] text-[25px] font-normal tracking-[0.05em]">/ EN ROTACIÓN</p>
+      <div className="absolute left-[34.95px] top-[767.9px] w-[30px] h-0 border-[5px] border-[#000000]"></div>
+      <div className="absolute left-[83.98px] top-[767.9px] w-[30px] h-0 border-[5px] border-[#868585]"></div>
+      <div className="absolute left-[133px] top-[767.9px] w-[30px] h-0 border-[5px] border-[#868585]"></div>
+      <div className="absolute left-0 top-[808px] w-full h-25 bg-[rgba(217,_217,_217,_0.00)] border-t-[4px] border-[#57000B] border-b-[4px] border-[#57000B]"></div>
+      <p className="absolute left-[-43px] top-[842px] w-full text-[#57000B] font-['Anton'] text-[24px] font-normal">         • Kidd Keo suelta Back to the Bone       |       • Movida Urbana: Guía del fin de semana       |       • Nuevo sencillo de Pailita disponible     |      • Bad Bunny anuncia tour Sudamericano </p>
+      <div className="absolute left-[30px] top-[1055px] w-[817.5px] h-[542px] rounded-[15px] [background:url(image.png)_center_/_cover]"></div>
+      <div className="absolute left-[30px] top-[1621px] w-[817.5px] h-[274px] rounded-[15px] [background:url(image.png)_center_/_cover]"></div>
+      <div className="absolute left-[869px] top-[1621px] w-[800px] h-[274px] rounded-[15px] [background:url(image.png)_center_/_cover]"></div>
+      <div className="absolute left-[871.62px] top-[1334px] w-[394px] h-[263px] rounded-[15px] [background:url(image.png)_center_/_cover]"></div>
+      <div className="absolute left-[869px] top-[1055px] w-[800px] h-[257px] rounded-[15px] [background:url(image.png)_center_/_cover]"></div>
+      <div className="absolute left-[1284.5px] top-[1334px] w-[384.5px] h-[263px] rounded-[15px] [background:url(image.png)_center_/_cover]"></div>
+      <div className="absolute left-[834px] top-[2069px] w-[858px] h-[540px] [background:url(image.png)_center_/_cover]"></div>
+      <div className="absolute left-[49.95px] top-[2886px] w-full max-w-[1612.04px] h-0 border-[3px] border-[#57000B]"></div>
+      <div className="absolute left-[247px] top-[3080.01px] rotate-[-90deg] origin-top-left w-[114.02px] h-0 rotate-[-90deg] origin-top-left border-[3px] border-[#57000B]"></div>
+      <div className="absolute left-[247px] top-[3292.01px] rotate-[-90deg] origin-top-left w-[114.02px] h-0 rotate-[-90deg] origin-top-left border-[3px] border-[#57000B]"></div>
+      <div className="absolute left-[247px] top-[3504.01px] rotate-[-90deg] origin-top-left w-[114.02px] h-0 rotate-[-90deg] origin-top-left border-[3px] border-[#57000B]"></div>
+      <p className="absolute left-[272.5px] top-[2987px] w-full max-w-[212.5px] text-[#FAE3B9] font-['Anton'] text-[24px] font-normal">TRAP FEST CHILE 2026</p>
+      <p className="absolute left-[272.5px] top-[3199px] w-full max-w-[212.5px] text-[#FAE3B9] font-['Anton'] text-[24px] font-normal">REGGAETON NIGHT</p>
+      <p className="absolute left-[272.5px] top-[3411px] w-full max-w-[212.5px] text-[#FAE3B9] font-['Anton'] text-[24px] font-normal">HIP HOP ALL STARS</p>
+      <p className="absolute left-[95px] top-[2965.99px] w-full max-w-[106px] text-[#FAE3B9] font-['Anton'] text-[24px] font-normal text-center">15 <br />DICIEMBRE</p>
+      <p className="absolute left-[95px] top-[3177.99px] w-full max-w-[106px] text-[#FAE3B9] font-['Anton'] text-[24px] font-normal text-center">22 <br />DICIEMBRE</p>
+      <p className="absolute left-[95px] top-[3389.99px] w-full max-w-[106px] text-[#FAE3B9] font-['Anton'] text-[24px] font-normal text-center">05 <br />ENERO</p>
+      <div className="absolute left-[1425px] top-[2986.5px] w-[174px] h-[73px]">
+        <div className="absolute left-[-3px] top-[14.93px] w-43 h-[45.15px] rounded-[5px] bg-[#000000]"></div>
+        <p className="absolute left-[-37px] top-1 w-full max-w-[240px] h-[65px] text-[#FAE3B9] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">ENTRADAS</p>
+      </div>
+      <div className="absolute left-[1425px] top-[3198.5px] w-[174px] h-[73px]">
+        <div className="absolute left-[-3px] top-[14.93px] w-43 h-[45.15px] rounded-[5px] bg-[#000000]"></div>
+        <p className="absolute left-[-37px] top-1 w-full max-w-[240px] h-[65px] text-[#FAE3B9] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">ENTRADAS</p>
+      </div>
+      <div className="absolute left-[1425px] top-[3410.5px] w-[174px] h-[73px]">
+        <div className="absolute left-[-3px] top-[14.93px] w-43 h-[45.15px] rounded-[5px] bg-[#000000]"></div>
+        <p className="absolute left-[-37px] top-1 w-full max-w-[240px] h-[65px] text-[#FAE3B9] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">ENTRADAS</p>
+      </div>
+      <div className="absolute left-[508.5px] top-[3842px] w-[711px] h-[105px] bg-[#000000]"></div>
+      <div className="absolute left-[1019.5px] top-[3858px] w-[174px] h-[73px]">
+        <div className="absolute left-[-3px] top-[14.93px] w-43 h-[45.15px] rounded-[5px] bg-[#57000B]"></div>
+        <p className="absolute left-[-37px] top-1 w-full max-w-[240px] h-[65px] text-[#FAE3B9] font-['FONTSPRING_DEMO_-_Integral_CF_Demi_Bold'] text-[18px] font-normal tracking-[0.1em] text-center">UNIRME</p>
+      </div>
+      <p className="absolute left-[544px] top-[3874.5px] w-full max-w-[165px] h-10 text-[#FAE3B9] font-['Carrois_Gothic'] text-[24px] font-normal">TU EMAIL</p>
+      <div className="absolute left-[1px] top-[4132px] w-full max-w-[1727px] h-[242px] bg-[#FAE3B9] border-t border-[#57000B]"></div>
+      <div className="absolute left-[741.87px] top-[4125.82px] w-[228.2px] h-[254.36px]">
+        <div className="absolute left-[44.2px] top-[49.27px] w-[139.8px] h-[155.82px]">
+          <div className="absolute left-0 top-0 w-[139.8px] h-[155.82px]">
+            <div className="absolute left-0 top-[0.02px] w-[65.09px] h-[68.13px] bg-[#57000B]"></div>
+            <div className="absolute left-[2.59px] top-0 w-[137.2px] h-[155.82px] bg-[#57000B]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+

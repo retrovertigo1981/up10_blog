@@ -1,0 +1,79 @@
+@import "./styles/fonts.css";
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Identidad UP10 */
+  --color-cream: #fae3b9;
+  --color-wine: #57000b;
+  --color-paper: #fff8e8;
+  --color-ink: #000000;
+  --color-wine-soft: color-mix(in srgb, #57000b 12%, transparent);
+
+  /* Tipografías */
+  --font-display: "Integral CF", "Archivo Black", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Anton", "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-sans: "Carrois Gothic", ui-sans-serif, system-ui, sans-serif;
+  --font-reading: "Newsreader", Georgia, "Times New Roman", serif;
+
+  /* Radios */
+  --radius-button: 6px;
+  --radius-card: 16px;
+
+  /* Contenedor */
+  --spacing-gutter: clamp(20px, 3.5vw, 56px);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    @apply font-display;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-wine);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-wine);
+    color: var(--color-cream);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .container-up10 {
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+}

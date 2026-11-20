@@ -1,0 +1,5 @@
+/* Fuentes autohospedadas. Integral CF se carga desde /public/fonts cuando el
+   cliente entregue los archivos licenciados (ver public/fonts/README.md). */
+@import "@fontsource/anton/400.css";
+@import "@fontsource/carrois-gothic/400.css";
+@import "@fontsource/archivo-black/400.css";

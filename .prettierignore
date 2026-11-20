@@ -1,0 +1,12 @@
+node_modules/
+build/
+dist/
+coverage/
+.react-router/
+playwright-report/
+test-results/
+.lighthouseci/
+docs/
+.opencode/
+pnpm-lock.yaml
+public/
