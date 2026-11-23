@@ -227,7 +227,67 @@ CREATE TABLE up10_top10_snapshots (
 
 ---
 
-## 7. Newsletter
+## 7. Instagram
+
+### 7.1 Estado actual
+
+- El frontend ya renderiza 10 piezas desde `HomePayload.instagram`; los mocks usan imágenes locales.
+- Falta la implementación del backend en `up10-core`, las credenciales y la decisión de cuenta.
+- La **Basic Display API está discontinuada**. La integración actual debe usar **Instagram Graph API** con una cuenta Business o Creator.
+
+### 7.2 Requisitos previos
+
+1. Convertir la cuenta de Instagram a **Business o Creator** y vincularla a una Página de Facebook.
+2. Crear una app en **Meta for Developers** y agregar el producto Instagram Graph API.
+3. Solicitar los permisos `instagram_basic`, `pages_show_list` y `pages_read_engagement`; para producción se necesita revisión/advanced access.
+4. Generar un token de larga duración o un token de System User de Business Manager. Guardarlo en `wp-config.php` o en un secreto del servidor, nunca en el frontend.
+5. Configurar el cron real de hPanel.
+
+### 7.3 Flujo de sincronización
+
+```
+cron cada 15–30 min
+  → GET /{ig-user-id}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&limit=10
+  → normalizar tipos (IMAGE, CAROUSEL_ALBUM, VIDEO, REEL)
+  → guardar/actualizar caché de 10 publicaciones
+  → exponer en /home como `instagram`
+  → disparar rebuild/revalidación del frontend
+```
+
+Reglas:
+
+- `IMAGE`: usar `media_url`.
+- `CAROUSEL_ALBUM`: usar la primera imagen hija o `thumbnail_url` como fallback.
+- `VIDEO` / `REEL`: usar `thumbnail_url`.
+- La Graph API no entrega dimensiones; el frontend usa ratio 1:1 y dimensiones fijas para el layout.
+- Cachear 15–30 min; el límite es amplio para un cron, pero no se debe llamar en cada request.
+- Si la API falla o el token expira, conservar la última caché y mostrar un aviso en el admin.
+- Si no hay datos, el frontend muestra la tarjeta “Síguenos en Instagram”, no un hueco.
+- Respetar la política de la plataforma: enlazar al permalink, no rehostear imágenes permanentemente sin revisar las condiciones, y proteger los tokens.
+
+### 7.4 Modos
+
+| Modo | Cuándo usarlo | Funcionamiento |
+|---|---|---|
+| `curado` | MVP y contingencia | 10 publicaciones cargadas a mano desde Options Page |
+| `api` | Fase 2 | Cron sincroniza las 10 últimas publicaciones reales |
+
+Recomendación: lanzar con `curado` mientras se aprueba la app de Meta; el frontend no cambia al pasar a `api`.
+
+### 7.5 Checklist de puesta en marcha
+
+- [ ] Cuenta Business/Creator vinculada a Página de Facebook.
+- [ ] App de Meta creada y permisos aprobados.
+- [ ] Token de larga duración o System User configurado.
+- [ ] Módulo `instagram.php` en `up10-core` con cron, caché y normalización.
+- [ ] Serializador de `/home` actualizado.
+- [ ] Modo `curado` operativo como fallback.
+- [ ] Rebuild/revalidación del frontend al terminar cada sync.
+- [ ] Aviso de token vencido y última sincronización en el admin.
+
+---
+
+## 8. Newsletter
 
 - Endpoint `POST /newsletter` con honeypot, rate limit por IP y validación de consentimiento.
 - Tabla `up10_subscribers` (email único, consent, source, status, token, created_at, confirmed_at).
@@ -238,7 +298,7 @@ CREATE TABLE up10_top10_snapshots (
 
 ---
 
-## 8. Preview de borradores
+## 9. Preview de borradores
 
 - `GET /preview?id={post_id}&token={hmac}`.
 - Token = HMAC-SHA256 de `id|expires` con `UP10_PREVIEW_SECRET`; vigencia 15 minutos.
@@ -247,7 +307,7 @@ CREATE TABLE up10_top10_snapshots (
 
 ---
 
-## 9. Rebuild del frontend
+## 10. Rebuild del frontend
 
 - Al pasar a `publish`, `future` o `update`: `wp_remote_post` a GitHub `repository_dispatch`.
 - Payload: `{ event_type: "content-updated", client_payload: { slug } }`.
@@ -256,7 +316,7 @@ CREATE TABLE up10_top10_snapshots (
 
 ---
 
-## 10. Medios
+## 11. Medios
 
 - WordPress genera `thumbnail`, `medium`, `medium_large`, `large` y `1536x1536`.
 - Portada 3:2, mínimo 2000×1333; sujeto en el 60 % central.
@@ -267,7 +327,7 @@ CREATE TABLE up10_top10_snapshots (
 
 ---
 
-## 11. Roles y permisos
+## 12. Roles y permisos
 
 | Rol | Capacidades |
 |---|---|
@@ -282,7 +342,7 @@ CREATE TABLE up10_top10_snapshots (
 
 ---
 
-## 12. Hardening
+## 13. Hardening
 
 Checklist mínimo:
 
@@ -299,7 +359,7 @@ Checklist mínimo:
 
 ---
 
-## 13. Despliegue
+## 14. Despliegue
 
 - `up10-core`, el tema mínimo y `acf-json/` viven en Git.
 - Deploy por Git o SFTP; nunca editar en producción.
@@ -309,7 +369,7 @@ Checklist mínimo:
 
 ---
 
-## 14. Checklist de puesta en marcha
+## 15. Checklist de puesta en marcha
 
 - [ ] Crear `cms.up10.cl` con PHP 8.3, SSL y MySQL.
 - [ ] Instalar WordPress y fijar zona horaria `America/Santiago`.
@@ -329,7 +389,7 @@ Checklist mínimo:
 
 ---
 
-## 15. Pendientes
+## 16. Pendientes
 
 - [ ] Confirmar licencia ACF Pro (USD 49/año).
 - [ ] Definir si el newsletter usa doble opt-in desde el día uno.

@@ -2,7 +2,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { LenisOptions } from "lenis";
 import { ReactLenis, useLenis } from "lenis/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigationType } from "react-router";
 
 const LENIS_OPTIONS: LenisOptions = {
@@ -36,6 +36,7 @@ function MotionEngine() {
   const lenis = useLenis();
   const location = useLocation();
   const navigationType = useNavigationType();
+  const firstRoute = useRef(true);
 
   // Sincroniza Lenis con el ticker de GSAP y con ScrollTrigger.
   useEffect(() => {
@@ -133,11 +134,34 @@ function MotionEngine() {
   useEffect(() => {
     if (!lenis) return;
 
+    const isFirstRoute = firstRoute.current;
+    firstRoute.current = false;
+
     ScrollTrigger.refresh();
 
     if (navigationType !== "POP" && !location.hash) {
       lenis.scrollTo(0, { immediate: true });
     }
+
+    if (isFirstRoute || location.hash) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Entrada corta de la nueva ruta. No se aplica en la carga inicial.
+    const main = document.querySelector("main");
+    if (!main) return;
+
+    gsap.fromTo(
+      main,
+      { opacity: 0.001, y: 10 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.35,
+        ease: "power2.out",
+        clearProps: "opacity,transform",
+        overwrite: true,
+      },
+    );
   }, [lenis, location.pathname, location.hash, navigationType]);
 
   return null;

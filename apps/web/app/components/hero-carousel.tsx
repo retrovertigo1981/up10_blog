@@ -76,6 +76,7 @@ function HeroSlide({ post, priority }: { post: PostSummary; priority: boolean })
 export function HeroCarousel({ posts }: { posts: PostSummary[] }) {
   const rootRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const firstSlideRender = useRef(true);
   const [index, setIndex] = useState(0);
   const [interacting, setInteracting] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -183,6 +184,52 @@ export function HeroCarousel({ posts }: { posts: PostSummary[] }) {
     { scope: rootRef, dependencies: [posts.length] },
   );
 
+  useGSAP(
+    () => {
+      // La entrada inicial ya la cubre el timeline de arriba.
+      if (firstSlideRender.current) {
+        firstSlideRender.current = false;
+        return;
+      }
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const slide = rootRef.current?.querySelector<HTMLElement>(`[data-hero-slide="${index}"]`);
+        if (!slide) return;
+
+        const select = gsap.utils.selector(slide);
+
+        gsap.fromTo(
+          select("[data-hero-copy]"),
+          { y: 14, opacity: 0.25 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.45,
+            stagger: 0.05,
+            ease: "power2.out",
+            overwrite: true,
+          },
+        );
+
+        gsap.fromTo(
+          select("[data-hero-image]"),
+          { scale: 1.02 },
+          {
+            scale: 1,
+            duration: 0.6,
+            ease: "power2.out",
+            overwrite: true,
+          },
+        );
+      });
+
+      return () => mm.revert();
+    },
+    { scope: rootRef, dependencies: [index] },
+  );
+
   if (posts.length === 0) return null;
 
   return (
@@ -211,6 +258,7 @@ export function HeroCarousel({ posts }: { posts: PostSummary[] }) {
         {posts.map((post, position) => (
           <div
             key={post.id}
+            data-hero-slide={position}
             role="group"
             aria-roledescription="slide"
             aria-label={`${position + 1} de ${posts.length}`}

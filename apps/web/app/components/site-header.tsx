@@ -2,10 +2,12 @@
    botón de cerrar. La regla de a11y no modela el comportamiento de <dialog>. */
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
 
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
 import { useLenis } from "lenis/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 
 import { cn } from "~/lib/cn";
 
@@ -81,21 +83,106 @@ function MenuIcon({ open = false }: { open?: boolean }) {
 export function SiteHeader() {
   const menuRef = useRef<HTMLDialogElement>(null);
   const searchRef = useRef<HTMLDialogElement>(null);
+  const menuTimeline = useRef<gsap.core.Timeline | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
   const lenis = useLenis();
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useGSAP(
+    () => {
+      const dialog = menuRef.current;
+      if (!dialog) return;
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const select = gsap.utils.selector(dialog);
+        const timeline = gsap.timeline({
+          paused: true,
+          defaults: { ease: "power3.out" },
+        });
+
+        timeline
+          .from(select("[data-menu-logo], [data-menu-close]"), {
+            y: -8,
+            autoAlpha: 0,
+            duration: 0.2,
+            stagger: 0.04,
+          })
+          .from(
+            select("[data-menu-primary] li"),
+            { y: 14, autoAlpha: 0, duration: 0.24, stagger: 0.035 },
+            "-=0.08",
+          )
+          .from(select("[data-menu-eyebrow]"), { y: 8, autoAlpha: 0, duration: 0.18 }, "-=0.12")
+          .from(
+            select("[data-menu-secondary] li"),
+            { y: 10, autoAlpha: 0, duration: 0.2, stagger: 0.02 },
+            "-=0.08",
+          )
+          .from(
+            select("[data-menu-footer] > *"),
+            { y: 10, autoAlpha: 0, duration: 0.2, stagger: 0.05 },
+            "-=0.08",
+          );
+
+        menuTimeline.current = timeline;
+
+        return () => {
+          timeline.kill();
+          menuTimeline.current = null;
+        };
+      });
+    },
+    { scope: menuRef },
+  );
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
   function openMenu() {
+    if (menuRef.current?.open) return;
+
     lenis?.stop();
     menuRef.current?.showModal();
     setMenuOpen(true);
+
+    window.requestAnimationFrame(() => {
+      menuTimeline.current?.eventCallback("onReverseComplete", null).timeScale(1).restart();
+    });
   }
 
-  function closeMenu() {
-    menuRef.current?.close();
+  function closeMenu({ immediate = false }: { immediate?: boolean } = {}) {
+    const dialog = menuRef.current;
+    if (!dialog?.open) return;
+
     setMenuOpen(false);
-    lenis?.start();
+
+    const timeline = menuTimeline.current;
+
+    if (immediate || !timeline || timeline.progress() === 0 || prefersReducedMotion()) {
+      dialog.close();
+      return;
+    }
+
+    timeline
+      .timeScale(2.5)
+      .eventCallback("onReverseComplete", () => {
+        dialog.close();
+      })
+      .reverse();
   }
 
   function openSearch() {
@@ -116,7 +203,12 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="bg-wine border-cream/15 sticky top-0 z-50 border-b">
+    <header
+      className={cn(
+        "bg-wine border-cream/15 sticky top-0 z-50 border-b transition-shadow duration-300",
+        scrolled && "shadow-[0_2px_12px_rgba(0,0,0,0.18)]",
+      )}
+    >
       <div className="container-up10 flex h-[72px] items-center justify-between gap-4 lg:h-[88px]">
         <Link to="/" className="shrink-0" aria-label="UP10, ir a la portada">
           <img
@@ -132,12 +224,12 @@ export function SiteHeader() {
           <ul className="flex items-center gap-6 xl:gap-8">
             {primaryNav.map((item) => (
               <li key={item.href}>
-                <Link
+                <NavLink
                   to={item.href}
-                  className="font-display text-cream/90 hover:text-cream text-[13px] uppercase tracking-[0.1em] transition-colors"
+                  className="nav-underline font-display text-cream/90 hover:text-cream text-[13px] uppercase tracking-[0.1em] transition-colors"
                 >
                   {item.label}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
@@ -178,6 +270,10 @@ export function SiteHeader() {
         ref={menuRef}
         aria-label="Menú de navegación"
         className="drawer bg-wine text-cream"
+        onCancel={(event) => {
+          event.preventDefault();
+          closeMenu();
+        }}
         onClose={() => {
           setMenuOpen(false);
           lenis?.start();
@@ -188,7 +284,12 @@ export function SiteHeader() {
       >
         <div data-lenis-prevent className="flex h-full flex-col overflow-y-auto p-6 lg:p-8">
           <div className="flex items-center justify-between">
-            <Link to="/" onClick={closeMenu} aria-label="UP10, ir a la portada">
+            <Link
+              data-menu-logo
+              to="/"
+              onClick={() => closeMenu({ immediate: true })}
+              aria-label="UP10, ir a la portada"
+            >
               <img
                 src="/brand/logo-wordmark.png"
                 alt="UP10"
@@ -198,8 +299,9 @@ export function SiteHeader() {
               />
             </Link>
             <button
+              data-menu-close
               type="button"
-              onClick={closeMenu}
+              onClick={() => closeMenu()}
               aria-label="Cerrar menú"
               className="text-cream hover:bg-cream/10 rounded-button flex size-10 items-center justify-center"
             >
@@ -208,16 +310,16 @@ export function SiteHeader() {
           </div>
 
           <nav aria-label="Secciones principales" className="mt-10 lg:hidden">
-            <ul className="space-y-3">
+            <ul data-menu-primary className="space-y-3">
               {primaryNav.map((item) => (
                 <li key={item.href}>
-                  <Link
+                  <NavLink
                     to={item.href}
-                    onClick={closeMenu}
-                    className="font-heading hover:text-cream/70 text-3xl uppercase"
+                    onClick={() => closeMenu({ immediate: true })}
+                    className="menu-link font-heading hover:text-cream/70 text-3xl uppercase"
                   >
                     {item.label}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
@@ -227,28 +329,31 @@ export function SiteHeader() {
             aria-label="Más secciones"
             className={cn("border-cream/15 mt-10 border-t pt-6", "lg:mt-12")}
           >
-            <p className="font-heading text-cream/50 mb-4 text-xs uppercase tracking-[0.15em]">
+            <p
+              data-menu-eyebrow
+              className="font-heading text-cream/50 mb-4 text-xs uppercase tracking-[0.15em]"
+            >
               Más secciones
             </p>
-            <ul className="grid gap-2">
+            <ul data-menu-secondary className="grid gap-2">
               {secondaryNav.map((item) => (
                 <li key={item.href}>
-                  <Link
+                  <NavLink
                     to={item.href}
-                    onClick={closeMenu}
-                    className="font-display hover:text-cream/70 text-lg"
+                    onClick={() => closeMenu({ immediate: true })}
+                    className="menu-link font-display hover:text-cream/70 text-lg"
                   >
                     {item.label}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>
           </nav>
 
-          <div className="mt-auto pt-10">
+          <div data-menu-footer className="mt-auto pt-10">
             <Link
               to="/#newsletter"
-              onClick={closeMenu}
+              onClick={() => closeMenu({ immediate: true })}
               className="bg-cream text-wine rounded-button font-display inline-flex min-h-11 items-center px-5 text-[12px] font-semibold uppercase tracking-[0.08em]"
             >
               Suscribirse al pulso →

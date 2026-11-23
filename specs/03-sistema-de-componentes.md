@@ -80,9 +80,11 @@ Contiene los ítems secundarios: Lanzamientos, Industria musical, Cultura y entr
 | Fondo | `wine`; texto `cream` |
 | Estructura | Logo · enlaces primarios (solo móvil) · separador · secundarios · redes · CTA newsletter |
 | Tipografía de enlaces | Anton 32 px móvil / 28 px desktop |
-| Animación de entrada | `translateX(100%) → 0`, 260 ms, `cubic-bezier(.22,1,.36,1)` |
-| Animación de salida | 180 ms, `ease-in` |
+| Animación de entrada | Panel `translateX(100%) → 0`, 260 ms, `cubic-bezier(.22,1,.36,1)` + contenido en stagger con GSAP |
+| Animación de salida | Contenido en reversa ~300 ms y luego cierre del diálogo |
 | Backdrop | Negro al 40 %, fade 200 ms |
+| Navegación | Subrayado animado en hover, foco y ruta activa |
+| Scroll del header | Sombra suave a partir de 24 px de scroll |
 | Cierre | Esc, clic en backdrop, botón X, clic en un enlace |
 | Scroll | Se bloquea el body mientras está abierto |
 | Foco | Trap dentro del panel; al cerrar vuelve al disparador |
@@ -247,6 +249,10 @@ Meta: autor · fecha · tiempo de lectura, Gelasio 14 px, `ink` al 60 %.
 - El hero se anima solo con transformaciones: no se oculta el titular ni la imagen para no afectar el LCP.
 - Los elementos sobre el pliegue no se ocultan al cargar.
 - Las animaciones de entrada usan `once: true`; no se repiten al volver a entrar en viewport.
+- El menú lateral anima su contenido en stagger al abrir y en reversa al cerrar; los enlaces tienen subrayado animado y estado activo.
+- El cambio de slide del hero anima solo el contenido del slide activo.
+- Las navegaciones internas hacen una entrada corta de `main`; la carga inicial no se anima.
+- El header agrega una sombra suave al hacer scroll.
 
 ### 5.2 Reglas
 

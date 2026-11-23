@@ -29,4 +29,6 @@ La aplicación es React Router con SSR/prerender. Las animaciones no pueden romp
 - Se suma un chunk de GSAP/ScrollTrigger y un pequeño runtime de Lenis; hay que vigilar el presupuesto de JS.
 - Los cambios de ruta deben refrescar ScrollTrigger y coordinarse con `ScrollRestoration`.
 - Las animaciones se limitan a `transform`, `opacity` y `clip-path`; nada de propiedades de layout.
+- El menú lateral usa una timeline de GSAP para el stagger de entrada y la reversa de salida; el panel y el backdrop siguen en CSS.
+- La navegación interna hace una entrada corta de `main`; el hero anima el slide activo y el header gana sombra al hacer scroll.
 - El movimiento acompaña al contenido: duraciones cortas, un solo parallax y sin efectos repetidos.

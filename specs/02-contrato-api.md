@@ -99,7 +99,7 @@ Devuelve todo lo necesario para la portada en **una sola petición**. Existe par
 | `interviews` | `tipo_contenido = entrevista`             | 3                    |
 | `events`     | Próximos eventos                          | 3                    |
 | `top10`      | Ranking ordenado por posición             | 10                   |
-| `instagram`  | Publicaciones curadas                     | 10                   |
+| `instagram`  | Publicaciones curadas o sincronizadas      | 10                   |
 | `stats`      | Cifras institucionales                    | 3                    |
 | `partners`   | Marcas                                    | 10                   |
 | `unplugged`  | Página + última sesión                    | 1                    |
