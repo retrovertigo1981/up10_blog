@@ -1,6 +1,7 @@
 import type {
   Author,
   Category,
+  EditorialTag,
   EventSummary,
   HomePayload,
   InstagramPost,
@@ -45,6 +46,12 @@ const categories: Category[] = [
   { id: 8, name: "Cultura y entretenimiento", slug: "cultura-entretenimiento" },
 ];
 
+const editorialSignals: Record<"breaking" | "show" | "fashion", EditorialTag> = {
+  breaking: { id: 1, name: "Última hora", slug: "ultima-hora" },
+  show: { id: 2, name: "Espectáculo", slug: "espectaculo" },
+  fashion: { id: 3, name: "Moda", slug: "moda" },
+};
+
 const authors: Author[] = [
   {
     id: 1,
@@ -83,6 +90,7 @@ type PostSeed = {
   author: number;
   image: PostSummary["cover"];
   featured?: boolean;
+  signals?: EditorialTag[];
 };
 
 const seeds: PostSeed[] = [
@@ -96,28 +104,31 @@ const seeds: PostSeed[] = [
     featured: true,
   },
   {
-    title: "Consectetur adipiscing elit: cinco discos que marcaron el año",
+    title: "Suspenden la segunda jornada del festival por alerta meteorológica en Chile",
     dek: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa.",
-    category: 5,
-    tipo: "reportaje",
+    category: 4,
+    tipo: "noticia",
     author: 3,
     image: featureImage,
+    signals: [editorialSignals.breaking, editorialSignals.show],
   },
   {
-    title: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+    title: "Cinco discos que marcaron el año en Chile",
     dek: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.",
     category: 2,
     tipo: "entrevista",
     author: 2,
     image: standard[0]!,
+    signals: [editorialSignals.show],
   },
   {
-    title: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris",
+    title: "La moda del vinilo vuelve a las tiendas chilenas",
     dek: "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.",
     category: 4,
     tipo: "noticia",
     author: 1,
     image: standard[1]!,
+    signals: [editorialSignals.fashion],
   },
   {
     title: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum",
@@ -191,6 +202,8 @@ const posts: PostSummary[] = seeds.map((seed, index) => ({
   publishedAt: new Date(Date.UTC(2026, 10, 20 - index, 12, 0, 0)).toISOString(),
   readingTime: 4 + (index % 6),
   isFeatured: Boolean(seed.featured),
+  signals: seed.signals ?? [],
+  isBreaking: (seed.signals ?? []).some((signal) => signal.slug === "ultima-hora"),
 }));
 
 const html = (title: string) => `
@@ -277,6 +290,7 @@ const stats: Stat[] = [
     shortLabel: "Desde",
     value: 2018,
     format: "plain",
+    animated: false,
   },
 ];
 
@@ -362,9 +376,15 @@ const events: EventSummary[] = [
   },
 ];
 
+const latest = posts.slice(0, 10);
+const breaking = latest.find((post) => post.isBreaking);
+const hero = breaking
+  ? [breaking, ...latest.filter((post) => post.id !== breaking.id)].slice(0, 3)
+  : latest.slice(0, 3);
+
 export const mockHome: HomePayload = {
-  hero: posts.slice(0, 3),
-  latest: posts.slice(0, 10),
+  hero,
+  latest,
   interviews,
   events,
   top10,

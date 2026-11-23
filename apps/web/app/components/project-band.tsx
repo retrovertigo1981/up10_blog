@@ -8,12 +8,18 @@ export function ProjectBand({ page }: { page: Page }) {
     <section aria-labelledby="unplugged-title" className="bg-paper py-16 lg:py-24">
       <div className="container-up10 grid items-center gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
         {page.hero.image ? (
-          <Image data={page.hero.image} ratio="4:3" />
+          <div data-reveal>
+            <Image data={page.hero.image} ratio="4:3" parallax />
+          </div>
         ) : (
-          <div className="bg-wine rounded-card aspect-[4/3] w-full" aria-hidden="true" />
+          <div
+            data-reveal
+            className="bg-wine rounded-card aspect-[4/3] w-full"
+            aria-hidden="true"
+          />
         )}
 
-        <div>
+        <div data-reveal>
           <p className="font-heading text-wine text-sm uppercase tracking-[0.12em]">
             / Proyecto propio
           </p>

@@ -19,6 +19,9 @@
 - `docs/plan-infraestructura-hostinger.md` — hosting, despliegue y respaldos
 - `adr/0001-cms-wordpress-headless.md` — decisión de CMS
 - `adr/0002-tipografias.md` — sistema tipográfico
+- `adr/0004-titulares-secundarios.md` — caja y fuente de los titulares
+- `adr/0005-senales-editoriales.md` — última hora y etiquetas editoriales
+- `adr/0006-movimiento-gsap-lenis.md` — scroll suave y animaciones
 
 **Convenciones**
 

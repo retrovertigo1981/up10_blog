@@ -149,15 +149,23 @@ Anton 18–25 px, tracking `.05em`, uppercase, color vino. En fondos oscuros usa
 
 ### 4.8 ArticleCard
 
-Los títulos en Integral CF usan **Bold (700)**. Anton se mantiene en su único peso (400) para evitar negritas sintéticas.
+Integral CF es una fuente **caps-only**: sus glifos de caja baja son formas de caja alta. Por eso se reserva para los titulares destacados; los titulares secundarios usan Anton y respetan la caja de oración del contenido.
 
 | Variante | Uso | Imagen | Título |
 |---|---|---|---|
-| `hero` | Portada, nota principal | 3:2, full-bleed | 42 px |
-| `overlay` | Bento de portada | Fondo completo con degradado | 22–40 px sobre la imagen |
-| `feature` | Grillas editoriales | 4:3 | 28 px |
-| `standard` | Grillas y relacionados | 16:9 | 24 px |
-| `compact` | Listas | 1:1, 80 px | 20 px |
+| `hero` | Portada, nota principal | 3:2, full-bleed | Integral CF 42 px, uppercase |
+| `overlay` | Bento de portada | Fondo completo con degradado | Anton 22–44 px, caja de oración |
+| `feature` | Grillas editoriales | 4:3 | Anton 28 px, caja de oración |
+| `standard` | Grillas y relacionados | 16:9 | Anton 24 px, caja de oración |
+| `compact` | Listas | 1:1, 80 px | Anton 17 px, caja de oración |
+
+La última hora se muestra solo en el hero. Las tarjetas del bento, entrevistas y archivo no aplican mayúsculas ni insignia de última hora; usan siempre Anton en caja de oración.
+
+Reglas de caja:
+
+- El contenido se escribe en caja de oración; los nombres propios conservan sus mayúsculas.
+- No se usa `text-transform: lowercase`: rompería nombres propios, siglas y marcas.
+- Anton se aplica con `font-normal` para evitar negritas sintéticas, porque solo tiene peso 400.
 
 La variante `overlay` coloca categoría, título y "LEER MÁS →" dentro de la tarjeta, sobre un degradado de negro a vino. No lleva texto fuera de la imagen. La tarjeta es un contenedor de consulta (`container-type: inline-size`) y el tamaño del título se calcula con `cqi`, de modo que se adapta al ancho real de cada pieza del mosaico.
 
@@ -200,6 +208,9 @@ Meta: autor · fecha · tiempo de lectura, Gelasio 14 px, `ink` al 60 %.
 - Barra compacta bajo el header, 48–56 px.
 - Cifras en Anton 20–22 px y etiquetas cortas de 11 px.
 - Iconos sociales a la derecha con `SocialLinks`; sin texto visible, con `aria-label`.
+- Los contadores animan al entrar en viewport, salvo que `Stat.animated === false`.
+- El año 2018 se muestra fijo desde el primer render, también en SSR, sin pasar por cero.
+- Con `prefers-reduced-motion`, todas las cifras aparecen fijas.
 
 ### 4.14 PartnerMarquee
 
@@ -228,11 +239,23 @@ Meta: autor · fecha · tiempo de lectura, Gelasio 14 px, `ink` al 60 %.
 | `--ease-out` | `cubic-bezier(.22,1,.36,1)` |
 | `--ease-in` | `cubic-bezier(.4,0,1,1)` |
 
-Reglas:
+### 5.1 Scroll suave y animaciones de contenido
 
-- Solo se animan `transform` y `opacity`.
+- **Lenis** gestiona el scroll suave en desktop. En touch se conserva el scroll nativo (`syncTouch: false`).
+- **GSAP + ScrollTrigger** gestionan revelados y parallax. Se sincronizan con el ticker de GSAP y con Lenis.
+- Patrones base: fade-up corto, revelado de imagen y stagger de tarjetas. Un parallax muy sutil solo en imágenes grandes de desktop.
+- El hero se anima solo con transformaciones: no se oculta el titular ni la imagen para no afectar el LCP.
+- Los elementos sobre el pliegue no se ocultan al cargar.
+- Las animaciones de entrada usan `once: true`; no se repiten al volver a entrar en viewport.
+
+### 5.2 Reglas
+
+- Solo se animan `transform`, `opacity` y `clip-path`.
 - Nada de animación en `width`, `height`, `top` o `left`.
-- `prefers-reduced-motion: reduce` desactiva marquesina, contadores y desplazamientos.
+- `prefers-reduced-motion: reduce` desactiva Lenis, ScrollTrigger, parallax, marquesina y contadores; el contenido queda visible y estático.
+- Los diálogos detienen Lenis mientras están abiertos y el panel con scroll interno usa `data-lenis-prevent`.
+- Los cambios de ruta refrescan ScrollTrigger; las navegaciones nuevas vuelven arriba y el back/forward conserva la restauración nativa.
+- No se usan plugins premium de GSAP ni ScrollSmoother: Lenis cumple el scroll suave.
 
 ---
 

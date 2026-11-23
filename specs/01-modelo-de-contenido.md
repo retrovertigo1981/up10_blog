@@ -48,6 +48,22 @@ Regla: un artículo tiene **exactamente una** categoría. El menú se arma por A
 
 Etiquetas libres: artistas, géneros, ciudades, festivales. Alimentan el buscador y los relacionados sugeridos.
 
+### 2.4 `senal` (personalizada, no jerárquica)
+
+Señales editoriales curadas. Un artículo puede tener varias. No reemplazan a la categoría ni al tipo de contenido.
+
+| Término | Slug | Uso |
+|---|---|---|
+| Última hora | `ultima-hora` | Prioriza la noticia en el hero y activa la insignia |
+| Espectáculo | `espectaculo` | Etiqueta editorial |
+| Moda | `moda` | Etiqueta editorial |
+| Exclusivo | `exclusivo` | Opcional, para contenido exclusivo |
+| Destacado | `destacado` | Opcional, para curaduría futura |
+
+Regla: “Espectáculo” y “Moda” son señales, no categorías. Si el cliente quiere que sean secciones del menú, se promueven a `category` con aprobación explícita, porque el brief fija 8 categorías musicales.
+
+**Última hora (MVP):** se marca con la señal `ultima-hora`. En esta versión no expira automáticamente: el editor la desmarca cuando corresponda. La expiración automática queda para una fase posterior.
+
 ---
 
 ## 3. Tipos de contenido
@@ -56,7 +72,7 @@ Etiquetas libres: artistas, géneros, ciudades, festivales. Alimentan el buscado
 
 | Campo | Tipo | Obligatorio | Notas |
 |---|---|---|---|
-| `title` | nativo | Sí | Titular editorial |
+| `title` | nativo | Sí | Titular editorial en caja de oración; nombres propios conservan mayúsculas |
 | `slug` | nativo | Sí | Único, sin acentos |
 | `content` | nativo (Gutenberg) | Sí | Bloques permitidos en §5 |
 | `excerpt` | nativo | Sí | Máx. 200 caracteres; si falta, se genera del contenido |
@@ -64,6 +80,7 @@ Etiquetas libres: artistas, géneros, ciudades, festivales. Alimentan el buscado
 | `categories` | nativa | Sí | Exactamente una |
 | `tipo_contenido` | taxonomía | Sí | Por defecto `noticia` |
 | `tags` | nativa | No | Máx. 8 |
+| `senal` | taxonomía | No | Señales editoriales; máx. 3 |
 | `author` | nativo | Sí | Usuario con biografía completa |
 
 **Campos ACF — grupo `Artículo`**
@@ -116,6 +133,7 @@ Regla: los eventos pasados se conservan, pero no aparecen en la portada.
 | Valor | `value` | number | Ej. 136000 |
 | Prefijo | `prefix` | text | Ej. "+" |
 | Sufijo | `suffix` | text | Ej. "M" |
+| Animar cifra | `animated` | true/false | Default sí. Desactivar para años o cifras que deben aparecer fijas |
 | Orden | `sort_order` | number | 1–3 |
 
 El frontend formatea el número según configuración regional chilena.
@@ -213,7 +231,11 @@ Un artículo no puede pasar a `publish` si falta:
 
 Se implementa con validación en `save_post` + aviso en el editor. El incumplimiento no bloquea el guardado del borrador, solo la publicación.
 
-**Carrusel de portada:** las 3 noticias más recientes se muestran en el hero. No se curan a mano; al publicar una nueva, la más antigua pasa al bento. El total de la portada es 10: 3 en el hero y 7 en el bento.
+**Carrusel de portada:** el hero muestra 3 noticias: primero la noticia con `senal = ultima-hora` más reciente, si existe, y luego las más recientes hasta completar 3. Sin última hora, son las 3 más recientes. El total de la portada es 10: 3 en el hero y 7 en el bento.
+
+**Última hora:** se recomienda mantener una sola noticia activa con `ultima-hora`. Solo esa noticia recibe insignia y titular en mayúsculas, y vive en el hero. El bento y el resto de las tarjetas no aplican tratamiento de última hora aunque existan términos antiguos; si hay más de una activa, el hero prioriza la más reciente y el admin debe avisar para desmarcar las demás.
+
+**Caja de los titulares:** el contenido se escribe en caja de oración; los nombres propios conservan mayúsculas. El diseño aplica mayúsculas completas solo a las noticias principales y de última hora. No se debe escribir todo el titular en mayúsculas desde WordPress.
 
 **Programación:** se usa el programador nativo de WordPress. El cron real de hPanel ejecuta `wp-cron.php` cada 5 minutos; sin él, un post programado no se publica a tiempo.
 
@@ -251,7 +273,7 @@ Se elimina el rol Suscriptor y se desactiva el registro público.
 
 | Grupo | Campos |
 |---|---|
-| Estadísticas | repeater de 3 `stat` (etiqueta, valor, prefijo, sufijo) |
+| Estadísticas | repeater de 3 `stat` (etiqueta, valor, prefijo, sufijo, animar) |
 | Redes | Instagram, TikTok, Facebook, YouTube, WhatsApp, correo de prensa |
 | TOP 10 | URL de playlist, activar sync, frecuencia |
 | Instagram | modo (`curado` / `api`), repeater de 10 publicaciones |

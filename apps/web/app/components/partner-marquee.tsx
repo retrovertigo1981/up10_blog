@@ -3,7 +3,7 @@ import { useState } from "react";
 
 function PartnerName({ partner }: { partner: Partner }) {
   return (
-    <span className="font-heading font-normal text-wine/80 text-xl tracking-wide uppercase">
+    <span className="font-heading text-wine/80 text-xl font-normal uppercase tracking-wide">
       {partner.name}
     </span>
   );
@@ -19,13 +19,14 @@ export function PartnerMarquee({ partners }: { partners: Partner[] }) {
       <div className="container-up10">
         <h2
           id="partners-title"
-          className="font-heading font-normal text-wine text-center text-[clamp(1.5rem,3vw,2.25rem)] uppercase"
+          data-reveal
+          className="font-heading text-wine text-center text-[clamp(1.5rem,3vw,2.25rem)] font-normal uppercase"
         >
           Marcas que han confiado en UP10
         </h2>
       </div>
 
-      <div className="marquee relative mt-8 hidden overflow-hidden sm:block">
+      <div data-reveal className="marquee relative mt-8 hidden overflow-hidden sm:block">
         <div
           className="marquee-track flex w-max items-center"
           style={{ animationPlayState: paused ? "paused" : undefined }}
@@ -56,7 +57,7 @@ export function PartnerMarquee({ partners }: { partners: Partner[] }) {
           type="button"
           onClick={() => setPaused((value) => !value)}
           aria-pressed={paused}
-          className="border-wine/20 text-wine hover:bg-wine hover:text-cream absolute top-1/2 right-4 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border transition-colors"
+          className="border-wine/20 text-wine hover:bg-wine hover:text-cream absolute right-4 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border transition-colors"
         >
           <span className="sr-only">{paused ? "Reanudar marcas" : "Pausar marcas"}</span>
           <span aria-hidden="true" className="text-[10px] leading-none">
@@ -65,7 +66,7 @@ export function PartnerMarquee({ partners }: { partners: Partner[] }) {
         </button>
       </div>
 
-      <ul className="container-up10 mt-8 grid grid-cols-2 gap-4 sm:hidden">
+      <ul data-reveal className="container-up10 mt-8 grid grid-cols-2 gap-4 sm:hidden">
         {partners.map((partner) => (
           <li key={`grid-${partner.id}`} className="text-center">
             <PartnerName partner={partner} />

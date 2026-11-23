@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { MotionProvider } from "~/components/motion/motion-provider";
+
 export function Providers({ children }: { children: React.ReactNode }) {
   const [client] = useState(
     () =>
@@ -19,5 +21,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     document.documentElement.dataset.hydrated = "true";
   }, []);
 
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={client}>
+      <MotionProvider>{children}</MotionProvider>
+    </QueryClientProvider>
+  );
 }

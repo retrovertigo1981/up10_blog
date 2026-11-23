@@ -2,6 +2,7 @@
    botón de cerrar. La regla de a11y no modela el comportamiento de <dialog>. */
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
 
+import { useLenis } from "lenis/react";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
@@ -83,8 +84,10 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const lenis = useLenis();
 
   function openMenu() {
+    lenis?.stop();
     menuRef.current?.showModal();
     setMenuOpen(true);
   }
@@ -92,14 +95,17 @@ export function SiteHeader() {
   function closeMenu() {
     menuRef.current?.close();
     setMenuOpen(false);
+    lenis?.start();
   }
 
   function openSearch() {
+    lenis?.stop();
     searchRef.current?.showModal();
   }
 
   function closeSearch() {
     searchRef.current?.close();
+    lenis?.start();
   }
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
@@ -172,12 +178,15 @@ export function SiteHeader() {
         ref={menuRef}
         aria-label="Menú de navegación"
         className="drawer bg-wine text-cream"
-        onClose={() => setMenuOpen(false)}
+        onClose={() => {
+          setMenuOpen(false);
+          lenis?.start();
+        }}
         onClick={(event) => {
           if (event.target === event.currentTarget) closeMenu();
         }}
       >
-        <div className="flex h-full flex-col overflow-y-auto p-6 lg:p-8">
+        <div data-lenis-prevent className="flex h-full flex-col overflow-y-auto p-6 lg:p-8">
           <div className="flex items-center justify-between">
             <Link to="/" onClick={closeMenu} aria-label="UP10, ir a la portada">
               <img
@@ -268,6 +277,7 @@ export function SiteHeader() {
         ref={searchRef}
         aria-label="Buscar en UP10"
         className="search-dialog bg-paper text-ink rounded-card"
+        onClose={() => lenis?.start()}
         onClick={(event) => {
           if (event.target === event.currentTarget) closeSearch();
         }}

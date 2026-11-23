@@ -10,6 +10,9 @@ Punto de entrada a la documentación del proyecto.
 | `../adr/0001-cms-wordpress-headless.md` | Por qué WordPress headless y no Strapi ni Laravel. |
 | `../adr/0002-tipografias.md` | Sistema tipográfico: Integral CF, Anton y Gelasio. |
 | `../adr/0003-estrategia-plugins-wordpress.md` | Por qué plugin propio + ACF y no una suite de plugins. |
+| `../adr/0004-titulares-secundarios.md` | Integral CF caps-only y titulares secundarios en Anton. |
+| `../adr/0005-senales-editoriales.md` | Etiquetas editoriales y prioridad de última hora. |
+| `../adr/0006-movimiento-gsap-lenis.md` | Scroll suave y animaciones de contenido. |
 | `../specs/00-indice.md` | Índice de especificaciones. |
 | `../specs/01-modelo-de-contenido.md` | Tipos de contenido, campos, taxonomías y reglas editoriales. |
 | `../specs/02-contrato-api.md` | Endpoints, respuestas, caché, CORS y errores. |

@@ -12,6 +12,7 @@ export function AnimatedCounter({
   suffix = "",
   duration = 900,
   format = "number",
+  animate = true,
 }: {
   value: number;
   prefix?: string;
@@ -19,19 +20,23 @@ export function AnimatedCounter({
   duration?: number;
   /** "plain" evita el separador de miles, por ejemplo para un año. */
   format?: "number" | "plain";
+  /** Si es false, la cifra se muestra fija desde el primer render. */
+  animate?: boolean;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
-  const [display, setDisplay] = useState(0);
+  const [display, setDisplay] = useState(() => (animate ? 0 : value));
 
   useEffect(() => {
+    if (!animate) return;
+
     const node = ref.current;
     if (!node) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let frame = 0;
 
-    const animate = () => {
+    const runAnimation = () => {
       const start = performance.now();
 
       const tick = (now: number) => {
@@ -60,7 +65,7 @@ export function AnimatedCounter({
           return;
         }
 
-        animate();
+        runAnimation();
       },
       { threshold: 0.4 },
     );
@@ -71,9 +76,13 @@ export function AnimatedCounter({
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [value, duration]);
+  }, [value, duration, animate]);
 
   const finalText = `${prefix}${formatValue(value, format)}${suffix}`;
+
+  if (!animate) {
+    return <span className="tabular-nums">{finalText}</span>;
+  }
 
   return (
     <span ref={ref} className="inline-grid justify-items-center tabular-nums">

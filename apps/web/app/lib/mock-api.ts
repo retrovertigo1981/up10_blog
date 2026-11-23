@@ -17,6 +17,9 @@ export function createMockApi(): ApiClient {
       const filtered = mockPosts.filter((post) => {
         if (query.category && post.category.slug !== query.category) return false;
         if (query.tipo && post.tipo !== query.tipo) return false;
+        if (query.signal && !post.signals.some((signal) => signal.slug === query.signal)) {
+          return false;
+        }
         if (query.exclude?.includes(post.id)) return false;
         return true;
       });
@@ -76,7 +79,8 @@ export function createMockApi(): ApiClient {
         (post) =>
           post.title.toLowerCase().includes(term) ||
           post.dek?.toLowerCase().includes(term) ||
-          post.category.name.toLowerCase().includes(term),
+          post.category.name.toLowerCase().includes(term) ||
+          post.signals.some((signal) => signal.name.toLowerCase().includes(term)),
       );
 
       return {

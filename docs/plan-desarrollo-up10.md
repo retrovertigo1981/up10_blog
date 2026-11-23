@@ -93,11 +93,11 @@ Cada requisito se traduce a una spec verificable. Prioridad: **M** = debe estar 
 | F-01 | Publicar, editar y programar noticias | `post` nativo + programador de WordPress + cron real | Un editor publica y programa sin intervención técnica | M | 0 |
 | F-02 | Gestionar fotos, videos, categorías y entrevistas | Medios nativos + `category` + `tipo_contenido` + ACF | Subir imagen y asignarla a una nota en < 1 min | M | 0 |
 | F-03 | Administración sencilla | Roles nativos + campos obligatorios + vista previa | Un editor nuevo publica su primera nota tras 20 min de capacitación | M | 0 |
-| F-04 | Carrusel de 3 noticias destacadas | Las 3 últimas publicadas, sin curaduría | Navegable con barras, autoplay de 6 s y pausa | M | 1 |
+| F-04 | Carrusel de 3 noticias destacadas | 1 última hora + las más recientes hasta 3; señal editorial desde WordPress | Navegable con barras, autoplay de 6 s y pausa | M | 1 |
 | F-05 | Últimas 10 noticias | 3 en el carrusel + 7 en el bento | La portada muestra 10 en total | M | 1 |
 | F-06 | Noticias relacionadas | ACF relationship + sugerencia por categoría | Cada nota muestra 3 relacionadas | S | 3 |
 | F-07 | Galerías fotográficas | ACF gallery + componente con lightbox | 3+ imágenes accesibles por teclado | S | 3 |
-| F-08 | Cifras editables | Options Page con repeater `stat` | Cambiar +136.000 no requiere deploy | M | 1 |
+| F-08 | Cifras editables | Options Page con repeater `stat` (incluye animar sí/no) | Cambiar +136.000 no requiere deploy; 2018 fijo | M | 1 |
 | F-09 | Preparado para futuras secciones | `page` + bloques permitidos | Crear "UP10 Awards" sin tocar código | M | 3 |
 | F-10 | Revisar y revertir cambios | Revisiones nativas de WordPress | Restaurar una versión anterior en 2 clics | S | 0 |
 | F-11 | Vista previa antes de publicar | Token de preview firmado | Ver el borrador en el frontend real | C | 3 |
@@ -281,7 +281,7 @@ La decisión completa, con alternativas y criterios, está en `adr/0002-tipograf
 - Contenedor: `max-width: 1600px`, padding lateral `clamp(20px, 3.5vw, 56px)`.
 - Escala de espacio: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
 - Radios: `10px` para botones, tarjetas, fotos y videos, según el brief. Formas circulares solo en avatares e indicadores.
-- Movimiento: 150–250 ms, `ease-out`; contadores y marquesina se desactivan con `prefers-reduced-motion`.
+- Movimiento: 150–250 ms, `ease-out`; contadores, marquesina, Lenis y ScrollTrigger se desactivan con `prefers-reduced-motion`.
 - Sin sombras pronunciadas: separar por borde y color.
 
 ---

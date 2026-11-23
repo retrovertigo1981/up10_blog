@@ -19,7 +19,7 @@ export function SectionHeading({
   tone?: "wine" | "cream";
 }) {
   return (
-    <div className={cn("flex items-end justify-between gap-6", className)}>
+    <div data-reveal className={cn("flex items-end justify-between gap-6", className)}>
       <div>
         {eyebrow ? (
           <p

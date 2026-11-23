@@ -63,9 +63,10 @@ El detalle está en `specs/01-modelo-de-contenido.md`. Resumen de lo que WordPre
 | Artículo | `post` nativo | Noticia, entrevista y reportaje por taxonomía `tipo_contenido` |
 | Categoría | `category` nativa | Las 8 del brief |
 | Etiqueta | `post_tag` nativa | Artistas, géneros, ciudades |
+| Señal editorial | Taxonomía `senal` | Última hora, Espectáculo, Moda, etc. |
 | Evento | CPT `evento` | Fecha, recinto, lineup, entradas |
 | Marca | CPT `marca` | Logo y orden |
-| Cifra | CPT `stat` | Valor, prefijo, sufijo, orden |
+| Cifra | CPT `stat` | Valor, prefijo, sufijo, animar, orden |
 | Ranking | CPT `track` | Posición, anterior, movimiento, Spotify ID |
 | Sesión | CPT `sesion` | Unplugged |
 | Página | `page` nativa | Nosotros, Podcast, Awards, legales |
@@ -91,11 +92,22 @@ Los grupos se guardan como JSON en `acf-json/` y se versionan. Nunca se editan s
 | Evento | `evento` | `event_date`, `event_time`, `venue`, `city`, `lineup`, `ticket_url` |
 | Ranking | `track` | `position`, `previous_position`, `movement`, `is_new`, `spotify_id`, `cover` |
 | Marca | `marca` | `logo`, `website`, `sort_order` |
-| Cifra | `stat` | `label`, `short_label`, `value`, `prefix`, `suffix`, `sort_order` |
+| Cifra | `stat` | `label`, `short_label`, `value`, `prefix`, `suffix`, `animated`, `sort_order` |
 | Página | `page` | `hero`, `seo` |
 | Ajustes | options | redes, navegación, Instagram, newsletter |
 
 La lista completa de campos y validaciones está en `specs/01`.
+
+### 4.3 Experiencia editorial de las señales
+
+- La taxonomía `senal` se muestra como caja de checkboxes bajo el editor, con los términos ya sembrados en código.
+- Columna “Señales” y filtro por señal en el listado de artículos.
+- Ayuda visible en el editor:
+  - “Escribe el titular en caja de oración; los nombres propios conservan mayúsculas.”
+  - “Marca Última hora solo para noticias urgentes: se prioriza en el hero y lleva insignia.”
+  - “Espectáculo y Moda son etiquetas; no cambian la categoría ni el menú.”
+- La última hora vive solo en el hero. Se recomienda una sola noticia activa con `ultima-hora`; si hay más, el hero prioriza la más reciente y el admin muestra un aviso para desmarcar las demás. El bento no aplica insignia ni mayúsculas de breaking.
+- En el MVP la señal no expira automáticamente; el editor la desmarca. La expiración con `breaking_until` queda para fase 2.
 
 ---
 
@@ -121,6 +133,8 @@ Namespace: `/wp-json/up10/v1`. El contrato completo está en `specs/02`.
 Reglas:
 
 - Respuestas normalizadas a `camelCase` con un serializador único.
+- El serializador de artículos incluye `signals` (términos de `senal`) e `isBreaking` (derivado de `ultima-hora`).
+- El serializador de cifras incluye `animated`; el editor lo controla desde el repeater.
 - Nunca exponer `wp/v2` en producción para el frontend.
 - Cada endpoint declara `args` con validación y `permission_callback`.
 - `Cache-Control` según spec 02 y `ETag`.

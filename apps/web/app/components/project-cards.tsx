@@ -16,6 +16,7 @@ export function ProjectCards({ projects }: { projects: Page[] }) {
         {projects.slice(0, 2).map((project, index) => (
           <article
             key={project.slug}
+            data-reveal
             className={cn(
               "rounded-card flex flex-col overflow-hidden",
               index % 2 === 0 ? "bg-wine text-cream" : "bg-paper border-wine/20 border",

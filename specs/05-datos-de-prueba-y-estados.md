@@ -55,7 +55,7 @@ apps/web/app/lib/
 
 | Recurso | Cantidad |
 |---|---|
-| Artículos | 10 (3 para el hero, 3 entrevistas, 1 reportaje) |
+| Artículos | 10 (3 para el hero, 1 con última hora, 3 entrevistas, 1 reportaje) |
 | Eventos | 3 próximos + 2 pasados |
 | TOP 10 | 10 canciones |
 | Instagram | 10 publicaciones |

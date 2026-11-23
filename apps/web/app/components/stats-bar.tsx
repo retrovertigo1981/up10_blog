@@ -33,6 +33,7 @@ export function StatsBar({ stats }: { stats: Stat[] }) {
                   prefix={stat.prefix}
                   suffix={stat.suffix}
                   format={stat.format === "plain" ? "plain" : "number"}
+                  animate={stat.animated ?? true}
                 />
               </dd>
             </div>

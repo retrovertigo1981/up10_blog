@@ -4,7 +4,7 @@ export function NewsletterSection() {
   return (
     <section id="newsletter" aria-labelledby="newsletter-title" className="py-16 lg:py-24">
       <div className="container-up10">
-        <div className="mx-auto max-w-3xl text-center">
+        <div data-reveal className="mx-auto max-w-3xl text-center">
           <p className="font-heading text-wine text-sm uppercase tracking-[0.12em]">/ Newsletter</p>
 
           <h2

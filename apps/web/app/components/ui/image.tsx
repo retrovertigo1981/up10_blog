@@ -20,6 +20,7 @@ export function Image({
   className,
   imgClassName,
   fill = false,
+  parallax = false,
 }: {
   data: ImageData;
   ratio?: ImageRatio;
@@ -29,6 +30,8 @@ export function Image({
   className?: string;
   imgClassName?: string;
   fill?: boolean;
+  /** Añade un parallax corto en desktop mediante GSAP. */
+  parallax?: boolean;
 }) {
   if (import.meta.env.DEV && !data.alt) {
     throw new Error(`La imagen ${data.src} no tiene texto alternativo.`);
@@ -36,6 +39,7 @@ export function Image({
 
   const image = (
     <img
+      data-parallax={parallax ? "" : undefined}
       src={data.src}
       alt={data.alt}
       width={data.width}
@@ -55,7 +59,7 @@ export function Image({
   }
 
   return (
-    <div className={cn("bg-wine/10 overflow-hidden rounded-card", ratios[ratio], className)}>
+    <div className={cn("bg-wine/10 rounded-card overflow-hidden", ratios[ratio], className)}>
       {image}
     </div>
   );

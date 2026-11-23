@@ -29,7 +29,7 @@ export function PlaylistSection({
           </ButtonLink>
         </div>
 
-        <div className="rounded-card overflow-hidden">
+        <div data-reveal className="rounded-card overflow-hidden">
           <iframe
             title="Playlist UP10 TOP 10 en Spotify"
             src={embedUrl}

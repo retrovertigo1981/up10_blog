@@ -33,6 +33,13 @@ export type Category = {
 
 export type ContentType = "noticia" | "entrevista" | "reportaje";
 
+/** Etiqueta editorial curada: última hora, espectáculo, moda, etc. */
+export type EditorialTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 export type Seo = {
   title: string;
   description: string;
@@ -60,6 +67,10 @@ export type PostSummary = {
   publishedAt: string;
   readingTime: number;
   isFeatured: boolean;
+  /** Etiquetas editoriales curadas. */
+  signals: EditorialTag[];
+  /** Deriva de la señal `ultima-hora`; se prioriza en el hero. */
+  isBreaking: boolean;
 };
 
 export type Post = PostSummary & {
@@ -123,6 +134,8 @@ export type Stat = {
   suffix?: string;
   /** "plain" evita el separador de miles, por ejemplo para un año. */
   format?: "number" | "plain";
+  /** Si es false, la cifra se muestra fija desde el primer render. Default: true. */
+  animated?: boolean;
 };
 
 export type InstagramPost = {
@@ -163,6 +176,8 @@ export type PostListQuery = {
   category?: string;
   tipo?: ContentType;
   tag?: string;
+  /** Filtra por etiqueta editorial, por ejemplo `ultima-hora`. */
+  signal?: string;
   exclude?: number[];
   orderBy?: "date" | "title";
   order?: "asc" | "desc";

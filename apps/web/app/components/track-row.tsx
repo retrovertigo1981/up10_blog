@@ -7,7 +7,7 @@ import { Image } from "./ui/image";
 function Movement({ track }: { track: Track }) {
   if (track.movement === "new") {
     return (
-      <span className="bg-cream text-wine rounded-button px-1.5 py-0.5 text-[9px] font-semibold tracking-[0.08em] uppercase">
+      <span className="bg-cream text-wine rounded-button px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em]">
         Nuevo
       </span>
     );
@@ -15,7 +15,10 @@ function Movement({ track }: { track: Track }) {
 
   if (track.movement === "same" || track.previousPosition == null) {
     return (
-      <span className="text-cream/30 flex items-center" aria-label="Se mantiene en la misma posición">
+      <span
+        className="text-cream/30 flex items-center"
+        aria-label="Se mantiene en la misma posición"
+      >
         <Minus className="size-3" aria-hidden="true" />
       </span>
     );
@@ -41,7 +44,10 @@ function Movement({ track }: { track: Track }) {
 
 export function TrackRow({ track }: { track: Track }) {
   return (
-    <li className="bg-[linear-gradient(130deg,#000000_0%,#57000B_100%)] rounded-card flex min-w-0 items-center gap-3 px-4 py-3 text-cream">
+    <li
+      data-reveal
+      className="rounded-card text-cream flex min-w-0 items-center gap-3 bg-[linear-gradient(130deg,#000000_0%,#57000B_100%)] px-4 py-3"
+    >
       <span className="font-heading text-cream/50 w-7 shrink-0 text-xl tabular-nums">
         {String(track.position).padStart(2, "0")}
       </span>

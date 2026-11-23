@@ -168,6 +168,27 @@ body:has(dialog[open]) {
 }
 
 /* Carrusel del hero: scroll nativo con snap, sin barra visible */
+/* Lenis: solo lo necesario. No se desactivan los iframes durante el scroll
+   suave porque el embed de Spotify debe seguir siendo interactivo. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Compensa el header sticky en anclas y skip link. Con Lenis el offset lo
+   aplica la propia librería, así que evitamos duplicarlo. */
+html:not(.lenis) [id] {
+  scroll-margin-top: 96px;
+}
+
 .hero-track {
   scrollbar-width: none;
 }

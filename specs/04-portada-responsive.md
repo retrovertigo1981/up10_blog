@@ -40,8 +40,10 @@ Define la composición de la portada bloque por bloque: retícula, proporciones,
 | Etiqueta | 11 px uppercase, `ink` al 60 % | 10 px |
 | Redes | 4 iconos a la derecha, 40 px de objetivo | Igual |
 
-- Va inmediatamente debajo del header, sin animación ni contadores.
+- Va inmediatamente debajo del header. Las cifras animan al entrar en viewport, salvo que la cifra tenga `animated: false`.
 - Cifras: `+136.000 seguidores · +27M visualizaciones · desde 2018`.
+- El año 2018 se muestra fijo desde el primer render, también en SSR, sin conteo ni parpadeo.
+- Con `prefers-reduced-motion`, todas las cifras aparecen fijas.
 - Iconos de Instagram, TikTok, Facebook y YouTube como enlaces, sin texto visible, con `aria-label`.
 - En móvil se permite que las cifras ocupen dos líneas; los iconos se mantienen visibles.
 - **Vacío:** se ocultan los ítems faltantes; si no hay ninguno, no se renderiza.
@@ -49,13 +51,13 @@ Define la composición de la portada bloque por bloque: retícula, proporciones,
 
 ### 3.3 Hero (carrusel)
 
-Carrusel con las **3 noticias más recientes**. Avanza solo cada 6 segundos; el usuario navega con las barras.
+Carrusel con las **3 noticias principales**. Si hay una noticia marcada como **Última hora**, entra primera y se completa con las más recientes hasta 3. Sin última hora, se comporta como antes: las 3 más recientes. Avanza solo cada 6 segundos; el usuario navega con las barras.
 
 | Aspecto | Desktop | Tablet | Móvil |
 |---|---|---|---|
 | Columnas | Texto 5 · Imagen 7 | Texto 5 · Imagen 7 | 1 col |
 | Imagen | 3:2 | 3:2 | 3:2 |
-| Titular | Integral CF 42 px | 36 px | 30 px |
+| Titular | Integral CF 42 px, uppercase | 36 px, uppercase | 30 px, uppercase |
 | Extracto | Gelasio 20 px | 19 px | 17 px |
 | Altura mínima | 560 px | 480 px | auto |
 
@@ -64,6 +66,7 @@ Carrusel con las **3 noticias más recientes**. Avanza solo cada 6 segundos; el 
 - **Sin botón de pausa** (decisión del cliente). Se detiene al hover y al foco; con `prefers-reduced-motion` no avanza.
 - Slides inactivos con `inert`.
 - Un `h1` oculto por página; los titulares de cada slide son `h2`.
+- Los titulares del hero se muestran en mayúsculas con Integral CF. La noticia de última hora lleva insignia.
 - **Imagen:** la primera con `fetchpriority="high"`; las otras con `low` y lazy.
 - **Vacío:** "Próximamente" variante `band`.
 
@@ -73,7 +76,7 @@ Se retiró la franja de titulares bajo el hero por decisión del cliente.
 
 ### 3.5 Bento de noticias
 
-9 artículos: el hero ya ocupa el primero. El mosaico replica la composición de Figma en dos columnas iguales.
+9 artículos: el hero ya ocupa el primero. El mosaico replica la composición de Figma en dos columnas iguales. Los titulares del bento usan Anton en caja de oración, respetando nombres propios. La última hora vive solo en el hero; el bento no muestra insignia ni mayúsculas de breaking.
 
 ```
 Desktop (2 columnas)

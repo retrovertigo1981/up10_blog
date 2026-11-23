@@ -32,6 +32,51 @@ test("la portada muestra las secciones principales", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "SUSCRÍBETE AL PULSO" })).toBeAttached();
 });
 
+test("la cifra 2018 aparece fija y la noticia de última hora abre el hero", async ({ page }) => {
+  await gotoHome(page);
+
+  await expect(page.getByText("2018", { exact: true })).toBeVisible();
+  await expect(page.getByText("Última hora").first()).toBeVisible();
+
+  const firstHeroTitle = page
+    .getByRole("region", { name: "Noticias destacadas" })
+    .locator("h2")
+    .first();
+
+  await expect(firstHeroTitle).toHaveCSS("text-transform", "uppercase");
+
+  await expect(page.locator("article").filter({ hasText: "Última hora" })).toHaveCount(0);
+});
+
+test("los titulares secundarios usan Anton en caja de oración", async ({ page }) => {
+  await gotoHome(page);
+
+  const secondaryTitle = page.locator("article h3").first();
+
+  const styles = await secondaryTitle.evaluate((element) => {
+    const computed = getComputedStyle(element);
+    return {
+      fontFamily: computed.fontFamily,
+      textTransform: computed.textTransform,
+      fontWeight: computed.fontWeight,
+    };
+  });
+
+  expect(styles.fontFamily).toContain("Anton");
+  expect(styles.textTransform).toBe("none");
+  expect(styles.fontWeight).toBe("400");
+});
+
+test("con movimiento reducido no se activa Lenis y el contenido sigue visible", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await gotoHome(page);
+
+  await expect(page.locator("html")).not.toHaveClass(/lenis/);
+  await expect(page.getByRole("heading", { name: "LO ÚLTIMO" })).toBeVisible();
+});
+
 test("el carrusel del hero navega entre las tres noticias", async ({ page }) => {
   await gotoHome(page);
 

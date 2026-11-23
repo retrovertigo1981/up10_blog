@@ -18,7 +18,7 @@ export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
 
       <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {posts.slice(0, 10).map((post) => (
-          <li key={post.id}>
+          <li key={post.id} data-reveal>
             <a
               href={post.permalink}
               target="_blank"

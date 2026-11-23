@@ -15,12 +15,17 @@ export function formatDate(value: string) {
 }
 
 type Variant = "hero" | "feature" | "standard" | "compact" | "overlay";
-const titles: Record<Exclude<Variant, "overlay">, string> = {
+
+const titleSizes: Record<Exclude<Variant, "overlay">, string> = {
   hero: "text-[clamp(2rem,4vw,2.625rem)] leading-[1.05]",
-  feature: "text-[clamp(1.375rem,2.2vw,1.75rem)] leading-[1.15]",
-  standard: "text-[clamp(1.125rem,1.8vw,1.5rem)] leading-[1.15]",
-  compact: "text-lg leading-tight",
+  feature: "text-[clamp(1.5rem,2.4vw,1.875rem)] leading-[1.12]",
+  standard: "text-[clamp(1.25rem,1.9vw,1.625rem)] leading-[1.12]",
+  compact: "text-[1.0625rem] leading-[1.18]",
 };
+
+/** Integral CF no tiene minúsculas reales: se reserva para el hero. */
+const displayTitle = "font-display uppercase";
+const secondaryTitle = "font-heading font-normal normal-case";
 
 export function ArticleCard({
   post,
@@ -33,9 +38,12 @@ export function ArticleCard({
   priority?: boolean;
   className?: string;
 }) {
+  const titleFont = variant === "hero" ? displayTitle : secondaryTitle;
+
   if (variant === "overlay") {
     return (
       <article
+        data-reveal
         className={cn("bg-wine rounded-card @container group relative overflow-hidden", className)}
       >
         <Link
@@ -59,10 +67,14 @@ export function ArticleCard({
               {post.category.name}
             </p>
 
-            <h3 className="font-display text-cream group-hover:text-paper line-clamp-4 text-[clamp(1.25rem,5cqi,2.6rem)] leading-[1.05] transition-colors">
+            <h3
+              className={cn(
+                "text-cream group-hover:text-paper line-clamp-4 text-[clamp(1.35rem,5cqi,2.75rem)] leading-[1.08] transition-colors",
+                titleFont,
+              )}
+            >
               {post.title}
             </h3>
-
           </div>
         </Link>
       </article>
@@ -74,7 +86,7 @@ export function ArticleCard({
 
   if (variant === "compact") {
     return (
-      <article className={cn("group", className)}>
+      <article data-reveal className={cn("group", className)}>
         <Link to={`/noticias/${post.slug}`} className="flex items-start gap-4">
           <Image
             data={post.cover}
@@ -86,7 +98,13 @@ export function ArticleCard({
             <p className="font-heading text-wine text-xs uppercase tracking-[0.05em]">
               {post.category.name}
             </p>
-            <Heading className="font-display mt-1 line-clamp-3 transition-colors group-hover:text-wine">
+            <Heading
+              className={cn(
+                "group-hover:text-wine mt-1 line-clamp-3 transition-colors",
+                titleFont,
+                titleSizes.compact,
+              )}
+            >
               {post.title}
             </Heading>
             <p className="text-ink/50 mt-2 text-xs">
@@ -99,7 +117,7 @@ export function ArticleCard({
   }
 
   return (
-    <article className={cn("group", className)}>
+    <article data-reveal className={cn("group", className)}>
       <Link to={`/noticias/${post.slug}`} className="block">
         <Image
           data={post.cover}
@@ -114,8 +132,9 @@ export function ArticleCard({
           </p>
           <Heading
             className={cn(
-              "font-display mt-2 transition-colors group-hover:text-wine",
-              titles[variant],
+              "group-hover:text-wine mt-2 transition-colors",
+              titleFont,
+              titleSizes[variant],
             )}
           >
             {post.title}

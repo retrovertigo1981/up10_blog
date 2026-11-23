@@ -45,6 +45,12 @@ type Category = {
   slug: string;
 };
 
+type EditorialTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 type Seo = {
   title: string;
   description: string;
@@ -99,7 +105,7 @@ Devuelve todo lo necesario para la portada en **una sola petición**. Existe par
 | `unplugged`  | Página + última sesión                    | 1                    |
 | `projects`   | Podcast y Awards                          | 2                    |
 
-Regla: `hero` y `latest` salen de la misma consulta ordenada por fecha. El hero no se cura a mano; si hay menos de 3 artículos, devuelve los disponibles.
+Regla: `latest` sale de la consulta ordenada por fecha. `hero` toma primero la noticia con `isBreaking` activa más reciente, si existe, y completa con las más recientes hasta 3. Sin última hora, son las 3 más recientes. Si hay menos de 3 artículos, devuelve los disponibles. El bento excluye las que ya están en el hero.
 
 ### 2.2 `GET /posts`
 
@@ -109,7 +115,8 @@ Regla: `hero` y `latest` salen de la misma consulta ordenada por fecha. El hero 
 | `perPage`  | int   | 12      | Máx. 24                              |
 | `category` | slug  | —       | Filtra por categoría                 |
 | `tipo`     | slug  | —       | `noticia`, `entrevista`, `reportaje` |
-| `tag`      | slug  | —       | Filtra por etiqueta                  |
+| `tag`      | slug  | —       | Filtra por etiqueta nativa           |
+| `signal`   | slug  | —       | Filtra por señal editorial           |
 | `exclude`  | int[] | —       | IDs a excluir                        |
 | `orderBy`  | enum  | `date`  | `date` \| `title`                    |
 | `order`    | enum  | `desc`  | `desc` \| `asc`                      |
@@ -138,6 +145,9 @@ type PostSummary = {
   publishedAt: string;
   readingTime: number;
   isFeatured: boolean;
+  signals: EditorialTag[];
+  /** Deriva de la señal `ultima-hora`; el hero la prioriza. */
+  isBreaking: boolean;
 };
 ```
 
@@ -156,6 +166,22 @@ type Post = PostSummary & {
 ```
 
 `404` si no existe o no está publicado.
+
+**`Stat`**
+
+```ts
+type Stat = {
+  id: number;
+  label: string;
+  shortLabel?: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  format?: "number" | "plain";
+  /** false: la cifra se muestra fija desde el primer render. Default: true. */
+  animated?: boolean;
+};
+```
 
 ### 2.4 `GET /categories`
 
