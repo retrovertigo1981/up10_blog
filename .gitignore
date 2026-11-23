@@ -38,3 +38,6 @@ pnpm-debug.log*
 
 # Generados por herramientas
 .lighthouseci/
+
+# Documentos que no deben ir a producción
+docs/
