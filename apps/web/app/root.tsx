@@ -71,6 +71,23 @@ export default function App() {
   );
 }
 
+// Se muestra mientras el SPA hidrata y se piden los datos al CMS.
+// También es el contenido estático inicial de index.html.
+export function HydrateFallback() {
+  return (
+    <main className="container-up10 flex min-h-dvh flex-col items-center justify-center gap-5">
+      <img
+        src="/brand/logo-wordmark.png"
+        alt="UP10"
+        width={80}
+        height={40}
+        className="h-10 w-auto"
+      />
+      <p className="text-ink/50 text-xs uppercase tracking-[0.2em]">Cargando…</p>
+    </main>
+  );
+}
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Algo salió mal";
   let details = "No pudimos cargar esta página. Intenta nuevamente.";

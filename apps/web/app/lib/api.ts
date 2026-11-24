@@ -7,4 +7,8 @@ const useMocks = import.meta.env.VITE_USE_MOCKS !== "false";
 
 export const api: ApiClient = useMocks ? createMockApi() : createApiClient({ baseUrl });
 
-export const siteUrl = import.meta.env.VITE_SITE_URL ?? "http://localhost:5173";
+// Si no hay VITE_SITE_URL configurada, se usa el origen real del navegador
+// para que canonical y OG apunten al dominio correcto en cada despliegue.
+export const siteUrl =
+  import.meta.env.VITE_SITE_URL ??
+  (typeof window !== "undefined" ? window.location.origin : "http://localhost:5173");

@@ -10,7 +10,8 @@ const syncedFormatter = new Intl.DateTimeFormat("es-CL", {
   timeStyle: "short",
 });
 
-export async function loader() {
+// Se ejecuta en el navegador para mostrar el ranking actual del CMS.
+export async function clientLoader() {
   const { data, meta } = await api.top10();
   return {
     tracks: data,
@@ -35,9 +36,9 @@ export default function Top10({ loaderData }: Route.ComponentProps) {
     <section className="container-up10 py-14 lg:py-20">
       <div className="grid w-full min-w-0 gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
         <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
-          <p className="font-heading text-wine text-sm tracking-[0.12em] uppercase">/ Ranking</p>
+          <p className="font-heading text-wine text-sm uppercase tracking-[0.12em]">/ Ranking</p>
 
-          <h1 className="font-heading text-wine mt-3 text-[clamp(3rem,7vw,6rem)] leading-none uppercase">
+          <h1 className="font-heading text-wine mt-3 text-[clamp(3rem,7vw,6rem)] uppercase leading-none">
             UP10 TOP 10
           </h1>
 

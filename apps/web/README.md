@@ -50,6 +50,15 @@ El build genera archivos estáticos en `build/client`. En Hostinger se publican 
 `public_html` y se agrega el fallback SPA en `.htaccess` (ver
 `docs/plan-infraestructura-hostinger.md`).
 
+### Demo en Vercel
+
+`vercel.json` fuerza un despliegue estático (sin funciones) y reescribe todas
+las rutas a `index.html` para que funcionen los enlaces directos. Las rutas con
+datos (`/` y `/top10`) usan `clientLoader`, así que el contenido se pide al CMS
+en el navegador y los cambios se ven sin volver a compilar. Cuando el frontend
+viva en el mismo hosting que WordPress, se puede restaurar el prerender en
+`react-router.config.ts`.
+
 ## Notas
 
 - El export de Figma es solo referencia visual; no se reutiliza su código.

@@ -18,7 +18,9 @@ const PLAYLIST_ID = "3Iq8oHfADX6oHPi8jYs4vH";
 const PLAYLIST_URL = `https://open.spotify.com/playlist/${PLAYLIST_ID}`;
 const PLAYLIST_EMBED = `https://open.spotify.com/embed/playlist/${PLAYLIST_ID}?utm_source=generator&theme=0`;
 
-export async function loader() {
+// Se ejecuta en el navegador para que la portada siempre muestre el
+// contenido actual del CMS, sin depender de un nuevo build.
+export async function clientLoader() {
   const { data } = await api.home();
   return { home: data };
 }
