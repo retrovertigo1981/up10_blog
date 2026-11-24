@@ -1,24 +1,25 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
-const stub = (path: string, id: string) => route(path, "routes/stub.tsx", { id });
+const page = (path: string, id: string) => route(path, "routes/page.tsx", { id });
 
 export default [
   index("routes/home.tsx"),
 
-  stub("noticias", "stub-noticias"),
-  stub("noticias/:slug", "stub-noticia"),
-  stub("categoria/:slug", "stub-categoria"),
-  stub("entrevistas", "stub-entrevistas"),
-  stub("eventos", "stub-eventos"),
+  route("noticias", "routes/noticias.tsx"),
+  route("noticias/:slug", "routes/noticia.tsx"),
+  route("categoria/:slug", "routes/categoria.tsx"),
+  route("entrevistas", "routes/entrevistas.tsx"),
+  route("eventos", "routes/eventos.tsx"),
+  route("eventos/:slug", "routes/evento.tsx"),
   route("top10", "routes/top10.tsx"),
-  stub("nosotros", "stub-nosotros"),
-  stub("unplugged", "stub-unplugged"),
-  stub("podcast", "stub-podcast"),
-  stub("awards", "stub-awards"),
-  stub("buscar", "stub-buscar"),
-  stub("contacto", "stub-contacto"),
-  stub("privacidad", "stub-privacidad"),
-  stub("terminos", "stub-terminos"),
+  page("nosotros", "page-nosotros"),
+  page("unplugged", "page-unplugged"),
+  page("podcast", "page-podcast"),
+  page("awards", "page-awards"),
+  route("buscar", "routes/buscar.tsx"),
+  page("contacto", "page-contacto"),
+  page("privacidad", "page-privacidad"),
+  page("terminos", "page-terminos"),
 
   route("styleguide", "routes/styleguide.tsx"),
   route("*", "routes/not-found.tsx"),
