@@ -45,6 +45,10 @@ Ajusta usuario, host y ruta. En Hostinger la ruta actual es:
 
 Subir plugin y tema:
 
+> **Antes de desplegar:** si editaste grupos de campos desde el admin, respalda
+> `wp-content/plugins/up10-core/acf-json/`. El comando con `--delete` elimina los
+> archivos que no estén en el repo.
+
 ```bash
 rsync -avz --delete \
   apps/cms/plugin/up10-core/ \
