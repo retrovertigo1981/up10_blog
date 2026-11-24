@@ -589,6 +589,20 @@ function up10_rest_post( $request ) {
 
 	$tags = wp_get_post_tags( $post->ID, array( 'fields' => 'names' ) );
 
+	$seo_description = is_array( $seo ) && ! empty( $seo['seo_description'] ) ? $seo['seo_description'] : $summary['dek'];
+	$seo_description = up10_trim_text( $seo_description, 160 );
+
+	$og_image_id = is_array( $seo ) && ! empty( $seo['seo_og_image'] ) ? (int) $seo['seo_og_image'] : 0;
+	$og_image    = $og_image_id ? up10_serialize_image( $og_image_id, get_the_title( $post ) ) : $summary['cover'];
+
+	$seo_data = array(
+		'title'       => is_array( $seo ) && ! empty( $seo['seo_title'] ) ? $seo['seo_title'] : get_the_title( $post ),
+		'description' => $seo_description,
+		'ogImage'     => $og_image,
+		'canonical'   => is_array( $seo ) && ! empty( $seo['seo_canonical'] ) ? $seo['seo_canonical'] : '',
+		'noindex'     => is_array( $seo ) && ! empty( $seo['seo_noindex'] ),
+	);
+
 	return up10_rest_response(
 		array_merge(
 			$summary,
@@ -598,11 +612,7 @@ function up10_rest_post( $request ) {
 				'video'     => $video,
 				'tags'      => is_array( $tags ) ? $tags : array(),
 				'related'   => $related,
-				'seo'       => array(
-					'title'       => is_array( $seo ) && ! empty( $seo['seo_title'] ) ? $seo['seo_title'] : get_the_title( $post ),
-					'description' => is_array( $seo ) && ! empty( $seo['seo_description'] ) ? $seo['seo_description'] : $summary['dek'],
-					'noindex'     => is_array( $seo ) && ! empty( $seo['seo_noindex'] ),
-				),
+				'seo'       => $seo_data,
 				'updatedAt' => get_post_modified_time( 'c', true, $post ),
 			)
 		)

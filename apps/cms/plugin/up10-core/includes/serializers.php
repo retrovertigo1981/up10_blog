@@ -52,6 +52,96 @@ function up10_bool_field( $name, $post_id, $default = false ) {
 }
 
 /**
+ * Recorta un texto plano a un límite, buscando un corte natural.
+ *
+ * @param string $text  Texto.
+ * @param int    $limit Límite de caracteres.
+ * @return string
+ */
+function up10_trim_text( $text, $limit = 240 ) {
+	$text = trim( preg_replace( '/\s+/u', ' ', (string) $text ) );
+
+	if ( '' === $text || mb_strlen( $text ) <= $limit ) {
+		return $text;
+	}
+
+	$slice       = mb_substr( $text, 0, $limit );
+	$last_period = max(
+		(int) mb_strrpos( $slice, '.' ),
+		(int) mb_strrpos( $slice, '!' ),
+		(int) mb_strrpos( $slice, '?' )
+	);
+
+	if ( $last_period > 0 && $last_period >= (int) ( $limit * 0.6 ) ) {
+		return mb_substr( $slice, 0, $last_period + 1 );
+	}
+
+	$last_space = mb_strrpos( $slice, ' ' );
+
+	if ( false !== $last_space ) {
+		$slice = mb_substr( $slice, 0, $last_space );
+	}
+
+	return rtrim( $slice, " \t\n\r\0\x0B.,;:" ) . '…';
+}
+
+/**
+ * Busca el primer párrafo con texto en una lista de bloques.
+ *
+ * @param array $blocks Bloques.
+ * @return string
+ */
+function up10_first_paragraph_text( $blocks ) {
+	foreach ( $blocks as $block ) {
+		if ( ! is_array( $block ) ) {
+			continue;
+		}
+
+		if ( 'core/paragraph' === $block['blockName'] ) {
+			$html = render_block( $block );
+			$text = trim( preg_replace( '/\s+/u', ' ', wp_strip_all_tags( $html ) ) );
+
+			if ( '' !== $text ) {
+				return $text;
+			}
+		}
+
+		if ( ! empty( $block['innerBlocks'] ) ) {
+			$text = up10_first_paragraph_text( $block['innerBlocks'] );
+
+			if ( '' !== $text ) {
+				return $text;
+			}
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Deriva la bajada desde el primer párrafo del contenido.
+ *
+ * @param WP_Post $post  Post.
+ * @param int     $limit Límite de caracteres.
+ * @return string
+ */
+function up10_derive_dek( $post, $limit = 240 ) {
+	$text = up10_first_paragraph_text( parse_blocks( $post->post_content ) );
+
+	if ( '' !== $text ) {
+		return up10_trim_text( $text, $limit );
+	}
+
+	$excerpt = get_the_excerpt( $post );
+
+	if ( '' !== trim( (string) $excerpt ) ) {
+		return up10_trim_text( $excerpt, $limit );
+	}
+
+	return up10_trim_text( wp_strip_all_tags( $post->post_content ), $limit );
+}
+
+/**
  * Serializa un autor.
  *
  * @param WP_Post $post Post.
@@ -160,14 +250,11 @@ function up10_serialize_post_summary( $post ) {
 
 	$dek = up10_field( 'dek', $post->ID, '' );
 	if ( ! $dek ) {
-		$dek = get_the_excerpt( $post );
+		$dek = up10_derive_dek( $post );
 	}
 
-	$reading_time = (int) up10_field( 'reading_time', $post->ID, 0 );
-	if ( $reading_time <= 0 ) {
-		$words = str_word_count( wp_strip_all_tags( $post->post_content ) );
-		$reading_time = max( 1, (int) ceil( $words / 200 ) );
-	}
+	$word_count   = preg_match_all( '/[\p{L}\p{N}]+/u', wp_strip_all_tags( $post->post_content ) );
+	$reading_time = max( 1, (int) ceil( $word_count / 200 ) );
 
 	$terms = wp_get_post_terms( (int) $post->ID, 'tipo_contenido', array( 'fields' => 'slugs' ) );
 	$tipo = ( ! is_wp_error( $terms ) && ! empty( $terms ) ) ? $terms[0] : 'noticia';
