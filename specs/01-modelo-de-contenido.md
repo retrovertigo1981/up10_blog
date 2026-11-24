@@ -1,7 +1,7 @@
 # Spec 01 — Modelo de contenido
 
 - **Estado:** borrador para revisión
-- **CMS:** WordPress 6.x headless + ACF Pro
+- **CMS:** WordPress 7.x headless + Secure Custom Fields (SCF)
 - **Base de datos:** MySQL 8
 - **Prefijo de tablas:** `up10_`
 
@@ -12,7 +12,7 @@
 1. **Todo contenido editorial vive en `post`**, no en tipos separados. Esto conserva programación, revisiones, autores, feeds y compatibilidad con plugins SEO.
 2. **La diferencia entre noticia, entrevista y reportaje es taxonómica**, no estructural. Se filtra por `tipo_contenido`.
 3. **Los tipos personalizados se reservan para entidades**, no para artículos: eventos, marcas, sesiones, ranking.
-4. **Los campos se declaran en ACF y se exponen por REST** con `show_in_rest`.
+4. **Los campos se declaran en SCF y se exponen por REST** con `show_in_rest`.
 5. **Nada se publica sin los campos obligatorios** (§6).
 
 ---
@@ -34,7 +34,7 @@ Categorías editoriales definidas por el brief. Planas, sin jerarquía.
 | Industria musical | `industria-musical` | No |
 | Cultura y entretenimiento | `cultura-entretenimiento` | No |
 
-Regla: un artículo tiene **exactamente una** categoría. El menú se arma por ACF, no por el orden de la taxonomía.
+Regla: un artículo tiene **exactamente una** categoría. El menú se arma desde una Options Page o desde la navegación nativa, no por el orden de la taxonomía.
 
 ### 2.2 `tipo_contenido` (personalizada, no jerárquica)
 
@@ -64,6 +64,8 @@ Regla: “Espectáculo” y “Moda” son señales, no categorías. Si el clien
 
 **Última hora (MVP):** se marca con la señal `ultima-hora`. En esta versión no expira automáticamente: el editor la desmarca cuando corresponda. La expiración automática queda para una fase posterior.
 
+**UI editorial:** `tipo_contenido` se muestra como radio buttons de selección única; `senal` como checkboxes de selección múltiple. No se usan campos de etiquetas libres para estas taxonomías.
+
 ---
 
 ## 3. Tipos de contenido
@@ -83,7 +85,7 @@ Regla: “Espectáculo” y “Moda” son señales, no categorías. Si el clien
 | `senal` | taxonomía | No | Señales editoriales; máx. 3 |
 | `author` | nativo | Sí | Usuario con biografía completa |
 
-**Campos ACF — grupo `Artículo`**
+**Campos SCF — grupo `Artículo`**
 
 | Campo | Nombre | Tipo | Regla |
 |---|---|---|---|
@@ -91,7 +93,7 @@ Regla: “Espectáculo” y “Moda” son señales, no categorías. Si el clien
 | Destacado | `is_featured` | true/false | Máx. 6 activos |
 | Orden de destacado | `featured_rank` | number | 1–6, único entre destacados |
 | Crédito de foto | `photo_credit` | text | Obligatorio si la imagen no es propia |
-| Galería | `gallery` | gallery | 3–12 imágenes; activa el bloque de galería |
+| Galería | `gallery` | gallery | Opcional; hasta 12 imágenes. Si se usa, se recomienda un mínimo de 3 |
 | Punto focal | `focal_point` | select | `center`/`top`/`bottom`/`left`/`right`; se aplica como `object-position` |
 | Video YouTube | `video_url` | url | Solo YouTube; se extrae el ID |
 | Tiempo de lectura | `reading_time` | number | Si está vacío, se calcula a 200 palabras/min |
@@ -181,7 +183,7 @@ Se usa para Unplugged, Podcast, Awards, Nosotros, Privacidad y Términos.
 
 ## 4. SEO
 
-Un solo grupo ACF, expuesto en REST, sin duplicar con plugins.
+Un solo grupo SCF, expuesto en REST, sin duplicar con plugins.
 
 | Campo | Nombre | Regla |
 |---|---|---|
@@ -191,7 +193,7 @@ Un solo grupo ACF, expuesto en REST, sin duplicar con plugins.
 | Canonical | `seo_canonical` | Vacío por defecto |
 | No indexar | `seo_noindex` | Booleano |
 
-**Decisión:** Yoast o Rank Math se instalan solo como herramienta de análisis editorial, nunca como fuente de metadatos del frontend. El frontend lee exclusivamente el grupo ACF.
+**Decisión:** Yoast o Rank Math se instalan solo como herramienta de análisis editorial, nunca como fuente de metadatos del frontend. El frontend lee exclusivamente el grupo SCF.
 
 ---
 
@@ -251,7 +253,7 @@ Se implementa con validación en `save_post` + aviso en el editor. El incumplimi
 - Tamaño máximo de subida: 10 MB (verificar `upload_max_filesize` en Fase 0).
 - WordPress genera `thumbnail`, `medium`, `medium_large`, `large` y `1536x1536`.
 - El frontend arma `srcset` con esos tamaños y usa `sizes` según layout.
-- Los archivos viven en `cms.up10.cl/wp-content/uploads/`, con CDN delante.
+- Los archivos viven en `api.up10.cl/wp-content/uploads/`, con CDN delante.
 - Política: toda imagen debe tener `alt`; sin `alt`, no se publica.
 
 ---
@@ -269,7 +271,7 @@ Se elimina el rol Suscriptor y se desactiva el registro público.
 
 ---
 
-## 9. Ajustes globales (Options Page ACF)
+## 9. Ajustes globales (Options Page SCF)
 
 | Grupo | Campos |
 |---|---|

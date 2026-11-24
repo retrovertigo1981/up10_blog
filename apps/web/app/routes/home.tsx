@@ -42,7 +42,8 @@ export const meta: Route.MetaFunction = () => {
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   const { home } = loaderData;
-  const bentoPosts = home.latest.slice(3);
+  const heroIds = new Set(home.hero.map((post) => post.id));
+  const bentoPosts = home.latest.filter((post) => !heroIds.has(post.id));
 
   const jsonLd = {
     "@context": "https://schema.org",

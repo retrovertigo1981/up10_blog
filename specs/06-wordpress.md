@@ -2,23 +2,23 @@
 
 > **Estado:** borrador para implementación
 > **Rol de WordPress:** solo backend de contenido. No hay tema público, ni plantillas, ni page builders.
-> **Frontend:** React estático en `up10.cl`; WordPress vive en `cms.up10.cl`.
+> **Frontend:** React estático en `up10.cl`; WordPress vive en `api.up10.cl`.
 
 ---
 
-## 1. Decisión: plugin propio + ACF
+## 1. Decisión: plugin propio + SCF
 
 | Pieza | Qué usamos | Por qué |
 |---|---|---|
 | Lógica del proyecto | **Plugin propio `up10-core`** | Control total, sin dependencias innecesarias, versionado en Git |
-| Campos editoriales | **ACF Pro** | Repeaters, galerías, relación y options pages; reconstruir esa UI costaría semanas |
+| Campos editoriales | **Secure Custom Fields (SCF)** | Repeaters, galerías, relación y options pages; reconstruir esa UI costaría semanas |
 | Todo lo demás | **Nada** | Menos superficie de ataque, menos actualizaciones, menos licencias |
 
 **No instalamos:** page builders (Elementor, Divi), suites SEO (Yoast, RankMath), caché (WP Rocket, LiteSpeed Cache), seguridad (Wordfence), formularios (Contact Form 7), feeds de Instagram ni plugins de Spotify.
 
 Cada uno de esos plugins agrega código que no controlamos, actualizaciones que pueden romper el sitio y superficie de ataque. Lo que necesitamos se implementa en `up10-core` o se resuelve en el frontend.
 
-**Excepción justificada:** ACF Pro (USD 49/año). Alternativa gratuita: Secure Custom Fields, pero su soporte y roadmap son menos predecibles.
+**Secure Custom Fields (SCF):** fork gratuito de ACF, GPL, mantenido por WordPress.org y la comunidad. Cubre repeater, flexible content, galería, relacionales y options pages. Fijar versión y probar actualizaciones en staging.
 
 ---
 
@@ -29,7 +29,7 @@ wp-content/plugins/up10-core/
 ├── up10-core.php
 ├── includes/
 │   ├── content-types.php     # CPTs y taxonomías
-│   ├── fields.php            # grupos ACF y validaciones
+│   ├── fields.php            # grupos SCF y validaciones
 │   ├── rest.php              # endpoints /wp-json/up10/v1
 │   ├── serializers.php       # WP → contrato camelCase
 │   ├── spotify.php           # sync + historial
@@ -44,7 +44,7 @@ wp-content/plugins/up10-core/
 
 Responsabilidades:
 
-1. Registrar CPTs y taxonomías **en código**, no desde la UI de ACF, para que viajen con Git.
+1. Registrar CPTs y taxonomías **en código**, no desde la UI de SCF, para que viajen con Git.
 2. Exponer la API `up10/v1` con respuestas normalizadas.
 3. Sincronizar Spotify y guardar historial de posiciones.
 4. Gestionar el newsletter con doble opt-in.
@@ -70,7 +70,7 @@ El detalle está en `specs/01-modelo-de-contenido.md`. Resumen de lo que WordPre
 | Ranking | CPT `track` | Posición, anterior, movimiento, Spotify ID |
 | Sesión | CPT `sesion` | Unplugged |
 | Página | `page` nativa | Nosotros, Podcast, Awards, legales |
-| Ajustes | Options Page ACF | Redes, navegación, Instagram, newsletter |
+| Ajustes | Options Page SCF | Redes, navegación, Instagram, newsletter |
 
 **El contenido editorial vive en `post`.** Así conservamos programación, revisiones, autores y compatibilidad del ecosistema. Los CPTs son solo para entidades.
 
@@ -78,18 +78,18 @@ El detalle está en `specs/01-modelo-de-contenido.md`. Resumen de lo que WordPre
 
 ## 4. Campos personalizados
 
-### 4.1 ¿ACF o campos nativos?
+### 4.1 ¿SCF o campos nativos?
 
-Campos nativos (`register_post_meta`) sirven para texto simple, pero no dan repeater, galería, relationship ni options page con una UI decente. El equipo editorial necesita esa UI. Por eso ACF Pro.
+Campos nativos (`register_post_meta`) sirven para texto simple, pero no dan repeater, galería, relationship ni options page con una UI decente. El equipo editorial necesita esa UI. Por eso Secure Custom Fields (SCF).
 
-Los grupos se guardan como JSON en `acf-json/` y se versionan. Nunca se editan solo en producción: se cambian en local/staging, se exporta el JSON y se despliega.
+Los grupos base se declaran en `includes/fields.php` y se pueden editar desde el admin de SCF. Cuando se editan, se exportan con `wp scf json export` a `acf-json/` y se versionan. Nunca se editan solo en producción: se cambian en local/staging y se despliega.
 
 ### 4.2 Grupos
 
 | Grupo | Dónde | Campos clave |
 |---|---|---|
 | Artículo | `post` | `dek`, `focal_point`, `gallery`, `video_url`, `reading_time`, `related`, `seo` |
-| Evento | `evento` | `event_date`, `event_time`, `venue`, `city`, `lineup`, `ticket_url` |
+| Evento | `evento` | `event_date`, `event_time`, `venue`, `city`, `lineup`, `ticket_url`, `seo` |
 | Ranking | `track` | `position`, `previous_position`, `movement`, `is_new`, `spotify_id`, `cover` |
 | Marca | `marca` | `logo`, `website`, `sort_order` |
 | Cifra | `stat` | `label`, `short_label`, `value`, `prefix`, `suffix`, `animated`, `sort_order` |
@@ -100,6 +100,7 @@ La lista completa de campos y validaciones está en `specs/01`.
 
 ### 4.3 Experiencia editorial de las señales
 
+- La taxonomía `tipo_contenido` se muestra como radio buttons de selección única.
 - La taxonomía `senal` se muestra como caja de checkboxes bajo el editor, con los términos ya sembrados en código.
 - Columna “Señales” y filtro por señal en el listado de artículos.
 - Ayuda visible en el editor:
@@ -117,6 +118,7 @@ Namespace: `/wp-json/up10/v1`. El contrato completo está en `specs/02`.
 
 | Endpoint | Método | Uso |
 |---|---|---|
+| `/ping` | GET | Health check del plugin y la API |
 | `/home` | GET | Portada en una sola llamada |
 | `/posts` | GET | Archivo con filtros y paginación |
 | `/posts/{slug}` | GET | Artículo |
@@ -361,21 +363,22 @@ Checklist mínimo:
 
 ## 14. Despliegue
 
-- `up10-core`, el tema mínimo y `acf-json/` viven en Git.
+- `up10-core`, el tema `up10-headless` y `acf-json/` viven en Git.
 - Deploy por Git o SFTP; nunca editar en producción.
 - Staging para probar actualizaciones.
 - Variables sensibles en `wp-config.php`, fuera del repo.
+- El tema `up10-headless` no renderiza el frontend: redirige las vistas públicas a `https://up10.cl` y deja libres `/wp-admin`, REST, cron y AJAX.
 - El frontend se despliega aparte, como archivos estáticos.
 
 ---
 
 ## 15. Checklist de puesta en marcha
 
-- [ ] Crear `cms.up10.cl` con PHP 8.3, SSL y MySQL.
+- [ ] Usar `api.up10.cl` con PHP 8.3, SSL y MySQL.
 - [ ] Instalar WordPress y fijar zona horaria `America/Santiago`.
 - [ ] Configurar enlaces permanentes.
-- [ ] Instalar ACF Pro y activar la licencia.
-- [ ] Subir y activar `up10-core` y el tema mínimo.
+- [ ] Instalar Secure Custom Fields (SCF).
+- [ ] Subir y activar `up10-core` y el tema `up10-headless`.
 - [ ] Definir constantes de Spotify, preview y GitHub.
 - [ ] Crear las 8 categorías y los términos de `tipo_contenido`.
 - [ ] Crear usuarios con roles Editor/Autor.
@@ -391,7 +394,7 @@ Checklist mínimo:
 
 ## 16. Pendientes
 
-- [ ] Confirmar licencia ACF Pro (USD 49/año).
+- [ ] Fijar versión de Secure Custom Fields y revisar actualizaciones en staging.
 - [ ] Definir si el newsletter usa doble opt-in desde el día uno.
 - [ ] Confirmar el ID correcto de la playlist en el brief.
 - [ ] Definir política de retención de snapshots (8 semanas por defecto).

@@ -10,7 +10,7 @@
 | 03 | `03-sistema-de-componentes.md` | Aprobado | Primitivas, header, menú, cards, movimiento y accesibilidad |
 | 04 | `04-portada-responsive.md` | Aprobado | Composición de la portada bloque por bloque |
 | 05 | `05-datos-de-prueba-y-estados.md` | Aprobado | Mocks, estados vacíos, skeletons y rutas stub |
-| 06 | `06-wordpress.md` | Borrador | Plugin propio, ACF, API, Spotify, cron, seguridad y despliegue |
+| 06 | `06-wordpress.md` | Borrador | Plugin propio, SCF, API, Spotify, cron, seguridad y despliegue |
 
 **Documentos relacionados**
 
@@ -22,10 +22,11 @@
 - `adr/0004-titulares-secundarios.md` — caja y fuente de los titulares
 - `adr/0005-senales-editoriales.md` — última hora y etiquetas editoriales
 - `adr/0006-movimiento-gsap-lenis.md` — scroll suave y animaciones
+- `adr/0007-secure-custom-fields.md` — SCF en lugar de ACF Pro
 
 **Convenciones**
 
-- Los campos en `snake_case` corresponden a nombres internos de WordPress/ACF.
+- Los campos en `snake_case` corresponden a nombres internos de WordPress/SCF.
 - La API expone `camelCase`.
 - Las fechas son ISO 8601 en UTC.
 - Todo texto pasa por sanitización antes de llegar al navegador.

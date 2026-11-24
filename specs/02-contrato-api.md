@@ -71,6 +71,21 @@ type Pagination = {
 
 ## 2. Endpoints de lectura
 
+### 2.0 `GET /ping`
+
+Health check público del plugin.
+
+```json
+{
+  "data": {
+    "ok": true,
+    "plugin": "up10-core",
+    "version": "0.1.0",
+    "time": "2026-11-23T21:47:23+00:00"
+  }
+}
+```
+
 ### 2.1 `GET /home`
 
 Devuelve todo lo necesario para la portada en **una sola petición**. Existe para evitar 8 llamadas y mantener el LCP bajo.
@@ -382,7 +397,7 @@ Los mensajes se muestran al usuario tal cual: deben estar en español y sin jerg
 3. Ningún endpoint usa `_embed` ni `wp/v2` en producción.
 4. Cada endpoint declara `args` con validación y sanitización.
 5. Las consultas usan `WP_Query` con `no_found_rows` cuando no se necesita paginación.
-6. Los campos ACF se leen con `get_field` y se normalizan a `camelCase` en un serializador único.
+6. Los campos SCF se leen con `get_field` y se normalizan a `camelCase` en un serializador único.
 7. El HTML se sanitiza con `wp_kses_post` en origen y DOMPurify en destino.
 8. Los endpoints de escritura registran IP y fecha, sin almacenar más datos de los necesarios.
 

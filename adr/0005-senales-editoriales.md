@@ -34,7 +34,7 @@ El brief fija 8 categorías musicales y un menú aprobado. “Espectáculo” y 
 |---|---|
 | Usar `category` para “Espectáculo” y “Moda” | Rompe las 8 categorías del brief y obliga a una sola temática por artículo |
 | Usar solo `post_tag` | Mezcla artistas, géneros y urgencia; complica filtros y curación |
-| Campo ACF booleano aislado | No permite varias señales ni archivo por etiqueta; el modelo taxonómico es más duradero |
+| Campo SCF booleano aislado | No permite varias señales ni archivo por etiqueta; el modelo taxonómico es más duradero |
 | Caducidad automática en v1 | Añade cron y estados; el MVP solo necesita un checkbox manual |
 
 ## Consecuencias

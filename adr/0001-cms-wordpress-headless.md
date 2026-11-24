@@ -17,7 +17,7 @@ El cliente pidió explícitamente **evitar WordPress** al inicio del proyecto, p
 
 ## Decisión
 
-Usar **WordPress como CMS headless** en `cms.up10.cl`, y un **frontend React estático** en `up10.cl`.
+Usar **WordPress como CMS headless** en `api.up10.cl`, y un **frontend React estático** en `up10.cl`.
 
 - WordPress solo se usa como backend de contenido y panel editorial.
 - El frontend es 100 % propio: React, Tailwind y componentes escritos desde cero.
@@ -71,7 +71,7 @@ Laravel queda como opción si en el futuro el proyecto migra a VPS y se prioriza
 | Dependencia de plugins | Máximo 6 plugins, todos auditados y fijados por versión |
 | Payload pesado de la REST API | Endpoints propios agregados; nunca `_embed` en producción |
 | HTML de Gutenberg difícil de mapear a React | Set acotado de bloques permitidos + sanitización |
-| Costo de ACF Pro | USD 49/año (licencia Personal) |
+| Costo de Secure Custom Fields (SCF) | $0 (GPL) |
 | SEO duplicado entre WP y el frontend | Una sola fuente: campos SEO expuestos por la API |
 
 ## Notas
