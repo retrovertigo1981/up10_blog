@@ -160,6 +160,8 @@ function up10_rest_cors_headers( $served, $result, $request, $server ) {
 	$allowed = array(
 		'https://up10.cl',
 		'https://www.up10.cl',
+		// Demo temporal del frontend estático en Vercel.
+		'https://up10-blog.vercel.app',
 	);
 
 	$is_local = $origin && preg_match( '#^http://(localhost|127\.0\.0\.1)(:\d+)?$#', $origin );
