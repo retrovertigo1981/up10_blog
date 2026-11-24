@@ -40,4 +40,8 @@ export default tseslint.config(
     files: ["e2e/**/*.ts", "*.config.ts"],
     languageOptions: { globals: globals.node },
   },
+  {
+    files: ["scripts/**/*.mjs"],
+    languageOptions: { globals: { ...globals.node, fetch: "readonly" } },
+  },
 );

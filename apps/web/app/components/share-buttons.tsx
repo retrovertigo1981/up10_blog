@@ -6,9 +6,6 @@ import { Button } from "./ui/button";
 
 export function ShareButtons({ url, title }: { url: string; title: string }) {
   const [copied, setCopied] = useState(false);
-  const [canShare] = useState(
-    () => typeof navigator !== "undefined" && typeof navigator.share === "function",
-  );
 
   useEffect(() => {
     if (!copied) return;
@@ -27,7 +24,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
   }
 
   async function handleShare() {
-    if (canShare) {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title, url });
         return;
@@ -50,7 +47,7 @@ export function ShareButtons({ url, title }: { url: string; title: string }) {
         ) : (
           <Share2 className="size-4" aria-hidden="true" />
         )}
-        {copied ? "Enlace copiado" : canShare ? "Compartir" : "Copiar enlace"}
+        {copied ? "Enlace copiado" : "Compartir"}
       </Button>
 
       <a

@@ -18,12 +18,19 @@ const PLAYLIST_ID = "3Iq8oHfADX6oHPi8jYs4vH";
 const PLAYLIST_URL = `https://open.spotify.com/playlist/${PLAYLIST_ID}`;
 const PLAYLIST_EMBED = `https://open.spotify.com/embed/playlist/${PLAYLIST_ID}?utm_source=generator&theme=0`;
 
-// Se ejecuta en el navegador para que la portada siempre muestre el
-// contenido actual del CMS, sin depender de un nuevo build.
-export async function clientLoader() {
+async function loadHome() {
   const { data } = await api.home();
   return { home: data };
 }
+
+export async function loader() {
+  return loadHome();
+}
+
+export async function clientLoader() {
+  return loadHome();
+}
+clientLoader.hydrate = import.meta.env.VITE_LIVE_CONTENT !== "false";
 
 export const meta: Route.MetaFunction = () => {
   const title = "UP10 — Revista musical chilena";

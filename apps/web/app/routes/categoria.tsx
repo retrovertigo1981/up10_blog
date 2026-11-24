@@ -4,10 +4,7 @@ import { ArchivePage } from "~/components/archive-page";
 import { api, siteUrl } from "~/lib/api";
 import { getPageFromRequest } from "~/lib/request";
 
-export async function clientLoader({ params, request }: Route.ClientLoaderArgs) {
-  const page = getPageFromRequest(request);
-  const slug = params.slug;
-
+async function loadCategory(slug: string | undefined, page: number) {
   if (!slug) {
     throw new Response("Sección no encontrada", { status: 404 });
   }
@@ -31,6 +28,15 @@ export async function clientLoader({ params, request }: Route.ClientLoaderArgs) 
     page,
   };
 }
+
+export async function loader({ params, request }: Route.LoaderArgs) {
+  return loadCategory(params.slug, getPageFromRequest(request));
+}
+
+export async function clientLoader({ params, request }: Route.ClientLoaderArgs) {
+  return loadCategory(params.slug, getPageFromRequest(request));
+}
+clientLoader.hydrate = import.meta.env.VITE_LIVE_CONTENT !== "false";
 
 export const meta: Route.MetaFunction = ({ loaderData }) => {
   const page = loaderData?.page ?? 1;

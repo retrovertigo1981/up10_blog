@@ -5,9 +5,9 @@ import { ApiClientError } from "@up10/api-client";
 import { EventPage } from "~/components/event-page";
 import { api, siteUrl } from "~/lib/api";
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+async function loadEvent(slug: string) {
   try {
-    const { data } = await api.event(params.slug);
+    const { data } = await api.event(slug);
     return { event: data };
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 404) {
@@ -17,6 +17,11 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     throw error;
   }
 }
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  return loadEvent(params.slug);
+}
+clientLoader.hydrate = import.meta.env.VITE_LIVE_CONTENT !== "false";
 
 export const meta: Route.MetaFunction = ({ loaderData }) => {
   const event = loaderData?.event;

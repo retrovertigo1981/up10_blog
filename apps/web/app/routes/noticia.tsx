@@ -5,9 +5,9 @@ import { ApiClientError } from "@up10/api-client";
 import { ArticlePage } from "~/components/article-page";
 import { api, siteUrl } from "~/lib/api";
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+async function loadPost(slug: string) {
   try {
-    const { data } = await api.post(params.slug);
+    const { data } = await api.post(slug);
     return { post: data };
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 404) {
@@ -17,6 +17,15 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     throw error;
   }
 }
+
+export async function loader({ params }: Route.LoaderArgs) {
+  return loadPost(params.slug);
+}
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  return loadPost(params.slug);
+}
+clientLoader.hydrate = import.meta.env.VITE_LIVE_CONTENT !== "false";
 
 export const meta: Route.MetaFunction = ({ loaderData }) => {
   const post = loaderData?.post;

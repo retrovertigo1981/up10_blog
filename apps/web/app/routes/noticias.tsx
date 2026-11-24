@@ -4,12 +4,20 @@ import { ArchivePage } from "~/components/archive-page";
 import { api, siteUrl } from "~/lib/api";
 import { getPageFromRequest } from "~/lib/request";
 
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const page = getPageFromRequest(request);
+async function loadPosts(page: number) {
   const { data, meta } = await api.posts({ page, perPage: 12 });
 
   return { posts: data, pagination: meta?.pagination ?? null, page };
 }
+
+export async function loader({ request }: Route.LoaderArgs) {
+  return loadPosts(getPageFromRequest(request));
+}
+
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  return loadPosts(getPageFromRequest(request));
+}
+clientLoader.hydrate = import.meta.env.VITE_LIVE_CONTENT !== "false";
 
 export const meta: Route.MetaFunction = ({ loaderData }) => {
   const page = loaderData?.page ?? 1;

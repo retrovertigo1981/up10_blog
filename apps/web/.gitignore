@@ -6,3 +6,8 @@
 /.react-router/
 /build/
 .vercel
+
+# SEO generado en build
+/public/sitemap.xml
+/public/rss.xml
+/public/robots.txt

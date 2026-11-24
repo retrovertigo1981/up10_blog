@@ -284,3 +284,4 @@ Meta: autor · fecha · tiempo de lectura, Gelasio 14 px, `ink` al 60 %.
 - [ ] Confirmar si "Más" muestra texto o solo ícono en desktop.
 - [ ] Definir si el buscador será overlay o página en desktop.
 - [ ] Confirmar copy del CTA de newsletter.
+- [ ] **Deuda — Reportajes:** el formato `reportaje` existe en WordPress y en el contrato de API, pero no tiene enlace, listado ni entrada de navegación en el frontend. Definir si se agrega al menú/buscador, se promueve a sección o se elimina del modelo. No bloquea la Fase 3.

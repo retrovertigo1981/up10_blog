@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -54,6 +55,40 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    function dedupeHeadTags() {
+      const selectors = ["title", 'link[rel="canonical"]', "meta[property]", "meta[name]"];
+      const nodes = selectors.flatMap((selector) =>
+        Array.from(document.head.querySelectorAll(selector)),
+      );
+      const seen = new Map<string, Element>();
+
+      for (const node of nodes) {
+        const key =
+          node.tagName === "TITLE"
+            ? "title"
+            : node.tagName === "LINK"
+              ? `link:${node.getAttribute("rel")}`
+              : `meta:${node.getAttribute("property") ?? node.getAttribute("name")}`;
+
+        const previous = seen.get(key);
+
+        if (previous) {
+          previous.remove();
+        }
+
+        seen.set(key, node);
+      }
+    }
+
+    dedupeHeadTags();
+
+    const observer = new MutationObserver(dedupeHeadTags);
+    observer.observe(document.head, { childList: true });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Providers>
       <a

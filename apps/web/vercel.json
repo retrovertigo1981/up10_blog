@@ -3,5 +3,5 @@
   "framework": null,
   "buildCommand": "pnpm build",
   "outputDirectory": "build/client",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/__spa-fallback.html" }]
 }
