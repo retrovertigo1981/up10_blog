@@ -14,6 +14,13 @@ export type Image = {
   credit?: string;
   /** Punto de recorte para que la misma foto funcione en hero y bento. */
   focalPoint?: ImageFocalPoint;
+  /** MIME real del archivo original (para OG y compatibilidad). */
+  mimeType?: string;
+  /** Versión WebP generada por WordPress, si existe. */
+  webp?: {
+    src: string;
+    srcset: string;
+  };
 };
 
 export type Author = {

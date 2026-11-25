@@ -592,8 +592,8 @@ function up10_rest_post( $request ) {
 	$seo_description = is_array( $seo ) && ! empty( $seo['seo_description'] ) ? $seo['seo_description'] : $summary['dek'];
 	$seo_description = up10_trim_text( $seo_description, 160 );
 
-	$og_image_id = is_array( $seo ) && ! empty( $seo['seo_og_image'] ) ? (int) $seo['seo_og_image'] : 0;
-	$og_image    = $og_image_id ? up10_serialize_image( $og_image_id, get_the_title( $post ) ) : $summary['cover'];
+	$og_image_id = is_array( $seo ) && ! empty( $seo['seo_og_image'] ) ? (int) $seo['seo_og_image'] : (int) get_post_thumbnail_id( $post );
+	$og_image    = $og_image_id ? up10_serialize_og_image( $og_image_id, get_the_title( $post ) ) : $summary['cover'];
 
 	$seo_data = array(
 		'title'       => is_array( $seo ) && ! empty( $seo['seo_title'] ) ? $seo['seo_title'] : get_the_title( $post ),

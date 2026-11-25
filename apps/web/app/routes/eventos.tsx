@@ -6,6 +6,7 @@ import { EventCard } from "~/components/event-card";
 import { JsonLd } from "~/components/json-ld";
 import { EmptyState } from "~/components/ui/empty-state";
 import { api, siteUrl } from "~/lib/api";
+import { defaultOgMetadata } from "~/lib/seo";
 import { cn } from "~/lib/cn";
 
 function getScope(request: Request): "upcoming" | "past" {
@@ -41,6 +42,7 @@ export const meta: Route.MetaFunction = ({ loaderData }) => {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: canonical },
+    ...defaultOgMetadata(),
     { tagName: "link", rel: "canonical", href: canonical },
   ];
 };

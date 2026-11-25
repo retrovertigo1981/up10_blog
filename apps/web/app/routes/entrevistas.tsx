@@ -2,6 +2,7 @@ import type { Route } from "./+types/entrevistas";
 
 import { ArchivePage } from "~/components/archive-page";
 import { api, siteUrl } from "~/lib/api";
+import { defaultOgMetadata } from "~/lib/seo";
 import { getPageFromRequest } from "~/lib/request";
 
 async function loadInterviews(page: number) {
@@ -33,6 +34,7 @@ export const meta: Route.MetaFunction = ({ loaderData }) => {
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { property: "og:url", content: canonical },
+    ...defaultOgMetadata(),
     { tagName: "link", rel: "canonical", href: canonical },
   ];
 };

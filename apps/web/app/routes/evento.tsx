@@ -4,6 +4,7 @@ import { ApiClientError } from "@up10/api-client";
 
 import { EventPage } from "~/components/event-page";
 import { api, siteUrl } from "~/lib/api";
+import { imageMimeType } from "~/lib/seo";
 
 async function loadEvent(slug: string) {
   try {
@@ -40,6 +41,10 @@ export const meta: Route.MetaFunction = ({ loaderData }) => {
     { property: "og:description", content: event.seo.description },
     { property: "og:url", content: canonical },
     { property: "og:image", content: event.image.src },
+    { property: "og:image:width", content: String(event.image.width) },
+    { property: "og:image:height", content: String(event.image.height) },
+    { property: "og:image:type", content: imageMimeType(event.image) },
+    { property: "og:image:alt", content: event.image.alt },
     ...(event.seo.noindex ? [{ name: "robots", content: "noindex" }] : []),
     { tagName: "link", rel: "canonical", href: canonical },
   ];

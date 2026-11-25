@@ -13,6 +13,7 @@ import { PlaylistSection } from "~/components/playlist-section";
 import { ComingSoon } from "~/components/ui/coming-soon";
 import { SectionHeading } from "~/components/ui/section-heading";
 import { api, siteUrl } from "~/lib/api";
+import { defaultOgMetadata } from "~/lib/seo";
 
 const PLAYLIST_ID = "3Iq8oHfADX6oHPi8jYs4vH";
 const PLAYLIST_URL = `https://open.spotify.com/playlist/${PLAYLIST_ID}`;
@@ -45,6 +46,7 @@ export const meta: Route.MetaFunction = () => {
     { property: "og:type", content: "website" },
     { property: "og:url", content: siteUrl },
     { property: "og:locale", content: "es_CL" },
+    ...defaultOgMetadata(),
     { tagName: "link", rel: "canonical", href: siteUrl },
   ];
 };

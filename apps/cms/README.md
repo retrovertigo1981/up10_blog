@@ -22,6 +22,7 @@ apps/cms/
 │   ├── up10-core.php
 │   ├── includes/
 │   │   ├── admin.php
+│   │   ├── cli.php
 │   │   ├── content-types.php
 │   │   ├── fields.php
 │   │   ├── media.php
@@ -71,19 +72,19 @@ wp rewrite flush
 
 ## API
 
-| Endpoint | Uso |
-|---|---|
-| `GET /ping` | Health check |
-| `GET /home` | Portada agregada |
-| `GET /posts` | Archivo con filtros y paginación |
-| `GET /posts/{slug}` | Artículo |
-| `GET /categories` | Categorías |
-| `GET /events` | Eventos |
-| `GET /events/{slug}` | Evento |
-| `GET /top10` | Ranking |
-| `GET /partners` | Marcas |
-| `GET /pages/{slug}` | Páginas institucionales |
-| `GET /search?q=` | Buscador |
+| Endpoint             | Uso                              |
+| -------------------- | -------------------------------- |
+| `GET /ping`          | Health check                     |
+| `GET /home`          | Portada agregada                 |
+| `GET /posts`         | Archivo con filtros y paginación |
+| `GET /posts/{slug}`  | Artículo                         |
+| `GET /categories`    | Categorías                       |
+| `GET /events`        | Eventos                          |
+| `GET /events/{slug}` | Evento                           |
+| `GET /top10`         | Ranking                          |
+| `GET /partners`      | Marcas                           |
+| `GET /pages/{slug}`  | Páginas institucionales          |
+| `GET /search?q=`     | Buscador                         |
 
 ## Flujo editorial
 
@@ -97,6 +98,24 @@ El editor solo necesita cuatro pasos:
 La bajada manual, la galería, los videos, los relacionados y el SEO son opcionales. El SEO se genera automáticamente desde el titular, la bajada y la imagen principal. Las etiquetas y las señales adicionales están ocultas hasta que el frontend las use.
 
 En el listado de notas se muestran miniatura, sección, formato y si es última hora. El editor tiene un checklist “Antes de publicar” y un widget de ayuda en el escritorio.
+
+## Imágenes
+
+- El editor sube JPG/PNG como siempre. `up10-core` genera versiones WebP del archivo original y de cada tamaño (`up10-cover`, `up10-card`, `up10-square`, `up10-thumb` y los tamaños de WordPress).
+- Los originales se mantienen como fallback. El API expone `webp.src` y `webp.srcset`; el frontend usa `<picture>` y el navegador elige WebP cuando lo soporta.
+- La imagen OG se genera como **JPEG 1200×630** desde la portada o desde la imagen OG del SEO. WhatsApp exige una imagen bajo 600 KB; el JPEG queda muy por debajo.
+- Las imágenes nuevas se limitan a 2000 px de lado mayor (`big_image_size_threshold`).
+
+Convertir las imágenes que ya existen (WP-CLI, desde `public_html`):
+
+```bash
+wp up10 webp --limit=50 --offset=0 --dry-run
+wp up10 webp --limit=50 --offset=0
+```
+
+Repetir subiendo el `offset` hasta terminar. Usar `--force` para regenerar las que ya tengan WebP. El comando solo escribe sidecars; no borra ni reemplaza originales.
+
+Si el servidor no soporta WebP, el plugin no genera los sidecars y el sitio sigue funcionando con los originales. Verificar con `wp_image_editor_supports` o con la extensión GD/Imagick de PHP.
 
 ## Verificación
 

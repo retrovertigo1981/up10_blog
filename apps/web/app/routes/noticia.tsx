@@ -4,6 +4,7 @@ import { ApiClientError } from "@up10/api-client";
 
 import { ArticlePage } from "~/components/article-page";
 import { api, siteUrl } from "~/lib/api";
+import { imageMimeType } from "~/lib/seo";
 
 async function loadPost(slug: string) {
   try {
@@ -35,7 +36,7 @@ export const meta: Route.MetaFunction = ({ loaderData }) => {
   }
 
   const canonical = post.seo.canonical || `${siteUrl}/noticias/${post.slug}`;
-  const image = post.seo.ogImage?.src ?? post.cover.src;
+  const ogImage = post.seo.ogImage ?? post.cover;
 
   return [
     { title: `${post.seo.title} — UP10` },
@@ -44,7 +45,11 @@ export const meta: Route.MetaFunction = ({ loaderData }) => {
     { property: "og:title", content: post.seo.title },
     { property: "og:description", content: post.seo.description },
     { property: "og:url", content: canonical },
-    { property: "og:image", content: image },
+    { property: "og:image", content: ogImage.src },
+    { property: "og:image:width", content: String(ogImage.width) },
+    { property: "og:image:height", content: String(ogImage.height) },
+    { property: "og:image:type", content: imageMimeType(ogImage) },
+    { property: "og:image:alt", content: ogImage.alt },
     { property: "article:published_time", content: post.publishedAt },
     { property: "article:modified_time", content: post.updatedAt },
     { property: "article:section", content: post.category.name },
@@ -52,7 +57,8 @@ export const meta: Route.MetaFunction = ({ loaderData }) => {
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: post.seo.title },
     { name: "twitter:description", content: post.seo.description },
-    { name: "twitter:image", content: image },
+    { name: "twitter:image", content: ogImage.src },
+    { name: "twitter:image:alt", content: ogImage.alt },
     ...(post.seo.noindex ? [{ name: "robots", content: "noindex" }] : []),
     { tagName: "link", rel: "canonical", href: canonical },
   ];

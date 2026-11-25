@@ -5,6 +5,7 @@ import { TrackRow } from "~/components/track-row";
 import { ButtonLink } from "~/components/ui/button";
 import { ComingSoon } from "~/components/ui/coming-soon";
 import { api, siteUrl } from "~/lib/api";
+import { defaultOgMetadata } from "~/lib/seo";
 
 const syncedFormatter = new Intl.DateTimeFormat("es-CL", {
   dateStyle: "long",
@@ -35,6 +36,7 @@ export const meta: Route.MetaFunction = () => [
     name: "description",
     content: "Las 10 canciones del momento según UP10. Ranking actualizado cada semana.",
   },
+  ...defaultOgMetadata(),
   { tagName: "link", rel: "canonical", href: `${siteUrl}/top10` },
 ];
 

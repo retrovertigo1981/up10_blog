@@ -38,20 +38,25 @@ export function Image({
   }
 
   const image = (
-    <img
-      data-parallax={parallax ? "" : undefined}
-      src={data.src}
-      alt={data.alt}
-      width={data.width}
-      height={data.height}
-      srcSet={data.srcset || undefined}
-      sizes={sizes}
-      loading={priority ? "eager" : "lazy"}
-      fetchPriority={priority ? "high" : lowPriority ? "low" : undefined}
-      decoding="async"
-      style={{ objectPosition: data.focalPoint ?? "center" }}
-      className={cn("h-full w-full object-cover", imgClassName)}
-    />
+    <picture className="block h-full w-full">
+      {data.webp ? (
+        <source type="image/webp" srcSet={data.webp.srcset || data.webp.src} sizes={sizes} />
+      ) : null}
+      <img
+        data-parallax={parallax ? "" : undefined}
+        src={data.src}
+        alt={data.alt}
+        width={data.width}
+        height={data.height}
+        srcSet={data.srcset || undefined}
+        sizes={sizes}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : lowPriority ? "low" : undefined}
+        decoding="async"
+        style={{ objectPosition: data.focalPoint ?? "center" }}
+        className={cn("h-full w-full object-cover", imgClassName)}
+      />
+    </picture>
   );
 
   if (fill) {

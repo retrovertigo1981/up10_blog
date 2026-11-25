@@ -9,6 +9,7 @@ import { JsonLd } from "~/components/json-ld";
 import { Breadcrumbs } from "~/components/ui/breadcrumbs";
 import { Image } from "~/components/ui/image";
 import { api, siteUrl } from "~/lib/api";
+import { defaultOgMetadata } from "~/lib/seo";
 import { institutionalPage } from "~/lib/institutional";
 
 async function loadPage(request: Request) {
@@ -61,6 +62,7 @@ export const meta: Route.MetaFunction = ({ loaderData }) => {
     { property: "og:description", content: page.seo.description },
     { property: "og:url", content: canonical },
     ...(page.seo.noindex ? [{ name: "robots", content: "noindex" }] : []),
+    ...defaultOgMetadata(),
     { tagName: "link", rel: "canonical", href: canonical },
   ];
 };

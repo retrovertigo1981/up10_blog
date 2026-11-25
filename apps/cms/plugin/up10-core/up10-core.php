@@ -3,7 +3,7 @@
  * Plugin Name: UP10 Core
  * Plugin URI: https://up10.cl
  * Description: CMS headless de UP10: tipos de contenido, campos, API y hardening.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Requires at least: 6.9
  * Requires PHP: 8.1
  * Author: UP10
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'UP10_CORE_VERSION', '0.1.1' );
+define( 'UP10_CORE_VERSION', '0.1.2' );
 define( 'UP10_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'UP10_CORE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -24,6 +24,7 @@ require_once UP10_CORE_PATH . 'includes/media.php';
 require_once UP10_CORE_PATH . 'includes/serializers.php';
 require_once UP10_CORE_PATH . 'includes/rest.php';
 require_once UP10_CORE_PATH . 'includes/admin.php';
+require_once UP10_CORE_PATH . 'includes/cli.php';
 require_once UP10_CORE_PATH . 'includes/hardening.php';
 
 add_action( 'init', 'up10_register_taxonomies', 5 );
