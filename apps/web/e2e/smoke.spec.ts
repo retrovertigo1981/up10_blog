@@ -129,3 +129,55 @@ test("las tipografías locales cargan", async ({ page }) => {
 
   expect(loaded).toEqual({ integral: true, anton: true, gelasio: true });
 });
+
+test("la marquesina de marcas muestra los logos", async ({ page }) => {
+  await gotoHome(page);
+
+  const section = page.getByRole("region", { name: /Marcas que han confiado en UP10/i });
+  await expect(section).toBeVisible();
+  await expect(section.locator('img[alt="Warner Music Group"]').first()).toBeVisible();
+  await expect(section.locator('img[alt="Premios Musa"]').first()).toBeVisible();
+});
+
+test("la marquesina de marcas no genera scroll horizontal", async ({ page }) => {
+  await gotoHome(page);
+
+  const hasOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > window.innerWidth + 1,
+  );
+
+  expect(hasOverflow).toBe(false);
+});
+
+test("la marquesina se pausa al pasar el mouse", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "Solo se prueba en desktop");
+
+  await gotoHome(page);
+
+  const section = page.getByRole("region", { name: /Marcas que han confiado en UP10/i });
+  await section.scrollIntoViewIfNeeded();
+
+  // Asegura que el puntero no esté sobre la sección: el header sticky ocupa la
+  // parte superior de la ventana.
+  await page.mouse.move(720, 8);
+  await page.waitForTimeout(300);
+
+  const track = section.locator("[data-marquee-track]").first();
+
+  const before = await track.evaluate((element) => getComputedStyle(element).transform);
+  await page.waitForTimeout(600);
+  const moving = await track.evaluate((element) => getComputedStyle(element).transform);
+
+  expect(moving).not.toBe(before);
+
+  const box = await section.boundingBox();
+  if (!box) throw new Error("La sección de marcas no tiene caja.");
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.waitForTimeout(200);
+  const pausedAt = await track.evaluate((element) => getComputedStyle(element).transform);
+  await page.waitForTimeout(600);
+  const stillPaused = await track.evaluate((element) => getComputedStyle(element).transform);
+
+  expect(stillPaused).toBe(pausedAt);
+});

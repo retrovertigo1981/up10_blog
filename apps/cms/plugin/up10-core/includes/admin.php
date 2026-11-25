@@ -119,6 +119,91 @@ function up10_posts_custom_column( $column, $post_id ) {
 add_action( 'manage_posts_custom_column', 'up10_posts_custom_column', 10, 2 );
 
 /**
+ * Columnas del listado de marcas.
+ *
+ * @param array $columns Columnas.
+ * @return array
+ */
+function up10_brand_columns( $columns ) {
+	$new = array();
+
+	foreach ( $columns as $key => $label ) {
+		$new[ $key ] = $label;
+
+		if ( 'title' === $key ) {
+			$new['up10_brand_logo']  = __( 'Logo', 'up10-core' );
+			$new['up10_brand_order'] = __( 'Orden', 'up10-core' );
+		}
+	}
+
+	return $new;
+}
+add_filter( 'manage_marca_posts_columns', 'up10_brand_columns' );
+
+/**
+ * Pinta las columnas del listado de marcas.
+ *
+ * @param string $column  Columna.
+ * @param int    $post_id ID del post.
+ */
+function up10_brand_custom_column( $column, $post_id ) {
+	switch ( $column ) {
+		case 'up10_brand_logo':
+			$logo_id = up10_image_id( up10_field( 'logo', $post_id, 0 ) );
+
+			if ( $logo_id ) {
+				echo wp_get_attachment_image(
+					$logo_id,
+					array( 80, 40 ),
+					false,
+					array(
+						'style' => 'width:80px;height:36px;object-fit:contain;background:#57000b;padding:4px;border-radius:4px;',
+					)
+				);
+			} else {
+				echo '<span style="color:#b32d2e;font-weight:600">' . esc_html__( 'Falta', 'up10-core' ) . '</span>';
+			}
+			break;
+
+		case 'up10_brand_order':
+			$order = get_post_meta( $post_id, 'sort_order', true );
+			echo '' !== $order ? esc_html( (string) $order ) : '—';
+			break;
+	}
+}
+add_action( 'manage_marca_posts_custom_column', 'up10_brand_custom_column', 10, 2 );
+
+/**
+ * Permite ordenar el listado de marcas por el campo Orden.
+ *
+ * @param array $columns Columnas ordenables.
+ * @return array
+ */
+function up10_brand_sortable_columns( $columns ) {
+	$columns['up10_brand_order'] = 'sort_order';
+
+	return $columns;
+}
+add_filter( 'manage_edit-marca_sortable_columns', 'up10_brand_sortable_columns' );
+
+/**
+ * Aplica el orden por metadato en el listado de marcas.
+ *
+ * @param WP_Query $query Consulta.
+ */
+function up10_brand_order_query( $query ) {
+	if ( ! is_admin() || ! $query->is_main_query() || 'marca' !== $query->get( 'post_type' ) ) {
+		return;
+	}
+
+	if ( 'sort_order' === $query->get( 'orderby' ) ) {
+		$query->set( 'meta_key', 'sort_order' );
+		$query->set( 'orderby', 'meta_value_num' );
+	}
+}
+add_action( 'pre_get_posts', 'up10_brand_order_query' );
+
+/**
  * Checklist antes de publicar.
  */
 function up10_add_publish_checklist_meta_box() {

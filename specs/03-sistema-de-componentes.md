@@ -216,9 +216,12 @@ Meta: autor · fecha · tiempo de lectura, Gelasio 14 px, `ink` al 60 %.
 
 ### 4.14 PartnerMarquee
 
-- Marquesina continua de 10 marcas con pausa al hover/foco y control visible.
-- Móvil: grilla estática de 2 columnas.
-- Logo en gris con color al hover; si falta, se usa el nombre.
+- Banda full-bleed vino con dos filas de logos crema.
+- Fila 1 hacia la izquierda y fila 2 hacia la derecha, a velocidades distintas.
+- Pausa al hover y al foco; se decidió no mostrar un botón de pausa visible.
+  **Deuda de accesibilidad:** no cumple estrictamente WCAG 2.2.2; queda documentado.
+- Movimiento reducido: grilla estática con todos los logos, sin animación.
+- Hasta 50 marcas desde el CMS; si falta el logo, se usa el nombre.
 
 ### 4.15 SocialLinks
 

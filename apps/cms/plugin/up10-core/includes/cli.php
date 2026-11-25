@@ -83,4 +83,184 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			);
 		}
 	);
+
+	WP_CLI::add_command(
+		'up10 marcas import',
+		static function ( $args, $assoc_args ) {
+			$dir   = isset( $assoc_args['dir'] ) ? (string) $assoc_args['dir'] : up10_brand_logo_dir();
+			$dry   = isset( $assoc_args['dry-run'] );
+			$force = isset( $assoc_args['force'] );
+			$draft = isset( $assoc_args['draft'] );
+
+			if ( ! is_dir( $dir ) ) {
+				WP_CLI::error( sprintf( 'No existe el directorio de logos: %s', $dir ) );
+				return;
+			}
+
+			$created = 0;
+			$updated = 0;
+			$logos   = 0;
+			$skipped = 0;
+			$failed  = 0;
+
+			foreach ( up10_brand_catalog() as $brand ) {
+				$slug  = sanitize_title( (string) $brand['slug'] );
+				$name  = (string) $brand['name'];
+				$file  = trailingslashit( $dir ) . (string) $brand['file'];
+				$order = (int) $brand['order'];
+				$site  = (string) $brand['website'];
+
+				$existing = get_page_by_path( $slug, OBJECT, 'marca' );
+				$post_id  = $existing ? (int) $existing->ID : 0;
+
+				if ( $dry ) {
+					WP_CLI::log(
+						sprintf(
+							'%s %s (%s) · logo: %s',
+							$post_id ? '~' : '+',
+							$name,
+							$slug,
+							is_readable( $file ) ? 'ok' : 'falta'
+						)
+					);
+					continue;
+				}
+
+				if ( ! $post_id ) {
+					$post_id = wp_insert_post(
+						array(
+							'post_type'   => 'marca',
+							'post_title'  => $name,
+							'post_name'   => $slug,
+							'post_status' => $draft ? 'draft' : 'publish',
+						),
+						true
+					);
+
+					if ( is_wp_error( $post_id ) ) {
+						$failed++;
+						WP_CLI::warning( sprintf( '%s: %s', $name, $post_id->get_error_message() ) );
+						continue;
+					}
+
+					$created++;
+				} else {
+					$updated++;
+				}
+
+				$current_logo = up10_image_id( up10_field( 'logo', $post_id, 0 ) );
+				$attachment_id = 0;
+
+				if ( $current_logo && ! $force && 'attachment' === get_post_type( $current_logo ) ) {
+					$attachment_id = $current_logo;
+					$skipped++;
+				} else {
+					$attachment_id = up10_find_brand_attachment( $slug );
+
+					if ( ! $attachment_id || $force ) {
+						if ( ! is_readable( $file ) ) {
+							$failed++;
+							WP_CLI::warning( sprintf( '%s: no se encontró %s', $name, $file ) );
+							continue;
+						}
+
+						$imported = up10_import_brand_logo( $file, $name, $slug );
+
+						if ( is_wp_error( $imported ) ) {
+							$failed++;
+							WP_CLI::warning( sprintf( '%s: %s', $name, $imported->get_error_message() ) );
+							continue;
+						}
+
+						$attachment_id = (int) $imported;
+						$logos++;
+						WP_CLI::log( sprintf( '+ logo %s (#%d)', $name, $attachment_id ) );
+					} else {
+						$skipped++;
+					}
+				}
+
+				if ( ! $attachment_id ) {
+					$failed++;
+					WP_CLI::warning( sprintf( '%s: sin logo asignado.', $name ) );
+					continue;
+				}
+
+				if ( function_exists( 'update_field' ) ) {
+					update_field( 'logo', $attachment_id, $post_id );
+
+					if ( $force || '' === (string) get_post_meta( $post_id, 'website', true ) ) {
+						update_field( 'website', $site, $post_id );
+					}
+
+					if ( $force || '' === (string) get_post_meta( $post_id, 'sort_order', true ) ) {
+						update_field( 'sort_order', $order, $post_id );
+					}
+				} else {
+					update_post_meta( $post_id, 'logo', $attachment_id );
+
+					if ( $force || '' === (string) get_post_meta( $post_id, 'website', true ) ) {
+						update_post_meta( $post_id, 'website', $site );
+					}
+
+					if ( $force || '' === (string) get_post_meta( $post_id, 'sort_order', true ) ) {
+						update_post_meta( $post_id, 'sort_order', $order );
+					}
+				}
+
+				set_post_thumbnail( $post_id, $attachment_id );
+
+				if ( $force && $existing ) {
+					wp_update_post(
+						array(
+							'ID'          => $post_id,
+							'post_title'  => $name,
+							'post_name'   => $slug,
+							'post_status' => $draft ? 'draft' : 'publish',
+						)
+					);
+				}
+			}
+
+			WP_CLI::success(
+				sprintf(
+					'Marcas: %d creadas, %d actualizadas, %d logos importados, %d logos omitidos, %d errores.',
+					$created,
+					$updated,
+					$logos,
+					$skipped,
+					$failed
+				)
+			);
+		},
+		array(
+			'shortdesc' => 'Importa las marcas iniciales y sus logos a la biblioteca de medios.',
+			'synopsis'  => array(
+				array(
+					'type'        => 'assoc',
+					'name'        => 'dir',
+					'description' => 'Directorio con los PNG. Por defecto, assets/brands del plugin.',
+					'optional'    => true,
+				),
+				array(
+					'type'        => 'flag',
+					'name'        => 'dry-run',
+					'description' => 'Solo muestra lo que haría.',
+					'optional'    => true,
+				),
+				array(
+					'type'        => 'flag',
+					'name'        => 'force',
+					'description' => 'Actualiza título, orden, web y logo aunque ya existan.',
+					'optional'    => true,
+				),
+				array(
+					'type'        => 'flag',
+					'name'        => 'draft',
+					'description' => 'Crea las marcas como borrador.',
+					'optional'    => true,
+				),
+			),
+		)
+	);
 }

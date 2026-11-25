@@ -117,6 +117,35 @@ Repetir subiendo el `offset` hasta terminar. Usar `--force` para regenerar las q
 
 Si el servidor no soporta WebP, el plugin no genera los sidecars y el sitio sigue funcionando con los originales. Verificar con `wp_image_editor_supports` o con la extensión GD/Imagick de PHP.
 
+## Marcas
+
+El CPT `marca` se administra desde **WP Admin → Marcas**. Cada marca tiene nombre, logo,
+sitio web y orden. La portada muestra hasta 50 marcas publicadas; las que no tengan orden
+asignado quedan al final.
+
+### Importación inicial
+
+Los 12 logos del brief viajan dentro del plugin (`assets/brands/`). Desde `public_html`:
+
+```bash
+wp up10 marcas import --dry-run
+wp up10 marcas import
+```
+
+El comando crea las marcas que no existan, importa cada PNG a la biblioteca de medios con
+su texto alternativo, genera WebP, y asigna el campo Logo, el orden y el sitio web. Si ya
+existe una marca o un logo, no lo duplica. Usar `--force` para actualizar título, orden,
+web y logo.
+
+### Agregar una marca nueva
+
+1. **Medios → Añadir nuevo**: subir el PNG con fondo transparente.
+2. **Marcas → Añadir nueva**: nombre, logo, orden y web.
+3. Publicar. La portada la mostrará sin tocar código.
+
+Formato del logo: PNG o WebP transparente, color crema `#FAE3B9`, para que se vea sobre la
+banda vino.
+
 ## Verificación
 
 ```bash

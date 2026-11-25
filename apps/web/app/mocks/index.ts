@@ -305,6 +305,8 @@ const partners: Partner[] = [
   "Lollapalooza Chile",
   "La Junta",
   "Casa Parlante",
+  "Fenix Entertainment",
+  "Premios Musa",
 ].map((name, index) => ({ id: index + 1, name }));
 
 const unplugged: Page = {

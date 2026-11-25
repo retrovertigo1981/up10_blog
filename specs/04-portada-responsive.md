@@ -161,11 +161,13 @@ El home muestra solo la playlist, no el ranking.
 
 ### 3.11 Marcas
 
-- Marquesina continua de 10 marcas, 40 s.
-- Pausa al hover y al foco, con control visible.
-- Móvil: grilla estática de 2 columnas.
-- Logos en gris con color al hover; si falta, se usa el nombre.
-- **Vacío:** no se renderiza.
+- Banda full-bleed vino, título crema y dos marquesinas de logos.
+- Fila 1 ~34 px/s hacia la izquierda; fila 2 ~24 px/s hacia la derecha.
+- 6 marcas por fila en el caso inicial de 12; el reparto es dinámico por índice.
+- Pausa al hover y al foco. Sin control visible: deuda de accesibilidad 2.2.2.
+- Movimiento reducido: grilla estática de 3 columnas móvil y 6 desktop.
+- Logos desde WordPress; fallback local si la API no trae logo.
+- **Vacío:** se usa el catálogo local de respaldo.
 
 ### 3.12 Newsletter
 
@@ -210,7 +212,7 @@ Razón: Instagram no debe competir con las noticias en la primera pantalla del c
 | Bento | Media | Lazy salvo la primera fila |
 | TOP 10 | Baja | Portadas 1:1 de 64 px |
 | Instagram | Baja | Lazy; 10 imágenes como máximo |
-| Marcas | Baja | Logos en SVG o WebP pequeños |
+| Marcas | Baja | Logos PNG/WebP desde WordPress, lazy y con dimensiones explícitas |
 | Newsletter | Baja | Sin JS hasta interacción |
 
 Presupuesto: JS inicial < 200 KB gzip; ninguna imagen sobre el fold > 250 KB.

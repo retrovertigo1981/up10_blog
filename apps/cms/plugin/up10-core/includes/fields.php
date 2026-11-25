@@ -452,6 +452,8 @@ function up10_register_brand_fields() {
 					'type'          => 'image',
 					'return_format' => 'id',
 					'preview_size'  => 'medium',
+					'mime_types'    => 'png,webp',
+					'instructions'  => __( 'PNG o WebP con fondo transparente, en color crema (#FAE3B9). Se muestra sobre una banda vino.', 'up10-core' ),
 				),
 				array(
 					'key'   => 'field_up10_brand_website',
@@ -460,12 +462,13 @@ function up10_register_brand_fields() {
 					'type'  => 'url',
 				),
 				array(
-					'key'   => 'field_up10_brand_sort_order',
-					'label' => __( 'Orden', 'up10-core' ),
-					'name'  => 'sort_order',
-					'type'  => 'number',
-					'min'   => 1,
-					'max'   => 10,
+					'key'          => 'field_up10_brand_sort_order',
+					'label'        => __( 'Orden', 'up10-core' ),
+					'name'         => 'sort_order',
+					'type'         => 'number',
+					'min'          => 1,
+					'max'          => 999,
+					'instructions' => __( 'Si queda vacío, la marca se muestra al final de la marquesina.', 'up10-core' ),
 				),
 			),
 			'location' => array(

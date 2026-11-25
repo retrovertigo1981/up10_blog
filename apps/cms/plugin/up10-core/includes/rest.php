@@ -332,17 +332,7 @@ function up10_rest_home() {
 		)
 	);
 
-	$partner_posts = get_posts(
-		array(
-			'post_type'      => 'marca',
-			'post_status'    => 'publish',
-			'posts_per_page' => 10,
-			'no_found_rows'  => true,
-			'meta_key'       => 'sort_order',
-			'orderby'        => 'meta_value_num',
-			'order'          => 'ASC',
-		)
-	);
+	$partner_posts = up10_get_partner_posts();
 
 	$stat_posts = get_posts(
 		array(
@@ -765,22 +755,52 @@ function up10_rest_top10() {
 }
 
 /**
+ * Marcas publicadas, ordenadas por el campo Orden.
+ *
+ * Se ordena en PHP para que una marca sin orden asignado no desaparezca de la
+ * consulta y quede al final. Así el cliente puede agregar marcas desde el admin
+ * sin tocar código.
+ *
+ * @return WP_Post[]
+ */
+function up10_get_partner_posts() {
+	$posts = get_posts(
+		array(
+			'post_type'      => 'marca',
+			'post_status'    => 'publish',
+			'posts_per_page' => (int) apply_filters( 'up10_partners_limit', 50 ),
+			'no_found_rows'  => true,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		)
+	);
+
+	usort(
+		$posts,
+		static function ( $a, $b ) {
+			$order_a = get_post_meta( $a->ID, 'sort_order', true );
+			$order_b = get_post_meta( $b->ID, 'sort_order', true );
+			$order_a = '' === $order_a ? PHP_INT_MAX : (int) $order_a;
+			$order_b = '' === $order_b ? PHP_INT_MAX : (int) $order_b;
+
+			if ( $order_a === $order_b ) {
+				return strcasecmp( $a->post_title, $b->post_title );
+			}
+
+			return $order_a <=> $order_b;
+		}
+	);
+
+	return $posts;
+}
+
+/**
  * Marcas.
  *
  * @return WP_REST_Response
  */
 function up10_rest_partners() {
-	$posts = get_posts(
-		array(
-			'post_type'      => 'marca',
-			'post_status'    => 'publish',
-			'posts_per_page' => 10,
-			'no_found_rows'  => true,
-			'meta_key'       => 'sort_order',
-			'orderby'        => 'meta_value_num',
-			'order'          => 'ASC',
-		)
-	);
+	$posts = up10_get_partner_posts();
 
 	return up10_rest_response( array_values( array_map( 'up10_serialize_partner', $posts ) ) );
 }

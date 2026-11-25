@@ -321,16 +321,6 @@ body:has(dialog[open]) {
   }
 }
 
-/* Marquesina del ticker y de las marcas */
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 /* Carrusel del hero: scroll nativo con snap, sin barra visible */
 /* Lenis: solo lo necesario. No se desactivan los iframes durante el scroll
    suave porque el embed de Spotify debe seguir siendo interactivo. */
@@ -361,18 +351,39 @@ html:not(.lenis) [id] {
   display: none;
 }
 
-.marquee-track {
-  animation: marquee 40s linear infinite;
+/* Marquesina de marcas: dos filas con desvanecido en los bordes. */
+.marquee-row {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
 }
 
-.marquee:hover .marquee-track,
-.marquee:focus-within .marquee-track {
-  animation-play-state: paused;
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track {
+    will-change: transform;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .marquee-row {
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
   .marquee-track {
-    animation: none;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem 2rem;
+    transform: none !important;
+  }
+
+  .marquee-track > li {
+    padding-inline-end: 0;
+  }
+
+  .marquee-track > li[aria-hidden="true"] {
+    display: none;
   }
 
   dialog.drawer,
