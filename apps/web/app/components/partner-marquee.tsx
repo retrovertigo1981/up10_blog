@@ -220,7 +220,7 @@ export function PartnerMarquee({ partners }: { partners: Partner[] }) {
     <section
       ref={sectionRef}
       aria-labelledby="partners-title"
-      className="bg-wine text-cream overflow-hidden py-16 lg:py-24"
+      className="text-cream overflow-hidden bg-[linear-gradient(130deg,#000000_0%,#57000B_100%)] py-16 lg:py-24"
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       onFocusCapture={() => setFocusWithin(true)}
