@@ -19,7 +19,12 @@ export default defineConfig({
   webServer: {
     command: "pnpm dev --port 5173",
     url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
+    env: {
+      ...process.env,
+      VITE_USE_MOCKS: "true",
+      VITE_SITE_URL: "http://localhost:5173",
+    } as Record<string, string>,
   },
 });
