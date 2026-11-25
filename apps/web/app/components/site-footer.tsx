@@ -24,8 +24,8 @@ export function SiteFooter() {
           <img
             src="/brand/logo-mark.svg"
             alt=""
-            width={28}
-            height={31}
+            width={32}
+            height={34}
             className="mb-4 h-9 w-auto"
           />
           <p className="font-heading text-wine text-4xl">MÁS MÚSICA, MENOS PROBLEMAS.</p>
@@ -40,7 +40,7 @@ export function SiteFooter() {
             prensa@up10.cl
           </a>
 
-          <SocialLinks className="mt-4 -ml-2" label="Redes sociales de UP10" />
+          <SocialLinks className="-ml-2 mt-4" label="Redes sociales de UP10" />
         </div>
 
         <nav aria-label="Secciones">
