@@ -13,6 +13,7 @@ export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
     queryKey: ["instagram"],
     queryFn: async () => (await api.instagram()).data,
     initialData: posts,
+    refetchOnMount: "always",
     refetchInterval: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
   });
@@ -68,7 +69,8 @@ export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
             >
               <Image
                 data={post.image}
-                ratio="1:1"
+                ratio="4:5"
+                sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
                 className="rounded-card"
                 imgClassName="transition-transform duration-300 group-hover:scale-[1.04]"
               />

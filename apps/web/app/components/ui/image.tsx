@@ -4,6 +4,7 @@ import { cn } from "~/lib/cn";
 
 const ratios = {
   "1:1": "aspect-square",
+  "4:5": "aspect-[4/5]",
   "4:3": "aspect-[4/3]",
   "16:9": "aspect-video",
   "3:2": "aspect-[3/2]",
