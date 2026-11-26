@@ -58,25 +58,37 @@ export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
       </SectionHeading>
 
       <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {currentPosts.slice(0, 10).map((post) => (
-          <li key={post.id} data-reveal>
-            <a
-              href={post.permalink}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="group block"
-              aria-label={post.caption || "Ver publicación en Instagram"}
-            >
-              <Image
-                data={post.image}
-                ratio="4:5"
-                sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-                className="rounded-card"
-                imgClassName="transition-transform duration-300 group-hover:scale-[1.04]"
-              />
-            </a>
-          </li>
-        ))}
+        {currentPosts.slice(0, 10).map((post) => {
+          const image = {
+            ...post.image,
+            // La grilla debe usar la imagen completa: el srcset mezcla
+            // recortes cuadrados con tamaños proporcionales y el navegador
+            // puede elegir un recorte que corta el texto de la publicación.
+            srcset: "",
+            webp: post.image.webp
+              ? { src: post.image.webp.src, srcset: "" }
+              : undefined,
+          };
+
+          return (
+            <li key={post.id} data-reveal>
+              <a
+                href={post.permalink}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="group block"
+                aria-label={post.caption || "Ver publicación en Instagram"}
+              >
+                <Image
+                  data={image}
+                  ratio="3:4"
+                  className="rounded-card"
+                  imgClassName="transition-transform duration-300 group-hover:scale-[1.04]"
+                />
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );
