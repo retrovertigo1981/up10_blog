@@ -278,7 +278,7 @@ Se elimina el rol Suscriptor y se desactiva el registro público.
 | Estadísticas | repeater de 3 `stat` (etiqueta, valor, prefijo, sufijo, animar) |
 | Redes | Instagram, TikTok, Facebook, YouTube, WhatsApp, correo de prensa |
 | TOP 10 | URL de playlist, activar sync, frecuencia |
-| Instagram | modo (`curado` / `api`), repeater de 10 publicaciones |
+| Instagram | modo (`api` por defecto / `curado` como respaldo), repeater de 10 publicaciones |
 | Newsletter | título, bajada, texto de consentimiento, URL de privacidad |
 | Navegación | menú principal y menú del pie |
 | Contacto | correo, WhatsApp, dirección |

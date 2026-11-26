@@ -114,7 +114,7 @@ Devuelve todo lo necesario para la portada en **una sola petición**. Existe par
 | `interviews` | `tipo_contenido = entrevista`             | 3                    |
 | `events`     | Próximos eventos                          | 3                    |
 | `top10`      | Ranking ordenado por posición             | 10                   |
-| `instagram`  | Publicaciones curadas o sincronizadas      | 10                   |
+| `instagram`  | Publicaciones de Instagram (caché API o curado) | 10             |
 | `stats`      | Cifras institucionales                    | 3                    |
 | `partners`   | Marcas                                    | 10                   |
 | `unplugged`  | Página + última sesión                    | 1                    |
@@ -306,6 +306,44 @@ Busca en título, extracto, `dek` y etiquetas. Devuelve `PostSummary[]` con `met
 
 Devuelve un `Post` en borrador. Requiere el secreto compartido entre WordPress y GitHub Actions.
 
+### 2.12 `GET /instagram`
+
+Devuelve hasta 10 publicaciones reales de Instagram o el contenido curado como fallback.
+
+```json
+{
+  "data": [
+    {
+      "id": "1789...",
+      "image": {
+        "src": "https://api.up10.cl/wp-content/uploads/2026/11/instagram.jpg",
+        "width": 1080,
+        "height": 1080,
+        "alt": "Texto de la publicación",
+        "srcset": "...",
+        "focalPoint": "center",
+        "mimeType": "image/jpeg",
+        "webp": { "src": "...", "srcset": "..." }
+      },
+      "caption": "Texto de la publicación",
+      "permalink": "https://www.instagram.com/p/...",
+      "type": "image",
+      "publishedAt": "2026-11-25T12:00:00+0000"
+    }
+  ],
+  "meta": {
+    "mode": "api",
+    "syncedAt": "2026-11-25T12:00:00-03:00"
+  }
+}
+```
+
+- `mode`: `api` si hay caché sincronizada; `curated` si se está usando el respaldo.
+- `syncedAt`: fecha de la última sincronización exitosa (`DATE_ATOM`); vacío en modo curado.
+- `Cache-Control: public, max-age=300`.
+- Las imágenes se sirven desde WordPress (descargadas durante el sync) y usan WebP si está disponible.
+- Si la API falla, se mantiene la última caché. Nunca se expone el token ni errores internos de Meta.
+
 ---
 
 ## 3. Escritura
@@ -406,6 +444,6 @@ Los mensajes se muestran al usuario tal cual: deben estar en español y sin jerg
 ## 8. Pendientes de esta spec
 
 - [ ] Definir el proveedor de doble opt-in (propio o ESP).
-- [ ] Confirmar si `/home` incluye el bloque de Instagram cuando está en modo API.
+- [x] `/home` incluye `instagram` desde la caché API con fallback al contenido curado.
 - [ ] Definir política de paginación del archivo (12 vs 15 por página).
 - [ ] Confirmar si los eventos pasados se paginan o se muestran completos.
