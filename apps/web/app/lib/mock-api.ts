@@ -10,6 +10,11 @@ export function createMockApi(): ApiClient {
   return {
     home: async () => ({ data: mockHome }),
 
+    instagram: async () => ({
+      data: mockHome.instagram,
+      meta: { mode: "curated" },
+    }),
+
     posts: async (query: PostListQuery = {}) => {
       const perPage = query.perPage ?? 12;
       const page = query.page ?? 1;

@@ -4,6 +4,7 @@ import type {
   EventListQuery,
   EventSummary,
   HomePayload,
+  InstagramPost,
   Page,
   Pagination,
   Partner,
@@ -39,6 +40,7 @@ type Envelope<T> = {
     query?: string;
     playlistUrl?: string;
     syncedAt?: string;
+    mode?: "api" | "curated";
   };
 };
 
@@ -101,6 +103,8 @@ export function createApiClient({ baseUrl, fetchImpl, revalidate }: ClientOption
 
   return {
     home: () => request<HomePayload>("/home"),
+
+    instagram: () => request<InstagramPost[]>("/instagram"),
 
     posts: (query: PostListQuery = {}) => request<PostSummary[]>(`/posts${buildQuery(query)}`),
 

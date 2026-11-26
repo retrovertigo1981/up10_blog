@@ -45,6 +45,10 @@ Copiar `.env.example` a `.env` y ajustar:
 | `VITE_USE_MOCKS`    | `true` usa fixtures locales; `false` usa la API                                             |
 | `VITE_LIVE_CONTENT` | `true` refresca los datos en el navegador tras el prerender; `false` sirve el HTML estático |
 
+La grilla de Instagram usa los datos iniciales de `/home` y consulta
+`/instagram` cada cinco minutos y al recuperar el foco de la pestaña. Si la
+consulta falla, conserva las publicaciones que ya estaban renderizadas.
+
 ## Despliegue
 
 El build prerenderiza las rutas de contenido, genera `__spa-fallback.html` para

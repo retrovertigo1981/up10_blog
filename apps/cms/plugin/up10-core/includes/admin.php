@@ -10,6 +10,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Muestra el estado operativo de Instagram sin mostrar credenciales ni errores de Meta.
+ */
+function up10_instagram_admin_notice() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	$mode          = up10_instagram_mode();
+	$cache         = up10_instagram_cache();
+	$synced_at     = (int) get_option( 'up10_instagram_synced_at', 0 );
+	$token_updated = (int) get_option( 'up10_instagram_token_updated_at', 0 );
+	$token_age     = $token_updated ? (int) floor( ( time() - $token_updated ) / DAY_IN_SECONDS ) : null;
+	$has_error     = ! empty( $cache['error'] );
+	$class         = $has_error ? 'notice notice-error' : 'notice notice-info';
+	?>
+	<div class="<?php echo esc_attr( $class ); ?>">
+		<p>
+			<strong><?php esc_html_e( 'Instagram:', 'up10-core' ); ?></strong>
+			<?php echo esc_html( 'api' === $mode ? __( 'sincronización automática', 'up10-core' ) : __( 'modo curado', 'up10-core' ) ); ?>
+			<br>
+			<?php esc_html_e( 'Última sincronización:', 'up10-core' ); ?>
+			<?php echo esc_html( $synced_at ? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $synced_at ) : __( 'todavía no realizada', 'up10-core' ) ); ?>
+			<br>
+			<?php esc_html_e( 'Último error:', 'up10-core' ); ?>
+			<?php echo esc_html( $has_error ? sprintf( __( 'falló (%s); se conserva la caché anterior.', 'up10-core' ), sanitize_key( $cache['error'] ) ) : __( 'ninguno', 'up10-core' ) ); ?>
+			<br>
+			<?php esc_html_e( 'Antigüedad del token:', 'up10-core' ); ?>
+			<?php echo esc_html( null === $token_age ? __( 'sin fecha registrada', 'up10-core' ) : sprintf( _n( '%d día', '%d días', $token_age, 'up10-core' ), $token_age ) ); ?>
+			<?php if ( null === $token_age || $token_age >= 50 ) : ?>
+				<strong><?php esc_html_e( 'Verifica o renueva el token.', 'up10-core' ); ?></strong>
+			<?php endif; ?>
+		</p>
+	</div>
+	<?php
+}
+add_action( 'admin_notices', 'up10_instagram_admin_notice' );
+
+/**
  * Quita metaboxes nativos que duplican o estorban.
  */
 function up10_remove_default_meta_boxes() {

@@ -35,6 +35,16 @@ function up10_register_rest_routes() {
 
 	register_rest_route(
 		'up10/v1',
+		'/instagram',
+		array(
+			'methods'             => 'GET',
+			'callback'            => 'up10_rest_instagram',
+			'permission_callback' => '__return_true',
+		)
+	);
+
+	register_rest_route(
+		'up10/v1',
 		'/posts',
 		array(
 			'methods'             => 'GET',
@@ -376,11 +386,51 @@ function up10_rest_home() {
 }
 
 /**
- * Serializa las publicaciones de Instagram curadas.
+ * Serializa las publicaciones de Instagram según el modo activo y su fallback.
  *
  * @return array
  */
 function up10_serialize_instagram() {
+	if ( 'api' === up10_instagram_mode() ) {
+		$cache = up10_instagram_cache();
+		$items = array();
+
+		foreach ( $cache['items'] as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+
+			$image_id = (int) ( $item['attachment_id'] ?? 0 );
+			$image    = $image_id ? up10_serialize_image( $image_id, $item['caption'] ?? '' ) : null;
+
+			if ( ! $image ) {
+				continue;
+			}
+
+			$items[] = array(
+				'id'          => (string) ( $item['id'] ?? '' ),
+				'image'       => $image,
+				'caption'     => (string) ( $item['caption'] ?? '' ),
+				'permalink'   => (string) ( $item['permalink'] ?? '' ),
+				'type'        => (string) ( $item['type'] ?? 'image' ),
+				'publishedAt' => (string) ( $item['publishedAt'] ?? '' ),
+			);
+		}
+
+		if ( $items ) {
+			return array_slice( $items, 0, 10 );
+		}
+	}
+
+	return up10_serialize_curated_instagram();
+}
+
+/**
+ * Serializa las publicaciones de Instagram curadas.
+ *
+ * @return array
+ */
+function up10_serialize_curated_instagram() {
 	$rows = up10_field( 'instagram_posts', 'option', array() );
 
 	if ( ! is_array( $rows ) ) {
@@ -412,6 +462,32 @@ function up10_serialize_instagram() {
 	}
 
 	return $items;
+}
+
+/**
+ * Devuelve la caché API con el fallback curado y metadatos de sincronización.
+ *
+ * @return WP_REST_Response
+ */
+function up10_rest_instagram() {
+	$items = up10_serialize_instagram();
+	$cache = up10_instagram_cache();
+	$mode  = 'api' === up10_instagram_mode() && ! empty( $cache['items'] ) && $items ? 'api' : 'curated';
+	$meta  = array(
+		'syncedAt' => '',
+		'mode'     => $mode,
+	);
+
+	$synced_timestamp = (int) get_option( 'up10_instagram_synced_at', 0 );
+
+	if ( $synced_timestamp ) {
+		$meta['syncedAt'] = wp_date( DATE_ATOM, $synced_timestamp );
+	}
+
+	$response = up10_rest_response( $items, 200, $meta );
+	$response->header( 'Cache-Control', 'public, max-age=300' );
+
+	return $response;
 }
 
 /**

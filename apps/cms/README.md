@@ -25,6 +25,7 @@ apps/cms/
 │   │   ├── cli.php
 │   │   ├── content-types.php
 │   │   ├── fields.php
+│   │   ├── instagram.php
 │   │   ├── media.php
 │   │   ├── serializers.php
 │   │   ├── rest.php
@@ -72,19 +73,20 @@ wp rewrite flush
 
 ## API
 
-| Endpoint             | Uso                              |
-| -------------------- | -------------------------------- |
-| `GET /ping`          | Health check                     |
-| `GET /home`          | Portada agregada                 |
-| `GET /posts`         | Archivo con filtros y paginación |
-| `GET /posts/{slug}`  | Artículo                         |
-| `GET /categories`    | Categorías                       |
-| `GET /events`        | Eventos                          |
-| `GET /events/{slug}` | Evento                           |
-| `GET /top10`         | Ranking                          |
-| `GET /partners`      | Marcas                           |
-| `GET /pages/{slug}`  | Páginas institucionales          |
-| `GET /search?q=`     | Buscador                         |
+| Endpoint             | Uso                                          |
+| -------------------- | -------------------------------------------- |
+| `GET /ping`          | Health check                                 |
+| `GET /home`          | Portada agregada                             |
+| `GET /instagram`     | Publicaciones y estado de caché de Instagram |
+| `GET /posts`         | Archivo con filtros y paginación             |
+| `GET /posts/{slug}`  | Artículo                                     |
+| `GET /categories`    | Categorías                                   |
+| `GET /events`        | Eventos                                      |
+| `GET /events/{slug}` | Evento                                       |
+| `GET /top10`         | Ranking                                      |
+| `GET /partners`      | Marcas                                       |
+| `GET /pages/{slug}`  | Páginas institucionales                      |
+| `GET /search?q=`     | Buscador                                     |
 
 ## Flujo editorial
 
@@ -160,6 +162,54 @@ El frontend debe apuntar a:
 VITE_API_URL=https://api.up10.cl/wp-json/up10/v1
 VITE_USE_MOCKS=false
 ```
+
+## Instagram automático
+
+La opción **Ajustes UP10 → Instagram** controla el modo:
+
+- **API**: sincroniza hasta 10 publicaciones cada 30 minutos; las imágenes se descargan a la biblioteca de medios y se reutilizan por ID de Instagram.
+- **Curado**: muestra el repeater editorial. También se usa como respaldo si la caché API todavía está vacía.
+- Si una solicitud o descarga falla, la caché anterior se conserva y el admin muestra el estado sin revelar respuestas de Meta ni credenciales.
+
+El endpoint `GET /wp-json/up10/v1/instagram` devuelve `{ data, meta }` y usa caché HTTP de cinco minutos. La portada continúa incluyendo `instagram` en `/home`.
+
+Para desarrollo local, `apps/cms/.wp-env.json` define el entorno de Docker (ese archivo se excluye de Git). Desde `apps/cms`:
+
+```bash
+pnpm dlx @wordpress/env start
+pnpm dlx @wordpress/env run cli wp plugin list
+```
+
+Para probar el frontend contra ese WordPress, configura `apps/web/.env` (ignorado por Git):
+
+```env
+VITE_API_URL=http://localhost:8888/wp-json/up10/v1
+VITE_USE_MOCKS=false
+VITE_LIVE_CONTENT=true
+```
+
+Configura solo el WordPress local con constantes de `wp-config.php`; sustituye los valores desde el panel de la app de Meta y nunca los pegues en el repositorio, el frontend ni los logs:
+
+```php
+define( 'UP10_IG_ACCESS_TOKEN', 'TOKEN_LOCAL' );
+define( 'UP10_IG_USER_ID', 'ID_LOCAL' );
+define( 'UP10_IG_API_VERSION', 'VERSION_VIGENTE_DE_LA_APP' );
+```
+
+La primera sincronización guarda el token en la opción protegida `up10_instagram_token` con autoload desactivado; la renovación mensual reemplaza ese valor. Para medios se usa el ID de cuenta en `/{IG_ID}/media`; la renovación usa el endpoint oficial sin versión `/refresh_access_token`. La versión para medios debe ser la configurada actualmente en la app de Meta: el plugin no asume una versión.
+
+Comandos de validación local:
+
+```bash
+pnpm dlx @wordpress/env run cli wp up10 instagram-sync --dry-run
+pnpm dlx @wordpress/env run cli wp up10 instagram-sync --force
+pnpm dlx @wordpress/env run cli wp up10 instagram-refresh-token
+curl -s http://localhost:8888/wp-json/up10/v1/instagram
+php plugin/up10-core/tests/instagram-normalize.php
+php plugin/up10-core/tests/instagram-cache-failure.php
+```
+
+No ejecutar comandos `wp` contra producción. Las pruebas de integración con Meta requieren la cuenta autorizada; el test local de normalización usa respuestas grabadas y no hace solicitudes de red.
 
 ## Notas
 

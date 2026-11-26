@@ -11,6 +11,67 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command(
+		'up10 instagram-sync',
+		static function ( $args, $assoc_args ) {
+			$dry_run = isset( $assoc_args['dry-run'] );
+			$force   = isset( $assoc_args['force'] ) || $dry_run;
+			$result  = up10_instagram_sync( $force, $dry_run );
+
+			if ( is_wp_error( $result ) ) {
+				WP_CLI::error( $result->get_error_message() );
+				return;
+			}
+
+			if ( 'skipped' === $result['status'] ) {
+				WP_CLI::warning( 'Instagram está en modo curado; no se ejecutó la sincronización.' );
+				return;
+			}
+
+			WP_CLI::success(
+				sprintf(
+					'%s: %d publicaciones.',
+					$dry_run ? 'Vista previa' : 'Sincronización terminada',
+					$result['items']
+				)
+			);
+		},
+		array(
+			'shortdesc' => 'Sincroniza publicaciones de Instagram sin exponer credenciales.',
+			'synopsis'  => array(
+				array(
+					'type'        => 'flag',
+					'name'        => 'dry-run',
+					'description' => 'Consulta y normaliza sin descargar imágenes ni guardar la caché.',
+					'optional'    => true,
+				),
+				array(
+					'type'        => 'flag',
+					'name'        => 'force',
+					'description' => 'Omite el límite de frecuencia de 30 minutos.',
+					'optional'    => true,
+				),
+			),
+		)
+	);
+
+	WP_CLI::add_command(
+		'up10 instagram-refresh-token',
+		static function () {
+			$result = up10_instagram_refresh_token();
+
+			if ( is_wp_error( $result ) ) {
+				WP_CLI::error( $result->get_error_message() );
+				return;
+			}
+
+			WP_CLI::success( 'Token de Instagram renovado.' );
+		},
+		array(
+			'shortdesc' => 'Renueva el token de larga duración de Instagram.',
+		)
+	);
+
+	WP_CLI::add_command(
 		'up10 webp',
 		static function ( $args, $assoc_args ) {
 			if ( ! up10_webp_supported() ) {
