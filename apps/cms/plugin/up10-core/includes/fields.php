@@ -798,6 +798,7 @@ function up10_register_options_fields() {
 						'curated' => __( 'Curado', 'up10-core' ),
 						'api'     => __( 'API de Instagram', 'up10-core' ),
 					),
+					'instructions' => __( 'El modo API se actualiza automáticamente. Si no hay caché disponible, se muestran las publicaciones curadas como respaldo.', 'up10-core' ),
 					'default_value' => 'curated',
 				),
 				array(
@@ -805,7 +806,7 @@ function up10_register_options_fields() {
 					'label'        => __( 'Publicaciones curadas', 'up10-core' ),
 					'name'         => 'instagram_posts',
 					'type'         => 'repeater',
-					'instructions' => __( 'Se usa cuando el modo es curado.', 'up10-core' ),
+					'instructions' => __( 'Se usa en modo curado y como respaldo si la API no tiene una caché disponible.', 'up10-core' ),
 					'max'          => 10,
 					'layout'       => 'block',
 					'button_label' => __( 'Añadir publicación', 'up10-core' ),

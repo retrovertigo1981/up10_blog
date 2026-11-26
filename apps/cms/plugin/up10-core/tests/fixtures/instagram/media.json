@@ -1,0 +1,45 @@
+[
+  {
+    "id": "image-1",
+    "caption": "Imagen de prueba",
+    "media_type": "IMAGE",
+    "media_url": "https://scontent.cdninstagram.com/image-1.jpg",
+    "permalink": "https://www.instagram.com/p/image-1/",
+    "timestamp": "2026-11-25T12:00:00+0000"
+  },
+  {
+    "id": "carousel-1",
+    "caption": "Carrusel de prueba",
+    "media_type": "CAROUSEL_ALBUM",
+    "thumbnail_url": "https://scontent.cdninstagram.com/carousel-cover.jpg",
+    "children": {
+      "data": [
+        {
+          "media_type": "VIDEO",
+          "thumbnail_url": "https://scontent.cdninstagram.com/carousel-video.jpg"
+        },
+        {
+          "media_type": "IMAGE",
+          "media_url": "https://scontent.cdninstagram.com/carousel-image.jpg"
+        }
+      ]
+    },
+    "permalink": "https://www.instagram.com/p/carousel-1/",
+    "timestamp": "2026-11-24T12:00:00+0000"
+  },
+  {
+    "id": "video-1",
+    "caption": "Video de prueba",
+    "media_type": "VIDEO",
+    "media_url": "https://scontent.cdninstagram.com/video-1.mp4",
+    "thumbnail_url": "https://scontent.cdninstagram.com/video-1.jpg",
+    "permalink": "https://www.instagram.com/reel/video-1/",
+    "timestamp": "2026-11-23T12:00:00+0000"
+  },
+  {
+    "id": "unsupported-1",
+    "media_type": "STORY",
+    "media_url": "https://scontent.cdninstagram.com/story.jpg",
+    "permalink": "https://www.instagram.com/stories/up10.cl/unsupported-1/"
+  }
+]

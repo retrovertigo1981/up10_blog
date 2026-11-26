@@ -1,5 +1,7 @@
 import type { InstagramPost } from "@up10/api-client";
+import { useQuery } from "@tanstack/react-query";
 
+import { api } from "~/lib/api";
 import { ButtonLink } from "./ui/button";
 import { Image } from "./ui/image";
 import { SectionHeading } from "./ui/section-heading";
@@ -7,7 +9,15 @@ import { SectionHeading } from "./ui/section-heading";
 const INSTAGRAM_URL = "https://www.instagram.com/up10.cl/";
 
 export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
-  if (posts.length === 0) {
+  const { data: currentPosts = posts } = useQuery({
+    queryKey: ["instagram"],
+    queryFn: async () => (await api.instagram()).data,
+    initialData: posts,
+    refetchInterval: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  });
+
+  if (currentPosts.length === 0) {
     return (
       <section aria-labelledby="instagram-title" className="container-up10 py-16 lg:py-24">
         <SectionHeading
@@ -47,7 +57,7 @@ export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
       </SectionHeading>
 
       <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {posts.slice(0, 10).map((post) => (
+        {currentPosts.slice(0, 10).map((post) => (
           <li key={post.id} data-reveal>
             <a
               href={post.permalink}

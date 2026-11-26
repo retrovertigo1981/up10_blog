@@ -21,6 +21,7 @@ define( 'UP10_CORE_URL', plugin_dir_url( __FILE__ ) );
 require_once UP10_CORE_PATH . 'includes/content-types.php';
 require_once UP10_CORE_PATH . 'includes/fields.php';
 require_once UP10_CORE_PATH . 'includes/media.php';
+require_once UP10_CORE_PATH . 'includes/instagram.php';
 require_once UP10_CORE_PATH . 'includes/serializers.php';
 require_once UP10_CORE_PATH . 'includes/brands.php';
 require_once UP10_CORE_PATH . 'includes/rest.php';
@@ -56,6 +57,7 @@ function up10_activate() {
 	up10_register_taxonomies();
 	up10_register_post_types();
 	up10_seed_terms();
+	up10_instagram_schedule_events();
 	flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'up10_activate' );
@@ -64,6 +66,7 @@ register_activation_hook( __FILE__, 'up10_activate' );
  * Desactivación: limpia rewrite rules.
  */
 function up10_deactivate() {
+	up10_instagram_clear_scheduled_events();
 	flush_rewrite_rules();
 }
 register_deactivation_hook( __FILE__, 'up10_deactivate' );
