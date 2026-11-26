@@ -3,8 +3,6 @@
 define( 'ABSPATH', __DIR__ . '/' );
 define( 'MINUTE_IN_SECONDS', 60 );
 define( 'UP10_IG_ACCESS_TOKEN', 'instagram-test-token' );
-define( 'UP10_IG_USER_ID', '12345' );
-define( 'UP10_IG_API_VERSION', 'v27.0' );
 
 $GLOBALS['up10_test_options'] = array(
 	'instagram_mode'       => 'api',
@@ -31,6 +29,15 @@ function get_option( $name, $default = '' ) {
 function update_option( $name, $value, $autoload = null ) {
 	unset( $autoload );
 	$GLOBALS['up10_test_options'][ $name ] = $value;
+	return true;
+}
+function get_transient() {
+	return false;
+}
+function set_transient() {
+	return true;
+}
+function delete_transient() {
 	return true;
 }
 function is_wp_error( $value ) {
@@ -88,12 +95,22 @@ if ( 'up10_instagram_request_failed' !== $cache['error'] ) {
 	throw new RuntimeException( 'No se guardó el código seguro del error.' );
 }
 
-if ( false !== strpos( $GLOBALS['up10_test_request']['url'], UP10_IG_ACCESS_TOKEN ) ) {
-	throw new RuntimeException( 'El token apareció en la URL de la solicitud.' );
+$request = $GLOBALS['up10_test_request'];
+
+if ( 0 !== strpos( $request['url'], 'https://graph.instagram.com/me/media?' ) ) {
+	throw new RuntimeException( 'La solicitud no usó la ruta /me/media sin versión.' );
 }
 
-if ( 'Bearer ' . UP10_IG_ACCESS_TOKEN !== $GLOBALS['up10_test_request']['args']['headers']['Authorization'] ) {
-	throw new RuntimeException( 'La solicitud no usó el encabezado Authorization.' );
+if ( false === strpos( $request['url'], 'access_token=' . UP10_IG_ACCESS_TOKEN ) ) {
+	throw new RuntimeException( 'La solicitud no envió el token como query param.' );
+}
+
+if ( isset( $request['args']['headers']['Authorization'] ) ) {
+	throw new RuntimeException( 'La solicitud usó un encabezado Authorization no documentado.' );
+}
+
+if ( false !== strpos( $result->get_error_message(), UP10_IG_ACCESS_TOKEN ) ) {
+	throw new RuntimeException( 'El token apareció en el mensaje de error.' );
 }
 
 echo "Caché de Instagram ante fallos: OK\n";

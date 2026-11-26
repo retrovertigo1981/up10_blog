@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "pnpm --filter @up10/web test",
-    "test:e2e": "pnpm --filter @up10/web test:e2e"
+    "test:e2e": "pnpm --filter @up10/web test:e2e",
+    "test:php": "php apps/cms/plugin/up10-core/tests/instagram-normalize.php && php apps/cms/plugin/up10-core/tests/instagram-cache-failure.php && php apps/cms/plugin/up10-core/tests/instagram-refresh.php"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
