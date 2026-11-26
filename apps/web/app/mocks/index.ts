@@ -44,6 +44,9 @@ const categories: Category[] = [
   { id: 6, name: "Entrevistas", slug: "entrevistas" },
   { id: 7, name: "Industria musical", slug: "industria-musical" },
   { id: 8, name: "Cultura y entretenimiento", slug: "cultura-entretenimiento" },
+  { id: 9, name: "Estrenos", slug: "estrenos" },
+  { id: 10, name: "Estrenos | Música Latina", slug: "estrenos-musica-latina" },
+  { id: 11, name: "Uncategorized", slug: "uncategorized" },
 ];
 
 const editorialSignals: Record<"breaking" | "show" | "fashion", EditorialTag> = {

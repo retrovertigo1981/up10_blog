@@ -41,7 +41,7 @@ afterEach(() => {
 
 describe("InstagramGrid", () => {
   it("muestra inicialmente las publicaciones recibidas del loader", () => {
-    vi.spyOn(api, "instagram").mockResolvedValue({ data: [] });
+    vi.spyOn(api, "instagram").mockResolvedValue({ data: posts });
 
     renderGrid();
 

@@ -64,7 +64,7 @@ export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
               target="_blank"
               rel="noreferrer noopener"
               className="group block"
-              aria-label={post.caption ?? "Ver publicación en Instagram"}
+              aria-label={post.caption || "Ver publicación en Instagram"}
             >
               <Image
                 data={post.image}
