@@ -13,8 +13,6 @@ export function InstagramGrid({ posts }: { posts: InstagramPost[] }) {
     queryKey: ["instagram"],
     queryFn: async () => (await api.instagram()).data,
     initialData: posts,
-    initialDataUpdatedAt: 0,
-    staleTime: 0,
     refetchOnMount: "always",
     refetchInterval: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
