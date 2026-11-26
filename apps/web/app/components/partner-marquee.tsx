@@ -43,8 +43,9 @@ function PartnerLogo({ partner }: { partner: Partner }) {
       {webp ? (
         <source
           type="image/webp"
-          srcSet={webp.srcset || webp.src}
-          sizes="(min-width: 1024px) 156px, (min-width: 640px) 132px, 104px"
+          // Usar el WebP completo: el srcset de WordPress incluye un
+          // thumbnail recortado (150x144) que corta los logos anchos.
+          srcSet={webp.src}
         />
       ) : null}
       <img
