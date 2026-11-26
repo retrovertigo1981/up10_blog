@@ -798,8 +798,8 @@ function up10_register_options_fields() {
 						'curated' => __( 'Curado', 'up10-core' ),
 						'api'     => __( 'API de Instagram', 'up10-core' ),
 					),
-					'instructions' => __( 'El modo API se actualiza automáticamente. Si no hay caché disponible, se muestran las publicaciones curadas como respaldo.', 'up10-core' ),
-					'default_value' => 'curated',
+					'instructions' => __( 'El modo API se actualiza automáticamente y es el modo por defecto. Si no hay caché disponible, se muestran las publicaciones curadas como respaldo.', 'up10-core' ),
+					'default_value' => 'api',
 				),
 				array(
 					'key'          => 'field_up10_instagram_posts',

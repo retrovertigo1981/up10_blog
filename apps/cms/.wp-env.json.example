@@ -1,0 +1,13 @@
+{
+  "core": null,
+  "plugins": [
+    "./plugin/up10-core",
+    "https://downloads.wordpress.org/plugin/secure-custom-fields.latest-stable.zip"
+  ],
+  "themes": ["./theme/up10-headless"],
+  "config": {
+    "WP_DEBUG": true,
+    "WP_ENVIRONMENT_TYPE": "local"
+  },
+  "port": 8888
+}

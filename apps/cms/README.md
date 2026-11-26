@@ -167,15 +167,37 @@ VITE_USE_MOCKS=false
 
 La opción **Ajustes UP10 → Instagram** controla el modo:
 
-- **API**: sincroniza hasta 10 publicaciones cada 30 minutos; las imágenes se descargan a la biblioteca de medios y se reutilizan por ID de Instagram.
-- **Curado**: muestra el repeater editorial. También se usa como respaldo si la caché API todavía está vacía.
+- **API (por defecto)**: sincroniza hasta 10 publicaciones cada 30 minutos; las imágenes se descargan a la biblioteca de medios y se reutilizan por ID de Instagram.
+- **Curado (respaldo)**: muestra el repeater editorial. Se usa si la caché API está vacía o si se elige ese modo explícitamente.
 - Si una solicitud o descarga falla, la caché anterior se conserva y el admin muestra el estado sin revelar respuestas de Meta ni credenciales.
 
-El endpoint `GET /wp-json/up10/v1/instagram` devuelve `{ data, meta }` y usa caché HTTP de cinco minutos. La portada continúa incluyendo `instagram` en `/home`.
+El endpoint `GET /wp-json/up10/v1/instagram` devuelve `{ data, meta }` con `meta.mode` y `meta.syncedAt`, y usa caché HTTP de cinco minutos. La portada continúa incluyendo `instagram` en `/home`.
 
-Para desarrollo local, `apps/cms/.wp-env.json` define el entorno de Docker (ese archivo se excluye de Git). Desde `apps/cms`:
+### API de Meta
+
+Se usa **Instagram API with Instagram Login** (`graph.instagram.com`), que no exige Página de Facebook:
+
+```text
+GET https://graph.instagram.com/me/media
+    ?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,
+            children{media_url,media_type,thumbnail_url}
+    &limit=10
+    &access_token=<TOKEN>
+
+GET https://graph.instagram.com/refresh_access_token
+    ?grant_type=ig_refresh_token
+    &access_token=<TOKEN>
+```
+
+El host es **sin versión** y el token va en la query, como exige Meta. El plugin no lo devuelve en REST, no lo incluye en mensajes de error y no lo registra en logs.
+
+### Desarrollo local
+
+Copiar el ejemplo de Docker (el archivo real está ignorado por Git) y levantar WordPress:
 
 ```bash
+cd apps/cms
+cp .wp-env.json.example .wp-env.json
 pnpm dlx @wordpress/env start
 pnpm dlx @wordpress/env run cli wp plugin list
 ```
@@ -188,17 +210,19 @@ VITE_USE_MOCKS=false
 VITE_LIVE_CONTENT=true
 ```
 
-Configura solo el WordPress local con constantes de `wp-config.php`; sustituye los valores desde el panel de la app de Meta y nunca los pegues en el repositorio, el frontend ni los logs:
+Configura solo el WordPress local con la constante de `wp-config.php`; sustituye el valor desde el panel de la app de Meta y nunca lo pegues en el repositorio, el frontend ni los logs:
 
 ```php
 define( 'UP10_IG_ACCESS_TOKEN', 'TOKEN_LOCAL' );
-define( 'UP10_IG_USER_ID', 'ID_LOCAL' );
-define( 'UP10_IG_API_VERSION', 'VERSION_VIGENTE_DE_LA_APP' );
 ```
 
-La primera sincronización guarda el token en la opción protegida `up10_instagram_token` con autoload desactivado; la renovación mensual reemplaza ese valor. Para medios se usa el ID de cuenta en `/{IG_ID}/media`; la renovación usa el endpoint oficial sin versión `/refresh_access_token`. La versión para medios debe ser la configurada actualmente en la app de Meta: el plugin no asume una versión.
+La primera sincronización guarda el token en la opción `up10_instagram_token` con autoload desactivado; la renovación mensual reemplaza ese valor. Para forzar la relectura desde `wp-config.php`:
 
-Comandos de validación local:
+```bash
+pnpm dlx @wordpress/env run cli wp up10 instagram-reset-token
+```
+
+### Comandos de validación local
 
 ```bash
 pnpm dlx @wordpress/env run cli wp up10 instagram-sync --dry-run
@@ -207,9 +231,12 @@ pnpm dlx @wordpress/env run cli wp up10 instagram-refresh-token
 curl -s http://localhost:8888/wp-json/up10/v1/instagram
 php plugin/up10-core/tests/instagram-normalize.php
 php plugin/up10-core/tests/instagram-cache-failure.php
+php plugin/up10-core/tests/instagram-refresh.php
 ```
 
-No ejecutar comandos `wp` contra producción. Las pruebas de integración con Meta requieren la cuenta autorizada; el test local de normalización usa respuestas grabadas y no hace solicitudes de red.
+La primera sincronización descarga 10 imágenes y genera sus versiones WebP. Ejecutarla por WP-CLI para evitar el timeout de PHP del hosting; las siguientes solo descargan publicaciones nuevas.
+
+No ejecutar comandos `wp` contra producción. En producción, el cron real de WP debe correr cada 5 minutos (`wp cron event run --due-now`). Las pruebas de integración con Meta requieren la cuenta autorizada; los tests locales usan respuestas grabadas y no hacen solicitudes de red.
 
 ## Notas
 

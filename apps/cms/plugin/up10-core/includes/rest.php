@@ -401,7 +401,7 @@ function up10_serialize_instagram() {
 			}
 
 			$image_id = (int) ( $item['attachment_id'] ?? 0 );
-			$image    = $image_id ? up10_serialize_image( $image_id, $item['caption'] ?? '' ) : null;
+			$image    = $image_id ? up10_serialize_image( $image_id, up10_instagram_alt_text( $item['caption'] ?? '' ) ) : null;
 
 			if ( ! $image ) {
 				continue;
@@ -445,7 +445,7 @@ function up10_serialize_curated_instagram() {
 		}
 
 		$image_id = up10_image_id( $row['image'] ?? 0 );
-		$image = $image_id ? up10_serialize_image( $image_id, $row['caption'] ?? '' ) : null;
+		$image = $image_id ? up10_serialize_image( $image_id, up10_instagram_alt_text( $row['caption'] ?? '' ) ) : null;
 
 		if ( ! $image ) {
 			continue;
@@ -478,10 +478,12 @@ function up10_rest_instagram() {
 		'mode'     => $mode,
 	);
 
-	$synced_timestamp = (int) get_option( 'up10_instagram_synced_at', 0 );
+	if ( 'api' === $mode ) {
+		$synced_timestamp = (int) get_option( 'up10_instagram_synced_at', 0 );
 
-	if ( $synced_timestamp ) {
-		$meta['syncedAt'] = wp_date( DATE_ATOM, $synced_timestamp );
+		if ( $synced_timestamp ) {
+			$meta['syncedAt'] = wp_date( DATE_ATOM, $synced_timestamp );
+		}
 	}
 
 	$response = up10_rest_response( $items, 200, $meta );

@@ -43,9 +43,9 @@ function up10_instagram_cache() {
  * @return string
  */
 function up10_instagram_mode() {
-	$mode = (string) up10_field( 'instagram_mode', 'option', 'curated' );
+	$mode = (string) up10_field( 'instagram_mode', 'option', 'api' );
 
-	return in_array( $mode, array( 'api', 'curated' ), true ) ? $mode : 'curated';
+	return in_array( $mode, array( 'api', 'curated' ), true ) ? $mode : 'api';
 }
 
 /**
@@ -75,43 +75,25 @@ function up10_instagram_token() {
 }
 
 /**
- * Devuelve la versión de Graph API configurada por el operador.
+ * Devuelve un texto alternativo seguro para una publicación.
  *
- * @return string|WP_Error
+ * @param string $caption Caption original.
+ * @return string
  */
-function up10_instagram_api_version() {
-	$version = defined( 'UP10_IG_API_VERSION' ) ? (string) UP10_IG_API_VERSION : '';
+function up10_instagram_alt_text( $caption ) {
+	$caption = trim( (string) $caption );
 
-	if ( ! preg_match( '/^v[0-9]+\.[0-9]+$/D', $version ) ) {
-		return new WP_Error(
-			'up10_instagram_api_version_missing',
-			__( 'Configura UP10_IG_API_VERSION con la versión vigente de la aplicación de Meta.', 'up10-core' )
-		);
+	if ( '' !== $caption ) {
+		return $caption;
 	}
 
-	return $version;
+	return __( 'Publicación de Instagram de UP10', 'up10-core' );
 }
 
 /**
- * Devuelve el ID de la cuenta autorizado por la app de Meta.
+ * Solicita datos a Instagram con el token en la query, como exige la API.
  *
- * @return string|WP_Error
- */
-function up10_instagram_user_id() {
-	$user_id = defined( 'UP10_IG_USER_ID' ) ? trim( (string) UP10_IG_USER_ID ) : '';
-
-	if ( ! preg_match( '/^[0-9]+$/D', $user_id ) ) {
-		return new WP_Error(
-			'up10_instagram_user_id_missing',
-			__( 'Configura UP10_IG_USER_ID con el ID de la cuenta autorizada.', 'up10-core' )
-		);
-	}
-
-	return $user_id;
-}
-
-/**
- * Solicita datos a Instagram sin incluir el token en la URL ni en mensajes de error.
+ * El token nunca se incluye en mensajes de error ni en la respuesta REST.
  *
  * @param string $path  Ruta permitida de Graph API.
  * @param array  $query Parámetros de consulta.
@@ -129,33 +111,26 @@ function up10_instagram_request( $path, $query = array() ) {
 
 	$path = trim( (string) $path, '/' );
 
-	if ( 'refresh_access_token' !== $path && ! preg_match( '/^[0-9]+\/media$/D', $path ) ) {
+	if ( ! in_array( $path, array( 'me/media', 'refresh_access_token' ), true ) ) {
 		return new WP_Error(
 			'up10_instagram_invalid_path',
 			__( 'La ruta solicitada a Instagram no está permitida.', 'up10-core' )
 		);
 	}
 
-	if ( 'refresh_access_token' === $path ) {
-		$url = 'https://graph.instagram.com/refresh_access_token';
-	} else {
-		$version = up10_instagram_api_version();
+	$url = 'refresh_access_token' === $path
+		? 'https://graph.instagram.com/refresh_access_token'
+		: 'https://graph.instagram.com/me/media';
 
-		if ( is_wp_error( $version ) ) {
-			return $version;
-		}
-
-		$url = 'https://graph.instagram.com/' . $version . '/' . $path;
-	}
+	$query['access_token'] = $token;
 
 	$response = wp_remote_get(
 		add_query_arg( $query, $url ),
 		array(
-			'timeout'     => 15,
+			'timeout'     => 20,
 			'redirection' => 0,
 			'headers'     => array(
-				'Accept'        => 'application/json',
-				'Authorization' => 'Bearer ' . $token,
+				'Accept' => 'application/json',
 			),
 		)
 	);
@@ -167,23 +142,39 @@ function up10_instagram_request( $path, $query = array() ) {
 		);
 	}
 
-	if ( 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+	$status = (int) wp_remote_retrieve_response_code( $response );
+	$body   = json_decode( wp_remote_retrieve_body( $response ), true );
+	$code   = is_array( $body ) && isset( $body['error']['code'] ) ? (int) $body['error']['code'] : 0;
+
+	if ( 200 !== $status || ( is_array( $body ) && isset( $body['error'] ) ) ) {
+		if ( in_array( $code, array( 190, 102 ), true ) ) {
+			return new WP_Error(
+				'up10_instagram_token_invalid',
+				__( 'El token de Instagram no es válido o expiró. Renueva el token.', 'up10-core' )
+			);
+		}
+
+		if ( in_array( $code, array( 4, 17, 32, 613 ), true ) ) {
+			return new WP_Error(
+				'up10_instagram_rate_limited',
+				__( 'Instagram limitó temporalmente las solicitudes. Se conserva la última caché.', 'up10-core' )
+			);
+		}
+
 		return new WP_Error(
 			'up10_instagram_api_failed',
 			__( 'Instagram rechazó la solicitud. Se conserva la última caché.', 'up10-core' )
 		);
 	}
 
-	$data = json_decode( wp_remote_retrieve_body( $response ), true );
-
-	if ( ! is_array( $data ) || isset( $data['error'] ) ) {
+	if ( ! is_array( $body ) ) {
 		return new WP_Error(
 			'up10_instagram_invalid_response',
 			__( 'Instagram devolvió una respuesta inválida. Se conserva la última caché.', 'up10-core' )
 		);
 	}
 
-	return $data;
+	return $body;
 }
 
 /**
@@ -250,14 +241,8 @@ function up10_instagram_normalize( $item ) {
  * @return array|WP_Error
  */
 function up10_instagram_fetch_media() {
-	$user_id = up10_instagram_user_id();
-
-	if ( is_wp_error( $user_id ) ) {
-		return $user_id;
-	}
-
 	$response = up10_instagram_request(
-		$user_id . '/media',
+		'me/media',
 		array(
 			'fields' => 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,children{media_url,media_type,thumbnail_url}',
 			'limit'  => 10,
@@ -343,10 +328,12 @@ function up10_instagram_sideload( $media ) {
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/image.php';
 
+	$alt = up10_instagram_alt_text( $media['caption'] );
+
 	$attachment_id = media_sideload_image(
 		$media['media_url'],
 		0,
-		sanitize_text_field( $media['caption'] ),
+		sanitize_text_field( $alt ),
 		'id'
 	);
 
@@ -359,7 +346,7 @@ function up10_instagram_sideload( $media ) {
 
 	update_post_meta( $attachment_id, '_up10_ig_media_id', (string) $media['id'] );
 	update_post_meta( $attachment_id, '_up10_ig_permalink', esc_url_raw( $media['permalink'] ) );
-	update_post_meta( $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $media['caption'] ) );
+	update_post_meta( $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $alt ) );
 
 	return (int) $attachment_id;
 }
@@ -406,56 +393,75 @@ function up10_instagram_sync( $force = false, $dry_run = false ) {
 		}
 	}
 
-	$media = up10_instagram_fetch_media();
+	$lock_key = 'up10_instagram_sync_lock';
 
-	if ( is_wp_error( $media ) ) {
-		return up10_instagram_record_error( $media );
-	}
-
-	if ( $dry_run ) {
-		return array(
-			'status' => 'dry-run',
-			'items'  => count( $media ),
-		);
-	}
-
-	$items = array();
-
-	foreach ( $media as $item ) {
-		$attachment_id = up10_instagram_sideload( $item );
-
-		if ( is_wp_error( $attachment_id ) ) {
-			return up10_instagram_record_error( $attachment_id );
+	if ( ! $dry_run ) {
+		if ( get_transient( $lock_key ) ) {
+			return array(
+				'status' => 'locked',
+				'items'  => count( $cache['items'] ),
+			);
 		}
 
-		$items[] = array(
-			'id'            => $item['id'],
-			'attachment_id' => $attachment_id,
-			'caption'       => $item['caption'],
-			'permalink'     => $item['permalink'],
-			'type'          => $item['type'],
-			'publishedAt'   => $item['publishedAt'],
-		);
+		set_transient( $lock_key, 1, 10 * MINUTE_IN_SECONDS );
 	}
 
-	$synced_timestamp = time();
-	$synced_at        = current_time( 'mysql' );
+	try {
+		$media = up10_instagram_fetch_media();
 
-	update_option(
-		'up10_instagram_cache',
-		array(
-			'items'     => $items,
-			'synced_at' => $synced_at,
-			'error'     => null,
-		),
-		false
-	);
-	update_option( 'up10_instagram_synced_at', $synced_timestamp, false );
+		if ( is_wp_error( $media ) ) {
+			return up10_instagram_record_error( $media );
+		}
 
-	return array(
-		'status' => 'synced',
-		'items'  => count( $items ),
-	);
+		if ( $dry_run ) {
+			return array(
+				'status' => 'dry-run',
+				'items'  => count( $media ),
+			);
+		}
+
+		$items = array();
+
+		foreach ( $media as $item ) {
+			$attachment_id = up10_instagram_sideload( $item );
+
+			if ( is_wp_error( $attachment_id ) ) {
+				return up10_instagram_record_error( $attachment_id );
+			}
+
+			$items[] = array(
+				'id'            => $item['id'],
+				'attachment_id' => $attachment_id,
+				'caption'       => $item['caption'],
+				'permalink'     => $item['permalink'],
+				'type'          => $item['type'],
+				'publishedAt'   => $item['publishedAt'],
+			);
+		}
+
+		$synced_timestamp = time();
+		$synced_at        = current_time( 'mysql' );
+
+		update_option(
+			'up10_instagram_cache',
+			array(
+				'items'     => $items,
+				'synced_at' => $synced_at,
+				'error'     => null,
+			),
+			false
+		);
+		update_option( 'up10_instagram_synced_at', $synced_timestamp, false );
+
+		return array(
+			'status' => 'synced',
+			'items'  => count( $items ),
+		);
+	} finally {
+		if ( ! $dry_run ) {
+			delete_transient( $lock_key );
+		}
+	}
 }
 
 /**
@@ -487,11 +493,24 @@ function up10_instagram_refresh_token() {
 	update_option( 'up10_instagram_token', $response['access_token'], false );
 	update_option( 'up10_instagram_token_updated_at', time(), false );
 
+	if ( ! empty( $response['expires_in'] ) ) {
+		update_option( 'up10_instagram_token_expires_at', time() + (int) $response['expires_in'], false );
+	}
+
 	$cache          = up10_instagram_cache();
 	$cache['error'] = null;
 	update_option( 'up10_instagram_cache', $cache, false );
 
 	return true;
+}
+
+/**
+ * Elimina el token guardado para que vuelva a leerse desde wp-config.php.
+ */
+function up10_instagram_reset_token() {
+	delete_option( 'up10_instagram_token' );
+	delete_option( 'up10_instagram_token_updated_at' );
+	delete_option( 'up10_instagram_token_expires_at' );
 }
 
 /**
@@ -545,6 +564,10 @@ function up10_instagram_run_scheduled_sync() {
  * Ejecuta la renovación programada.
  */
 function up10_instagram_run_scheduled_refresh() {
+	if ( 'api' !== up10_instagram_mode() ) {
+		return;
+	}
+
 	if ( '' === up10_instagram_token() ) {
 		return;
 	}

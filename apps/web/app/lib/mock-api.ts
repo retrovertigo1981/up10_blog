@@ -1,4 +1,4 @@
-import type { ApiClient, PostListQuery } from "@up10/api-client";
+import { ApiClientError, type ApiClient, type PostListQuery } from "@up10/api-client";
 
 import { mockCategories, mockHome, mockPages, mockPosts } from "../mocks";
 
@@ -47,7 +47,12 @@ export function createMockApi(): ApiClient {
 
     post: async (slug: string) => {
       const post = mockPosts.find((item) => item.slug === slug);
-      if (!post) throw new Error("Artículo no encontrado");
+      if (!post)
+        throw new ApiClientError({
+          code: "not_found",
+          message: "Artículo no encontrado",
+          status: 404,
+        });
       return { data: post };
     },
 
@@ -57,7 +62,12 @@ export function createMockApi(): ApiClient {
 
     event: async (slug: string) => {
       const event = mockHome.events.find((item) => item.slug === slug);
-      if (!event) throw new Error("Evento no encontrado");
+      if (!event)
+        throw new ApiClientError({
+          code: "not_found",
+          message: "Evento no encontrado",
+          status: 404,
+        });
       return { data: { ...event, lineup: [], descriptionHtml: "", seo: mockPages.podcast.seo } };
     },
 
@@ -73,7 +83,12 @@ export function createMockApi(): ApiClient {
 
     page: async (slug: string) => {
       const page = Object.values(mockPages).find((item) => item.slug === slug);
-      if (!page) throw new Error("Página no encontrada");
+      if (!page)
+        throw new ApiClientError({
+          code: "not_found",
+          message: "Página no encontrada",
+          status: 404,
+        });
       return { data: page };
     },
 

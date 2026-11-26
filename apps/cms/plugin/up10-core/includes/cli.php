@@ -27,6 +27,16 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return;
 			}
 
+			if ( 'fresh' === $result['status'] ) {
+				WP_CLI::success( sprintf( 'Caché vigente: %d publicaciones.', $result['items'] ) );
+				return;
+			}
+
+			if ( 'locked' === $result['status'] ) {
+				WP_CLI::warning( 'Ya hay una sincronización de Instagram en curso.' );
+				return;
+			}
+
 			WP_CLI::success(
 				sprintf(
 					'%s: %d publicaciones.',
@@ -68,6 +78,17 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		},
 		array(
 			'shortdesc' => 'Renueva el token de larga duración de Instagram.',
+		)
+	);
+
+	WP_CLI::add_command(
+		'up10 instagram-reset-token',
+		static function () {
+			up10_instagram_reset_token();
+			WP_CLI::success( 'Token eliminado. La próxima sincronización usará UP10_IG_ACCESS_TOKEN.' );
+		},
+		array(
+			'shortdesc' => 'Elimina el token guardado para releerlo desde wp-config.php.',
 		)
 	);
 

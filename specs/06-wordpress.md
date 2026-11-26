@@ -233,59 +233,89 @@ CREATE TABLE up10_top10_snapshots (
 
 ### 7.1 Estado actual
 
-- El frontend ya renderiza 10 piezas desde `HomePayload.instagram`; los mocks usan imágenes locales.
-- Falta la implementación del backend en `up10-core`, las credenciales y la decisión de cuenta.
-- La **Basic Display API está discontinuada**. La integración actual debe usar **Instagram Graph API** con una cuenta Business o Creator.
+- El requisito del cliente es **automático**: las últimas 10 publicaciones, actualizadas cuando cambia el feed.
+- El modo **API** está implementado en `includes/instagram.php` con cron, caché, normalización y fallback.
+- El modo **curado** queda solo como respaldo: 10 publicaciones cargadas a mano desde Ajustes UP10.
+- El endpoint `GET /instagram` y el campo `instagram` de `/home` usan la misma caché.
+- La **Basic Display API está discontinuada**. Se usa **Instagram API with Instagram Login** (`graph.instagram.com`), que no exige Página de Facebook.
 
 ### 7.2 Requisitos previos
 
-1. Convertir la cuenta de Instagram a **Business o Creator** y vincularla a una Página de Facebook.
-2. Crear una app en **Meta for Developers** y agregar el producto Instagram Graph API.
-3. Solicitar los permisos `instagram_basic`, `pages_show_list` y `pages_read_engagement`; para producción se necesita revisión/advanced access.
-4. Generar un token de larga duración o un token de System User de Business Manager. Guardarlo en `wp-config.php` o en un secreto del servidor, nunca en el frontend.
-5. Configurar el cron real de hPanel.
+1. Cuenta de Instagram **Business o Creator** (la del cliente ya lo es).
+2. App en **Meta for Developers** con el producto Instagram y **Instagram Login**.
+3. Permiso `instagram_business_basic` (solo lectura de media).
+4. Token de usuario de Instagram de larga duración (60 días) o **System User token** de Business Manager si el cliente lo tiene. Se guarda en `wp-config.php` como `UP10_IG_ACCESS_TOKEN`; nunca en el frontend, el repo ni los logs.
+5. La cuenta del cliente debe autorizar la app (tester o Business Manager). No se comparte la contraseña si se puede evitar.
+6. Cron real de WordPress cada 5 minutos en el hosting.
+
+No se usan `UP10_IG_USER_ID` ni `UP10_IG_API_VERSION`: el endpoint con Instagram Login es `/me/media`, sin versión.
 
 ### 7.3 Flujo de sincronización
 
-```
-cron cada 15–30 min
-  → GET /{ig-user-id}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&limit=10
+```text
+cron cada 30 min
+  → GET https://graph.instagram.com/me/media
+        ?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,
+                children{media_url,media_type,thumbnail_url}
+        &limit=10
+        &access_token=<TOKEN>
   → normalizar tipos (IMAGE, CAROUSEL_ALBUM, VIDEO, REEL)
-  → guardar/actualizar caché de 10 publicaciones
-  → exponer en /home como `instagram`
-  → disparar rebuild/revalidación del frontend
+  → descargar la imagen a la biblioteca de medios (WebP automático)
+  → guardar caché de 10 publicaciones en `up10_instagram_cache`
+  → exponer en /instagram y /home como `instagram`
 ```
 
 Reglas:
 
 - `IMAGE`: usar `media_url`.
-- `CAROUSEL_ALBUM`: usar la primera imagen hija o `thumbnail_url` como fallback.
+- `CAROUSEL_ALBUM`: usar la primera hija con imagen o `thumbnail_url` como fallback.
 - `VIDEO` / `REEL`: usar `thumbnail_url`.
-- La Graph API no entrega dimensiones; el frontend usa ratio 1:1 y dimensiones fijas para el layout.
-- Cachear 15–30 min; el límite es amplio para un cron, pero no se debe llamar en cada request.
+- Las `media_url` de Instagram caducan; por eso las imágenes se descargan a WordPress y se reutilizan por `_up10_ig_media_id`.
+- Cachear 15–30 min; el límite de la API es amplio, pero no se debe llamar en cada request.
 - Si la API falla o el token expira, conservar la última caché y mostrar un aviso en el admin.
 - Si no hay datos, el frontend muestra la tarjeta “Síguenos en Instagram”, no un hueco.
-- Respetar la política de la plataforma: enlazar al permalink, no rehostear imágenes permanentemente sin revisar las condiciones, y proteger los tokens.
+- Mantener el permalink y la atribución; las imágenes son del cliente.
 
-### 7.4 Modos
+### 7.4 Renovación del token
+
+```text
+GET https://graph.instagram.com/refresh_access_token
+    ?grant_type=ig_refresh_token
+    &access_token=<TOKEN>
+```
+
+- El token va en la query, como exige Meta; no se registra en logs ni se devuelve en REST.
+- Cron mensual (`up10_instagram_refresh_token`) renueva y guarda el vencimiento.
+- El admin avisa cuando faltan menos de 10 días o el token supera los 50 días.
+- Para rotar manualmente: actualizar `wp-config.php` y ejecutar `wp up10 instagram-reset-token`.
+
+### 7.5 Modos
 
 | Modo | Cuándo usarlo | Funcionamiento |
 |---|---|---|
-| `curado` | MVP y contingencia | 10 publicaciones cargadas a mano desde Options Page |
-| `api` | Fase 2 | Cron sincroniza las 10 últimas publicaciones reales |
+| `api` | **Por defecto** | Cron sincroniza las 10 últimas publicaciones reales |
+| `curated` | Respaldo o contingencia | 10 publicaciones cargadas a mano desde Options Page |
 
-Recomendación: lanzar con `curado` mientras se aprueba la app de Meta; el frontend no cambia al pasar a `api`.
+Si el modo es `api` pero la caché está vacía, el serializador cae automáticamente al contenido curado.
 
-### 7.5 Checklist de puesta en marcha
+### 7.6 Actualización en el frontend
 
-- [ ] Cuenta Business/Creator vinculada a Página de Facebook.
-- [ ] App de Meta creada y permisos aprobados.
-- [ ] Token de larga duración o System User configurado.
-- [ ] Módulo `instagram.php` en `up10-core` con cron, caché y normalización.
-- [ ] Serializador de `/home` actualizado.
-- [ ] Modo `curado` operativo como fallback.
-- [ ] Rebuild/revalidación del frontend al terminar cada sync.
+- El HTML prerenderizado incluye las 10 piezas de `/home`.
+- `InstagramGrid` consulta `/instagram` cada 5 minutos y al recuperar el foco.
+- Si la consulta falla, conserva los datos iniciales. No requiere rebuild para actualizarse.
+
+### 7.7 Checklist de puesta en marcha
+
+- [ ] Cuenta Business/Creator autorizada a la app.
+- [ ] App de Meta creada con Instagram Login y permiso `instagram_business_basic`.
+- [ ] `UP10_IG_ACCESS_TOKEN` configurado en el `wp-config.php` de producción.
+- [ ] `instagram_mode` en `api`.
+- [ ] Primera sincronización ejecutada por WP-CLI (`wp up10 instagram-sync --force`).
+- [ ] Cron real de WP cada 5 minutos.
+- [ ] `/instagram` devuelve 10 piezas con `meta.mode = api`.
+- [ ] Fallback curado probado.
 - [ ] Aviso de token vencido y última sincronización en el admin.
+- [ ] Renovación mensual verificada.
 
 ---
 

@@ -21,9 +21,20 @@ function up10_instagram_admin_notice() {
 	$cache         = up10_instagram_cache();
 	$synced_at     = (int) get_option( 'up10_instagram_synced_at', 0 );
 	$token_updated = (int) get_option( 'up10_instagram_token_updated_at', 0 );
+	$token_expires = (int) get_option( 'up10_instagram_token_expires_at', 0 );
+	$token         = up10_instagram_token();
 	$token_age     = $token_updated ? (int) floor( ( time() - $token_updated ) / DAY_IN_SECONDS ) : null;
+	$token_soon    = $token_expires && ( $token_expires - time() ) < 10 * DAY_IN_SECONDS;
+	$token_old     = null === $token_age || $token_age >= 50;
 	$has_error     = ! empty( $cache['error'] );
-	$class         = $has_error ? 'notice notice-error' : 'notice notice-info';
+	$screen        = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	$is_settings   = $screen && false !== strpos( (string) $screen->id, 'up10-settings' );
+
+	if ( ! $is_settings && ! $has_error ) {
+		return;
+	}
+
+	$class = $has_error ? 'notice notice-error' : 'notice notice-info';
 	?>
 	<div class="<?php echo esc_attr( $class ); ?>">
 		<p>
@@ -38,8 +49,11 @@ function up10_instagram_admin_notice() {
 			<br>
 			<?php esc_html_e( 'Antigüedad del token:', 'up10-core' ); ?>
 			<?php echo esc_html( null === $token_age ? __( 'sin fecha registrada', 'up10-core' ) : sprintf( _n( '%d día', '%d días', $token_age, 'up10-core' ), $token_age ) ); ?>
-			<?php if ( null === $token_age || $token_age >= 50 ) : ?>
+			<?php if ( 'api' === $mode && ( $token_old || $token_soon ) ) : ?>
 				<strong><?php esc_html_e( 'Verifica o renueva el token.', 'up10-core' ); ?></strong>
+			<?php endif; ?>
+			<?php if ( 'api' === $mode && '' === $token ) : ?>
+				<strong><?php esc_html_e( 'Falta configurar UP10_IG_ACCESS_TOKEN.', 'up10-core' ); ?></strong>
 			<?php endif; ?>
 		</p>
 	</div>
