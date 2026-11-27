@@ -8,6 +8,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { INTRO_GATE_SCRIPT } from "~/components/intro/intro-gate";
+import { IntroSequence } from "~/components/intro/intro-sequence";
 import { SiteFooter } from "~/components/site-footer";
 import { SiteHeader } from "~/components/site-header";
 import { Providers } from "~/providers";
@@ -37,16 +39,18 @@ export const meta: Route.MetaFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es-CL">
+    <html lang="es-CL" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#FAE3B9" />
+        <script dangerouslySetInnerHTML={{ __html: INTRO_GATE_SCRIPT }} />
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
+        <div id="site-content">{children}</div>
+        <IntroSequence />
         <ScrollRestoration />
         <Scripts />
       </body>

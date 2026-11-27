@@ -53,19 +53,42 @@ export function AnimatedCounter({
       frame = requestAnimationFrame(tick);
     };
 
+    const start = () => {
+      if (hasAnimated.current) return;
+      hasAnimated.current = true;
+
+      if (reduced) {
+        setDisplay(value);
+        return;
+      }
+
+      runAnimation();
+    };
+
+    // En la primera visita los stats esperan a que termine la intro y el telón
+    // se haya levantado. En un refresh normal (sin intro) animan al entrar en
+    // pantalla como siempre.
+    const introActive = document.documentElement.dataset.intro === "on";
+    if (introActive) {
+      const onIntroDone = () => start();
+      const fallback = window.setTimeout(() => {
+        if (document.documentElement.dataset.intro !== "on") start();
+      }, 13000);
+
+      window.addEventListener("up10:intro-done", onIntroDone);
+
+      return () => {
+        window.removeEventListener("up10:intro-done", onIntroDone);
+        window.clearTimeout(fallback);
+        cancelAnimationFrame(frame);
+      };
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting) || hasAnimated.current) return;
-
-        hasAnimated.current = true;
+        if (!entries.some((entry) => entry.isIntersecting)) return;
         observer.disconnect();
-
-        if (reduced) {
-          setDisplay(value);
-          return;
-        }
-
-        runAnimation();
+        start();
       },
       { threshold: 0.4 },
     );

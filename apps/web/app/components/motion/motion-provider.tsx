@@ -57,6 +57,26 @@ function MotionEngine() {
     };
   }, [lenis]);
 
+  // La intro cinematográfica bloquea el scroll y devuelve el control al
+  // terminar. El overlay vive fuera de Providers, así que se comunica por evento.
+  useEffect(() => {
+    if (!lenis) return;
+
+    if (document.documentElement.dataset.intro === "on") {
+      lenis.stop();
+    }
+
+    const onIntroDone = () => {
+      lenis.start();
+      lenis.scrollTo(0, { immediate: true });
+      ScrollTrigger.refresh();
+    };
+
+    window.addEventListener("up10:intro-done", onIntroDone);
+
+    return () => window.removeEventListener("up10:intro-done", onIntroDone);
+  }, [lenis]);
+
   // Revelados y parallax por ruta. El contenido queda visible si no hay JS o
   // si el usuario prefiere movimiento reducido.
   useEffect(() => {

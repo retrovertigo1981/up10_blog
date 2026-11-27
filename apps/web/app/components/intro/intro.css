@@ -1,0 +1,228 @@
+/* Intro cinematográfica de la portada.
+   Todo el overlay se pinta con vino plano; el movimiento se limita a transform,
+   opacity y el clip del relleno del logo. */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html[data-intro="on"] .intro {
+  display: block;
+}
+
+html.intro-lock {
+  overflow: hidden;
+  background: var(--color-wine);
+}
+
+html.intro-lock body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html.intro-lock #site-content {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-intro="on"] .intro {
+    display: none;
+  }
+
+  html.intro-lock,
+  html.intro-lock body {
+    overflow: auto;
+  }
+
+  html.intro-lock #site-content {
+    pointer-events: auto;
+  }
+}
+
+/* --- Telones -------------------------------------------------------------- */
+
+.intro-curtain {
+  position: absolute;
+  inset: 0;
+  color: var(--curtain-color);
+  will-change: transform;
+}
+
+.intro-curtain--front {
+  --curtain-color: var(--color-wine);
+  z-index: 2;
+}
+
+.intro-curtain--back {
+  --curtain-color: #1c1c1c;
+  z-index: 1;
+}
+
+.intro-curtain__panel {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--curtain-color);
+}
+
+.intro-curtain__cap {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 10vh;
+  pointer-events: none;
+}
+
+.intro-curtain__cap--top {
+  bottom: calc(100% - 1px);
+}
+
+.intro-curtain__cap--bottom {
+  top: calc(100% - 1px);
+}
+
+/* --- Escenario ------------------------------------------------------------- */
+
+.intro-stage {
+  --intro-wave-h: clamp(160px, 23.8vw, 360px);
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* La onda oficial cruza toda la pantalla, centrada verticalmente. El shutter
+   de vino la descubre de izquierda a derecha. */
+.intro-waves {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: 128vw;
+  height: var(--intro-wave-h);
+  color: var(--color-cream);
+  transform: translate(-50%, -50%);
+}
+
+.intro-waves__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.intro-wave {
+  opacity: 1;
+  transform-origin: 50% 50%;
+}
+
+.intro-wave-shutter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  width: 136vw;
+  height: var(--intro-wave-h);
+  background: linear-gradient(90deg, transparent 0, var(--color-wine) 2.5%, var(--color-wine) 100%);
+  transform: translate(-50%, -50%) scaleX(1.15);
+  transform-origin: right center;
+  will-change: transform;
+}
+
+/* --- Mensaje: palabras de a una ------------------------------------------ */
+
+.intro-message {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.intro-solo-word {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.intro-solo {
+  color: var(--color-cream);
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 12vw, 9rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+.intro-word {
+  display: inline-block;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.intro-char {
+  display: inline-block;
+  opacity: 0;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+}
+
+.intro-logo-solo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 30;
+  width: clamp(220px, 26vw, 340px);
+  aspect-ratio: 228.203 / 254.363;
+  color: var(--color-cream);
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.intro-logo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: var(--color-cream);
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.intro-logo__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.intro-logo__stroke {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .intro-curtain__cap {
+    height: 8vh;
+  }
+
+  .intro-solo {
+    font-size: clamp(2.2rem, 12vw, 4.6rem);
+  }
+}
