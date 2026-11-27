@@ -380,6 +380,7 @@ No se revela si el correo ya existía (evita enumeración).
 | `GET /posts`, `/events` | `public, max-age=60, s-maxage=300`                             |
 | `GET /posts/{slug}`     | `public, max-age=120, s-maxage=600`                            |
 | `GET /top10`            | `public, max-age=60, s-maxage=300`                             |
+| `GET /instagram`        | `public, max-age=300`                                          |
 | `GET /search`           | `public, max-age=30, s-maxage=60`                              |
 | `POST /newsletter`      | `no-store`                                                     |
 | `GET /preview`          | `no-store`                                                     |
@@ -387,6 +388,7 @@ No se revela si el correo ya existía (evita enumeración).
 - Cada respuesta de lectura incluye `ETag`.
 - Al guardar o publicar contenido se purga la caché del CDN.
 - Si la purga falla, el TTL actúa como red de seguridad.
+- `/instagram` se sirve detrás de hcdn. Si una variante cacheada llega sin `Access-Control-Allow-Origin`, el navegador bloquea el fetch: purgar el CDN. Si se repite, evaluar `private` o `no-store` para ese endpoint.
 
 ---
 

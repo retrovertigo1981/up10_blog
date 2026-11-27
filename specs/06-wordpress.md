@@ -269,7 +269,7 @@ Reglas:
 
 - `IMAGE`: usar `media_url`.
 - `CAROUSEL_ALBUM`: usar la primera hija con imagen o `thumbnail_url` como fallback.
-- `VIDEO` / `REEL`: usar `thumbnail_url`.
+- `VIDEO` / `REEL`: usar `thumbnail_url`. La grilla muestra el thumbnail; el video no se descarga. Reproducirlo dentro de la web requiere el embed oficial o usar `media_url` (evaluación pendiente).
 - Las `media_url` de Instagram caducan; por eso las imágenes se descargan a WordPress y se reutilizan por `_up10_ig_media_id`.
 - Cachear 15–30 min; el límite de la API es amplio, pero no se debe llamar en cada request.
 - Si la API falla o el token expira, conservar la última caché y mostrar un aviso en el admin.
@@ -306,16 +306,23 @@ Si el modo es `api` pero la caché está vacía, el serializador cae automática
 
 ### 7.7 Checklist de puesta en marcha
 
-- [ ] Cuenta Business/Creator autorizada a la app.
-- [ ] App de Meta creada con Instagram Login y permiso `instagram_business_basic`.
-- [ ] `UP10_IG_ACCESS_TOKEN` configurado en el `wp-config.php` de producción.
-- [ ] `instagram_mode` en `api`.
-- [ ] Primera sincronización ejecutada por WP-CLI (`wp up10 instagram-sync --force`).
+- [x] Cuenta Business/Creator autorizada a la app.
+- [x] App de Meta creada con Instagram Login y permiso `instagram_business_basic`.
+- [x] `UP10_IG_ACCESS_TOKEN` configurado en el `wp-config.php` de producción.
+- [x] `instagram_mode` en `api`.
+- [x] Primera sincronización ejecutada por WP-CLI (`wp up10 instagram-sync --force`).
 - [ ] Cron real de WP cada 5 minutos.
-- [ ] `/instagram` devuelve 10 piezas con `meta.mode = api`.
-- [ ] Fallback curado probado.
-- [ ] Aviso de token vencido y última sincronización en el admin.
+- [x] `/instagram` devuelve 10 piezas con `meta.mode = api`.
+- [ ] Fallback curado probado explícitamente en producción.
+- [x] Aviso de token vencido y última sincronización en el admin (implementado).
 - [ ] Renovación mensual verificada.
+
+### 7.8 Implementación (26/11/2026)
+
+- `up10-core` 0.1.3 desplegado; `/instagram` operativo con 10 piezas, `mode: api` y WebP.
+- Grilla 3:4 con imagen completa, carga al montar y refresco cada 5 min.
+- Incidente hcdn: una respuesta cacheada sin CORS bloqueó el fetch; se purgó el CDN y se recuperó el header.
+- Reels/modal no implementados: el sync solo guarda thumbnails. Opciones y costos en `docs/plan-integraciones-instagram-spotify.md` §2.8.
 
 ---
 

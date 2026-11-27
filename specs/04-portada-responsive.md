@@ -140,10 +140,12 @@ El home muestra solo la playlist, no el ranking.
 
 ### 3.8 Instagram
 
-- 10 piezas en 5 columnas × 2 filas, ratio 1:1.
+- 10 piezas en 5 columnas × 2 filas, ratio **3:4**.
+- La imagen usa el archivo completo, sin el `srcset` que mezcla recortes; así no se cortan los títulos de las publicaciones.
 - Móvil: 2 columnas × 5 filas, o carrusel; se elige 2 columnas por simplicidad y rendimiento.
 - Botón "Ver más en Instagram" alineado a la derecha del heading.
 - **Vacío:** se reemplaza por una tarjeta "Síguenos en Instagram" con CTA, no por un hueco.
+- **Implementado 26/11/2026:** modo API por defecto, fallback curado, carga al montar y refresco cada 5 minutos.
 
 ### 3.9 UP10 Unplugged
 
@@ -248,5 +250,5 @@ El detalle visual y de copy está en la spec 05.
 
 - [ ] Validar con el cliente la propuesta de orden móvil (Unplugged antes de Instagram).
 - [ ] Confirmar si Entrevistas es obligatorio en v1.
-- [ ] Definir si Instagram será curado o API antes del lanzamiento.
+- [x] Definir si Instagram será curado o API antes del lanzamiento. Resuelto: API por defecto, curado como fallback.
 - [ ] Confirmar si el ticker pausa al tocar en móvil o se detiene permanentemente.

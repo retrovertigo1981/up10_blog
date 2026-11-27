@@ -45,9 +45,15 @@ Copiar `.env.example` a `.env` y ajustar:
 | `VITE_USE_MOCKS`    | `true` usa fixtures locales; `false` usa la API                                             |
 | `VITE_LIVE_CONTENT` | `true` refresca los datos en el navegador tras el prerender; `false` sirve el HTML estático |
 
-La grilla de Instagram usa los datos iniciales de `/home` y consulta
-`/instagram` cada cinco minutos y al recuperar el foco de la pestaña. Si la
-consulta falla, conserva las publicaciones que ya estaban renderizadas.
+La grilla de Instagram usa los datos iniciales de `/home` y consulta `/instagram`
+al montar (`refetchOnMount: "always"`), cada cinco minutos y al recuperar el
+foco. Si la consulta falla, conserva las publicaciones que ya estaban
+renderizadas. Cada tarjeta usa ratio 3:4 y la imagen completa: se desactiva el
+`srcset` porque WordPress mezcla recortes con tamaños proporcionales.
+
+La marquesina de marcas también usa el WebP completo de cada logo (340×144),
+no el `srcset`, para evitar el thumbnail recortado `150×144` que cortaba los
+logos en algunas pantallas.
 
 ## Despliegue
 

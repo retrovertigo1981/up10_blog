@@ -236,6 +236,21 @@ php plugin/up10-core/tests/instagram-refresh.php
 
 La primera sincronización descarga 10 imágenes y genera sus versiones WebP. Ejecutarla por WP-CLI para evitar el timeout de PHP del hosting; las siguientes solo descargan publicaciones nuevas.
 
+Los **videos y reels no se descargan**: el sync guarda solo `thumbnail_url` como portada. Reproducirlos dentro de la web requiere el embed oficial de Instagram o usar `media_url`; está evaluado en `docs/plan-integraciones-instagram-spotify.md` (no implementado).
+
+### Si `/instagram` no carga en el navegador
+
+Verificar que la respuesta traiga CORS:
+
+```bash
+curl -s -D - -o /dev/null \
+  -H 'Origin: https://up10-blog.vercel.app' \
+  https://api.up10.cl/wp-json/up10/v1/instagram \
+  | grep -iE 'access-control-allow-origin|x-hcdn-cache-status'
+```
+
+Si falta `access-control-allow-origin` y `x-hcdn-cache-status` es `HIT`, el CDN de Hostinger cacheó una variante sin CORS: purgar la caché desde hPanel. El 26/11 se resolvió así. Si se repite, evaluar `Cache-Control: private` o `no-store` para el endpoint.
+
 No ejecutar comandos `wp` contra producción. En producción, el cron real de WP debe correr cada 5 minutos (`wp cron event run --due-now`). Las pruebas de integración con Meta requieren la cuenta autorizada; los tests locales usan respuestas grabadas y no hacen solicitudes de red.
 
 ## Notas
